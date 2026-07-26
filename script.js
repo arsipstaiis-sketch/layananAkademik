@@ -37,31 +37,51 @@ document.addEventListener('DOMContentLoaded', function() {
         btnText.innerText = 'Mengirim...';
         btnSpinner.classList.remove('hidden');
 
-        // Ambil data dari form untuk disiapkan ke Database (Google Sheets nantinya)
+        // Ambil data dari form untuk disiapkan ke Database (Google Sheets)
         const formData = {
             nama: document.getElementById('nama').value,
             nim: document.getElementById('nim').value,
             email: document.getElementById('email').value,
+            tempat_lahir: document.getElementById('tempatLahir').value,
+            tanggal_lahir: document.getElementById('tanggalLahir').value,
+            prodi: document.getElementById('prodi').value,
             jenis_surat: jenisSurat.value,
             tujuan_bebas: document.getElementById('tujuanBebas').value,
             kampus_tujuan: document.getElementById('kampusTujuan').value,
             alasan_mutasi: document.getElementById('alasanMutasi').value
         };
 
-        // TODO: Di sinilah kita akan meletakkan kode fetch() ke URL API Google Apps Script.
-        // Untuk sekarang, kita gunakan simulasi setTimeout 2 detik.
-        
-        setTimeout(() => {
-            // Sembunyikan form dan tampilkan pesan sukses
-            form.classList.add('hidden'); 
-            successMessage.classList.remove('hidden'); 
-            
+        // GANTI BAGIAN INI DENGAN URL WEB APP DARI GOOGLE APPS SCRIPT ANDA
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwDh5GKLgWZl6Re5fDaWkyz3BJW-KQtvRh0QD3iRsk_J2yVxZRwAaOHpXpJi3ZbLBDmlg/exec';
+
+        // Mengirim data ke Google Sheets menggunakan metode POST
+        fetch(API_URL, {
+            method: 'POST',
+            // Menggunakan text/plain untuk menghindari error CORS preflight
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                // Sembunyikan form dan tampilkan pesan sukses
+                form.classList.add('hidden'); 
+                successMessage.classList.remove('hidden'); 
+            } else {
+                alert('Terjadi kesalahan sistem: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Gagal mengirim data. Pastikan koneksi internet Anda stabil.');
+            console.error('Error:', error);
+        })
+        .finally(() => {
             // Kembalikan state tombol ke semula (untuk persiapan jika form direset)
             btnSubmit.disabled = false;
             btnSubmit.classList.remove('opacity-75', 'cursor-not-allowed');
             btnText.innerText = 'Kirim Permohonan';
             btnSpinner.classList.add('hidden');
-        }, 2000);
+        });
         
     });
 
