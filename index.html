@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layanan Administrasi Mahasiswa</title>
+    
+    <!-- Memanggil Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memanggil file CSS Kustom -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 antialiased">
+
+    <!-- Container Utama -->
+    <div class="bg-white max-w-lg w-full rounded-xl shadow-lg p-6 md:p-8">
+        
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Layanan Administrasi</h1>
+            <p class="text-sm text-gray-500 mt-2">Ajukan surat permohonan Anda dengan cepat dan mudah.</p>
+        </div>
+
+        <!-- Form Aplikasi -->
+        <form id="suratForm" class="space-y-5">
+            
+            <!-- Data Diri Dasar -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                <input type="text" id="nama" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Masukkan nama lengkap">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">NIM</label>
+                    <input type="number" id="nim" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Contoh: 12345678">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Mahasiswa</label>
+                    <input type="email" id="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="email@kampus.ac.id">
+                </div>
+            </div>
+
+            <!-- Pilihan Jenis Surat -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Surat</label>
+                <select id="jenisSurat" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+                    <option value="" disabled selected>-- Pilih Jenis Surat --</option>
+                    <option value="Aktif">Surat Keterangan Aktif</option>
+                    <option value="Bebas Tanggungan">Surat Keterangan Bebas Tanggungan</option>
+                    <option value="Mutasi">Surat Keterangan Mutasi</option>
+                </select>
+            </div>
+
+            <!-- KOLOM DINAMIS (Disembunyikan secara default) -->
+            
+            <!-- Tambahan untuk Surat Bebas Tanggungan -->
+            <div id="fieldBebasTanggungan" class="hidden space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="text-xs font-semibold text-blue-800 mb-2">Data Tambahan Bebas Tanggungan</p>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tujuan Keperluan</label>
+                    <input type="text" id="tujuanBebas" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Misal: Persyaratan Wisuda">
+                </div>
+            </div>
+
+            <!-- Tambahan untuk Surat Mutasi -->
+            <div id="fieldMutasi" class="hidden space-y-4 p-4 bg-orange-50 rounded-lg border border-orange-100">
+                <p class="text-xs font-semibold text-orange-800 mb-2">Data Tambahan Mutasi</p>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Universitas Tujuan</label>
+                    <input type="text" id="kampusTujuan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Masukkan nama universitas tujuan">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Alasan Pindah</label>
+                    <textarea id="alasanMutasi" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Jelaskan alasan secara singkat"></textarea>
+                </div>
+            </div>
+
+            <!-- Tombol Submit -->
+            <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors flex justify-center items-center">
+                <span id="btnText">Kirim Permohonan</span>
+                <!-- Spinner Loading (Disembunyikan default) -->
+                <svg id="btnSpinner" class="hidden animate-spin ml-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </form>
+
+        <!-- Pesan Sukses (Disembunyikan default) -->
+        <div id="successMessage" class="hidden text-center py-8">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Permohonan Berhasil!</h2>
+            <p class="text-sm text-gray-600">Data Anda telah masuk ke sistem. Dokumen akan diproses dan dikirimkan ke email Anda dalam waktu dekat.</p>
+            <button id="btnReset" class="mt-6 text-sm text-blue-600 font-medium hover:underline">Ajukan surat lainnya</button>
+        </div>
+
+    </div>
+
+    <!-- Memanggil file JavaScript Kustom -->
+    <script src="script.js"></script>
+</body>
+</html>
