@@ -1,11 +1,7 @@
-/* style.css */
-
-/* Efek smooth scrolling untuk seluruh halaman */
 html {
     scroll-behavior: smooth;
 }
 
-/* Kustomisasi Scrollbar agar terlihat lebih bersih dan modern */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -25,7 +21,6 @@ html {
     background: #94a3b8; 
 }
 
-/* Hilangkan panah up/down pada input tipe number (untuk NIM) */
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
     -webkit-appearance: none; 
