@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         // PASTIKAN URL APPS SCRIPT ANDA DISINI
-        const API_URL = 'https://script.google.com/macros/s/GANTI_DENGAN_URL_ANDA/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwDh5GKLgWZl6Re5fDaWkyz3BJW-KQtvRh0QD3iRsk_J2yVxZRwAaOHpXpJi3ZbLBDmlg/exec';
 
         fetch(API_URL, {
             method: 'POST',
