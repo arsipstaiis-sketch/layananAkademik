@@ -75,23 +75,35 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Masuk (STAIIS)</label>
-                        <input type="number" id="tahunMasuk" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Contoh: 2022">
-                    </div>
-                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Universitas Tujuan</label>
                         <input type="text" id="kampusTujuan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Nama kampus tujuan">
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Program Studi Tujuan</label>
+                        <input type="text" id="prodiTujuan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Contoh: Manajemen Pendidikan">
+                    </div>
+                </div>
+
+                <!-- Dropdown Wilayah Bertingkat -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Provinsi Tujuan</label>
+                        <select id="provinsiTujuan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-white">
+                            <option value="" disabled selected>-- Pilih Provinsi --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Kabupaten/Kota</label>
+                        <!-- Disable secara default, baru aktif setelah provinsi dipilih -->
+                        <select id="kabupatenTujuan" disabled class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-gray-100 cursor-not-allowed">
+                            <option value="" disabled selected>-- Pilih Kab/Kota --</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Program Studi Tujuan</label>
-                    <input type="text" id="prodiTujuan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Contoh: Pendidikan Agama Islam">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Kampus Tujuan</label>
-                    <textarea id="alamatTujuan" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Tulis alamat lengkap kampus tujuan"></textarea>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Detail Alamat Kampus</label>
+                    <textarea id="detailAlamat" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Nama jalan, nama gedung, dsb."></textarea>
                 </div>
 
                 <div>
