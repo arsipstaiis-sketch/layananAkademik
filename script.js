@@ -38,10 +38,15 @@ document.addEventListener('DOMContentLoaded', function() {
             prodi: document.getElementById('prodi').value,
             jenis_surat: jenisSurat.value,
             
-            // Kolom Dinamis (Opsional tergantung jenis surat)
+            // Kolom Dinamis Bebas Tanggungan (K)
             tujuan_bebas: document.getElementById('tujuanBebas').value,
+            
+            // Kolom Dinamis Mutasi (L, M, N, O, P)
             kampus_tujuan: document.getElementById('kampusTujuan').value,
-            alasan_mutasi: document.getElementById('alasanMutasi').value
+            alasan_mutasi: document.getElementById('alasanMutasi').value,
+            tahun_masuk: document.getElementById('tahunMasuk').value,
+            prodi_tujuan: document.getElementById('prodiTujuan').value,
+            alamat_tujuan: document.getElementById('alamatTujuan').value
         };
 
         // GANTI DENGAN URL API ANDA YANG BARU SETELAH DEPLOY NEW VERSION
