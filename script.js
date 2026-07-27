@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectKecamatan = document.getElementById('kecamatanTujuan');
     const fileKTM = document.getElementById('fileKTM');
     const fileBebas = document.getElementById('fileBebas');
+    const fieldLulus = document.getElementById('fieldLulus');
+    const fileIjazah = document.getElementById('fileIjazah');
+    const tanggalMunaqosyah = document.getElementById('tanggalMunaqosyah');
 
     // Fungsi konversi file ke Base64
     function getBase64(file) {
@@ -112,15 +115,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     jenisSurat.addEventListener('change', function() {
+        // Sembunyikan semua dan hapus wajib isi
         fieldBebasTanggungan.classList.add('hidden');
         fieldMutasi.classList.add('hidden');
-        if (fileBebas) fileBebas.required = false; // Reset required
+        fieldLulus.classList.add('hidden');
+        
+        if (fileBebas) fileBebas.required = false; 
+        if (fileIjazah) fileIjazah.required = false; 
 
         if (this.value === 'Bebas Tanggungan') {
             fieldBebasTanggungan.classList.remove('hidden');
         } else if (this.value === 'Mutasi') {
             fieldMutasi.classList.remove('hidden');
-            if (fileBebas) fileBebas.required = true; // Wajib upload jika mutasi
+            if (fileBebas) fileBebas.required = true; 
+        } else if (this.value === 'Lulus') {
+            fieldLulus.classList.remove('hidden');
+            if (fileIjazah) fileIjazah.required = true; // Wajib untuk SKL
         }
     });
 
@@ -180,7 +190,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 alamat_tujuan: alamatLengkap,
                 
                 file_ktm: ktmObj,
-                file_bebas: bebasObj
+                file_bebas: bebasObjlet ijazahObj = { base64: "", name: "", mime: "" };
+
+            if (fileIjazah && fileIjazah.files[0] && jenisSurat.value === 'Lulus') {
+                ijazahObj.base64 = await getBase64(fileIjazah.files[0]);
+                ijazahObj.name = fileIjazah.files[0].name;
+                ijazahObj.mime = fileIjazah.files[0].type;
+            }
+
+            // Lalu pada bagian formData, tambahkan 2 baris baru ini di akhir:
+            const formData = {
+                // ... (data lama Anda tetap ada) ...
+                tanggal_munaqosyah: document.getElementById('tanggalMunaqosyah') ? document.getElementById('tanggalMunaqosyah').value : "",
+                file_ijazah: ijazahObj
             };
 
             // PASTIKAN MENGGANTI URL API INI
