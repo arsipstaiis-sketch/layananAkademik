@@ -1,36 +1,14 @@
-// script.js
-
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Fungsi untuk mengubah UPPERCASE menjadi Proper Case (Contoh: JAWA TENGAH -> Jawa Tengah)
+    // --- FUNGSI BANTUAN ---
+    // Mengubah huruf menjadi Proper Case (Awal kapital)
     function toProperCase(str) {
-        return str.replace(
-            /\w\S*/g,
-            function(txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-        );
+        return str.replace(/\w\S*/g, function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
     }
 
-    const jenisSurat = document.getElementById('jenisSurat');
-    const fieldBebasTanggungan = document.getElementById('fieldBebasTanggungan');
-    const fieldMutasi = document.getElementById('fieldMutasi');
-    const form = document.getElementById('suratForm');
-    const btnSubmit = document.getElementById('btnSubmit');
-    const btnText = document.getElementById('btnText');
-    const btnSpinner = document.getElementById('btnSpinner');
-    const successMessage = document.getElementById('successMessage');
-    const btnReset = document.getElementById('btnReset');
-    const selectProvinsi = document.getElementById('provinsiTujuan');
-    const selectKabupaten = document.getElementById('kabupatenTujuan');
-    const selectKecamatan = document.getElementById('kecamatanTujuan');
-    const fileKTM = document.getElementById('fileKTM');
-    const fileBebas = document.getElementById('fileBebas');
-    const fieldLulus = document.getElementById('fieldLulus');
-    const fileIjazah = document.getElementById('fileIjazah');
-    const tanggalMunaqosyah = document.getElementById('tanggalMunaqosyah');
-
-    // Fungsi konversi file ke Base64
+    // Mengubah file fisik menjadi format teks Base64
     function getBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -40,14 +18,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 1. Muat Provinsi (API Wilayah)
+    // --- DEKLARASI ELEMEN ---
+    const form = document.getElementById('suratForm');
+    const jenisSurat = document.getElementById('jenisSurat');
+    
+    // Kotak Kategori Surat
+    const fieldBebasTanggungan = document.getElementById('fieldBebasTanggungan');
+    const fieldMutasi = document.getElementById('fieldMutasi');
+    const fieldLulus = document.getElementById('fieldLulus'); // Tambahan SKL
+    
+    // Tombol & Notifikasi
+    const btnSubmit = document.getElementById('btnSubmit');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const successMessage = document.getElementById('successMessage');
+    const btnReset = document.getElementById('btnReset');
+
+    // Elemen Alamat (API Wilayah)
+    const selectProvinsi = document.getElementById('provinsiTujuan');
+    const selectKabupaten = document.getElementById('kabupatenTujuan');
+    const selectKecamatan = document.getElementById('kecamatanTujuan');
+
+    // Elemen File Upload & Tanggal Khusus
+    const fileKTM = document.getElementById('fileKTM');
+    const fileBebas = document.getElementById('fileBebas');
+    const fileIjazah = document.getElementById('fileIjazah'); // Syarat SKL
+    const tanggalMunaqosyah = document.getElementById('tanggalMunaqosyah'); // Syarat SKL
+
+    // --- LOGIKA API WILAYAH ---
     if (selectProvinsi) {
         fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
             .then(response => response.json())
             .then(provinces => {
                 provinces.forEach(province => {
                     const option = document.createElement('option');
-                    option.value = province.id; // ID untuk pemanggilan kabupaten
+                    option.value = province.id; 
                     option.dataset.name = toProperCase(province.name); 
                     option.textContent = toProperCase(province.name);
                     selectProvinsi.appendChild(option);
@@ -56,13 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Gagal memuat provinsi:', error));
     }
 
-    // 2. Muat Kabupaten saat Provinsi dipilih
     if (selectProvinsi && selectKabupaten) {
         selectProvinsi.addEventListener('change', function() {
             selectKabupaten.innerHTML = '<option value="" disabled selected>Loading...</option>';
             selectKabupaten.disabled = true;
             
-            // Reset Kecamatan juga
             if(selectKecamatan) {
                 selectKecamatan.innerHTML = '<option value="" disabled selected>-- Kecamatan --</option>';
                 selectKecamatan.disabled = true;
@@ -76,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     selectKabupaten.innerHTML = '<option value="" disabled selected>-- Kab/Kota --</option>';
                     regencies.forEach(regency => {
                         const option = document.createElement('option');
-                        option.value = regency.id; // ID untuk pemanggilan kecamatan
+                        option.value = regency.id; 
                         option.dataset.name = toProperCase(regency.name);
                         option.textContent = toProperCase(regency.name);
                         selectKabupaten.appendChild(option);
@@ -89,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 3. Muat Kecamatan saat Kabupaten dipilih
     if (selectKabupaten && selectKecamatan) {
         selectKabupaten.addEventListener('change', function() {
             selectKecamatan.innerHTML = '<option value="" disabled selected>Loading...</option>';
@@ -101,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     selectKecamatan.innerHTML = '<option value="" disabled selected>-- Kecamatan --</option>';
                     districts.forEach(district => {
                         const option = document.createElement('option');
-                        // Pada tahap kecamatan, kita jadikan nama sebagai value akhir
                         option.value = toProperCase(district.name); 
                         option.textContent = toProperCase(district.name);
                         selectKecamatan.appendChild(option);
@@ -114,50 +115,54 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // --- LOGIKA MENAMPILKAN FORM DINAMIS ---
     jenisSurat.addEventListener('change', function() {
-        // Sembunyikan semua dan hapus wajib isi
-        fieldBebasTanggungan.classList.add('hidden');
-        fieldMutasi.classList.add('hidden');
-        fieldLulus.classList.add('hidden');
+        // Reset tampilan
+        if (fieldBebasTanggungan) fieldBebasTanggungan.classList.add('hidden');
+        if (fieldMutasi) fieldMutasi.classList.add('hidden');
+        if (fieldLulus) fieldLulus.classList.add('hidden');
         
-        if (fileBebas) fileBebas.required = false; 
-        if (fileIjazah) fileIjazah.required = false; 
+        // Reset validasi wajib upload
+        if (fileBebas) fileBebas.required = false;
+        if (fileIjazah) fileIjazah.required = false;
 
+        // Tampilkan sesuai pilihan
         if (this.value === 'Bebas Tanggungan') {
-            fieldBebasTanggungan.classList.remove('hidden');
+            if (fieldBebasTanggungan) fieldBebasTanggungan.classList.remove('hidden');
         } else if (this.value === 'Mutasi') {
-            fieldMutasi.classList.remove('hidden');
+            if (fieldMutasi) fieldMutasi.classList.remove('hidden');
             if (fileBebas) fileBebas.required = true; 
         } else if (this.value === 'Lulus') {
-            fieldLulus.classList.remove('hidden');
-            if (fileIjazah) fileIjazah.required = true; // Wajib untuk SKL
+            if (fieldLulus) fieldLulus.classList.remove('hidden');
+            if (fileIjazah) fileIjazah.required = true; 
         }
     });
 
+    // --- LOGIKA PENGIRIMAN DATA ---
     form.addEventListener('submit', async function(e) {
         e.preventDefault(); 
         
-        // Ubah tombol jadi loading
         btnSubmit.disabled = true;
         btnSubmit.classList.add('opacity-75', 'cursor-not-allowed');
         btnText.innerText = 'Mengirim... (Proses Upload)';
         btnSpinner.classList.remove('hidden');
 
         try {
-            // 1. Merakit Alamat Lengkap (Khusus Mutasi)
+            // 1. Merakit Alamat Mutasi
             let alamatLengkap = "";
             if (jenisSurat.value === 'Mutasi') {
                 const namaProvinsi = selectProvinsi.options[selectProvinsi.selectedIndex]?.dataset?.name || "";
                 const namaKabupaten = selectKabupaten.options[selectKabupaten.selectedIndex]?.dataset?.name || "";
-                const namaKecamatan = selectKecamatan.value || "";
+                const namaKecamatan = selectKecamatan ? selectKecamatan.value : "";
                 const detailAlamat = document.getElementById('detailAlamat') ? document.getElementById('detailAlamat').value : "";
                 
                 alamatLengkap = `${detailAlamat}, Kec. ${namaKecamatan}, ${namaKabupaten}, ${namaProvinsi}`;
             }
 
-            // 2. Mengubah File Fisik menjadi Base64 (Teks)
+            // 2. Pemrosesan File
             let ktmObj = { base64: "", name: "", mime: "" };
             let bebasObj = { base64: "", name: "", mime: "" };
+            let ijazahObj = { base64: "", name: "", mime: "" };
 
             if (fileKTM && fileKTM.files[0]) {
                 ktmObj.base64 = await getBase64(fileKTM.files[0]);
@@ -171,14 +176,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 bebasObj.mime = fileBebas.files[0].type;
             }
 
-            // 3. Menyatukan Semua Data Form
+            if (fileIjazah && fileIjazah.files[0] && jenisSurat.value === 'Lulus') {
+                ijazahObj.base64 = await getBase64(fileIjazah.files[0]);
+                ijazahObj.name = fileIjazah.files[0].name;
+                ijazahObj.mime = fileIjazah.files[0].type;
+            }
+
+            // 3. Merakit Data Akhir
             const formData = {
-                nama: document.getElementById('nama').value,
-                nim: document.getElementById('nim').value,
-                email: document.getElementById('email').value,
-                tempat_lahir: document.getElementById('tempatLahir').value,
-                tanggal_lahir: document.getElementById('tanggalLahir').value,
-                prodi: document.getElementById('prodi').value,
+                nama: document.getElementById('nama') ? document.getElementById('nama').value : "",
+                nim: document.getElementById('nim') ? document.getElementById('nim').value : "",
+                email: document.getElementById('email') ? document.getElementById('email').value : "",
+                tempat_lahir: document.getElementById('tempatLahir') ? document.getElementById('tempatLahir').value : "",
+                tanggal_lahir: document.getElementById('tanggalLahir') ? document.getElementById('tanggalLahir').value : "",
+                prodi: document.getElementById('prodi') ? document.getElementById('prodi').value : "",
                 jenis_surat: jenisSurat.value,
                 
                 tujuan_bebas: document.getElementById('tujuanBebas') ? document.getElementById('tujuanBebas').value : "",
@@ -188,50 +199,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 tahun_masuk: "", 
                 alamat_tujuan: alamatLengkap,
+                tanggal_munaqosyah: document.getElementById('tanggalMunaqosyah') ? document.getElementById('tanggalMunaqosyah').value : "",
                 
                 file_ktm: ktmObj,
-                file_bebas: bebasObjlet ijazahObj = { base64: "", name: "", mime: "" };
-
-            if (fileIjazah && fileIjazah.files[0] && jenisSurat.value === 'Lulus') {
-                ijazahObj.base64 = await getBase64(fileIjazah.files[0]);
-                ijazahObj.name = fileIjazah.files[0].name;
-                ijazahObj.mime = fileIjazah.files[0].type;
-            }
-
-            // Lalu pada bagian formData, tambahkan 2 baris baru ini di akhir:
-            const formData = {
-                // ... (data lama Anda tetap ada) ...
-                tanggal_munaqosyah: document.getElementById('tanggalMunaqosyah') ? document.getElementById('tanggalMunaqosyah').value : "",
+                file_bebas: bebasObj,
                 file_ijazah: ijazahObj
             };
 
-            // PASTIKAN MENGGANTI URL API INI
-            const API_URL = 'https://script.google.com/macros/s/AKfycbwDh5GKLgWZl6Re5fDaWkyz3BJW-KQtvRh0QD3iRsk_J2yVxZRwAaOHpXpJi3ZbLBDmlg/exec';
+            // PASTIKAN ANDA MENGGANTI URL INI
+            const API_URL = 'https://script.google.com/macros/s/GANTI_DENGAN_URL_ANDA/exec';
 
-            // 4. Mengirim Data ke Google Apps Script
+            // 4. Mengirim Permintaan API
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(formData)
             });
 
-            // 5. Menerima Jawaban dari Server
             const data = await response.json();
 
             if (data.status === 'success') {
                 form.classList.add('hidden'); 
                 successMessage.classList.remove('hidden'); 
             } else {
-                alert('Terjadi kesalahan sistem: ' + data.message);
+                alert('Terjadi kesalahan sistem di server: ' + data.message);
             }
 
         } catch (error) {
-            // BLOK CATCH DITEMPATKAN DI SINI: Akan menangkap error jika file gagal dibaca atau internet terputus
-            alert('Gagal mengirim data. Pastikan koneksi internet stabil atau ukuran file tidak terlalu besar.');
-            console.error('Error lengkap:', error);
-            
+            alert('Gagal mengirim permohonan. Mohon periksa kembali koneksi internet Anda atau pastikan ukuran file tidak melebihi batas wajar.');
+            console.error('Pesan Error:', error);
         } finally {
-            // BLOK FINALLY: Akan selalu dijalankan di akhir untuk mereset tampilan tombol
             btnSubmit.disabled = false;
             btnSubmit.classList.remove('opacity-75', 'cursor-not-allowed');
             btnText.innerText = 'Kirim Permohonan';
@@ -239,25 +236,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    btnReset.addEventListener('click', function() {
-        form.reset(); 
-        fieldBebasTanggungan.classList.add('hidden'); 
-        fieldMutasi.classList.add('hidden');
-        successMessage.classList.add('hidden'); 
-        form.classList.remove('hidden'); 
-        
-        // Reset wilayah bertingkat
-        if (selectKabupaten) {
-            selectKabupaten.innerHTML = '<option value="" disabled selected>-- Kab/Kota --</option>';
-            selectKabupaten.disabled = true;
-            selectKabupaten.classList.add('bg-gray-100', 'cursor-not-allowed');
-            selectKabupaten.classList.remove('bg-white');
-        }
-        if (selectKecamatan) {
-            selectKecamatan.innerHTML = '<option value="" disabled selected>-- Kecamatan --</option>';
-            selectKecamatan.disabled = true;
-            selectKecamatan.classList.add('bg-gray-100', 'cursor-not-allowed');
-            selectKecamatan.classList.remove('bg-white');
-        }
-    });
+    // --- LOGIKA TOMBOL RESET ---
+    if (btnReset) {
+        btnReset.addEventListener('click', function() {
+            form.reset(); 
+            if (fieldBebasTanggungan) fieldBebasTanggungan.classList.add('hidden'); 
+            if (fieldMutasi) fieldMutasi.classList.add('hidden');
+            if (fieldLulus) fieldLulus.classList.add('hidden');
+            if (successMessage) successMessage.classList.add('hidden'); 
+            form.classList.remove('hidden'); 
+            
+            if (selectKabupaten) {
+                selectKabupaten.innerHTML = '<option value="" disabled selected>-- Kab/Kota --</option>';
+                selectKabupaten.disabled = true;
+                selectKabupaten.classList.add('bg-gray-100', 'cursor-not-allowed');
+                selectKabupaten.classList.remove('bg-white');
+            }
+            if (selectKecamatan) {
+                selectKecamatan.innerHTML = '<option value="" disabled selected>-- Kecamatan --</option>';
+                selectKecamatan.disabled = true;
+                selectKecamatan.classList.add('bg-gray-100', 'cursor-not-allowed');
+                selectKecamatan.classList.remove('bg-white');
+            }
+        });
+    }
 });
