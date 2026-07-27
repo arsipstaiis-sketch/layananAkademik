@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Kotak Kategori Surat
     const fieldBebasTanggungan = document.getElementById('fieldBebasTanggungan');
     const fieldMutasi = document.getElementById('fieldMutasi');
-    const fieldLulus = document.getElementById('fieldLulus'); // Tambahan SKL
+    const fieldLulus = document.getElementById('fieldLulus');
+    const fieldRekomendasi = document.getElementById('fieldRekomendasi');
     
     // Tombol & Notifikasi
     const btnSubmit = document.getElementById('btnSubmit');
@@ -121,6 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (fieldBebasTanggungan) fieldBebasTanggungan.classList.add('hidden');
         if (fieldMutasi) fieldMutasi.classList.add('hidden');
         if (fieldLulus) fieldLulus.classList.add('hidden');
+        if (fieldRekomendasi) fieldRekomendasi.classList.add('hidden');
         
         // Reset validasi wajib upload
         if (fileBebas) fileBebas.required = false;
@@ -135,6 +137,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (this.value === 'Lulus') {
             if (fieldLulus) fieldLulus.classList.remove('hidden');
             if (fileIjazah) fileIjazah.required = true; 
+        } else if (this.value === 'Rekomendasi') {
+         if (fieldRekomendasi) fieldRekomendasi.classList.remove('hidden');
         }
     });
 
@@ -203,7 +207,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 file_ktm: ktmObj,
                 file_bebas: bebasObj,
-                file_ijazah: ijazahObj
+                file_ijazah: ijazahObj,
+                nama_kegiatan: document.getElementById('namaKegiatan') ? document.getElementById('namaKegiatan').value : "",
+                lokasi_kegiatan: document.getElementById('lokasiKegiatan') ? document.getElementById('lokasiKegiatan').value : "",
+                tgl_mulai_kegiatan: document.getElementById('tglMulaiKegiatan') ? document.getElementById('tglMulaiKegiatan').value : "",
+                tgl_selesai_kegiatan: document.getElementById('tglSelesaiKegiatan') ? document.getElementById('tglSelesaiKegiatan').value : "",
             };
 
             // PASTIKAN ANDA MENGGANTI URL INI
