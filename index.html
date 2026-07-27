@@ -115,6 +115,17 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Alasan Pindah</label>
                     <textarea id="alasanMutasi" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Jelaskan alasan secara singkat"></textarea>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Upload Bebas Tanggungan <span class="text-red-500">*</span></label>
+                    <input type="file" id="fileBebas" accept=".pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                    <p class="text-xs text-gray-500 mt-1">Format: PDF. Wajib untuk permohonan Mutasi.</p>
+                </div>
+            </div>
+            <!-- Upload KTM (Wajib Semua) -->
+            <div class="mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Kartu Tanda Mahasiswa (KTM) <span class="text-red-500">*</span></label>
+                <input type="file" id="fileKTM" required accept=".pdf, .jpg, .jpeg" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                <p class="text-xs text-gray-500 mt-1">Format: PDF atau JPG. Maks 3MB.</p>
             </div>
 
             <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors flex justify-center items-center">
