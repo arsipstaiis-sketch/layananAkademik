@@ -251,6 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (fieldBebasTanggungan) fieldBebasTanggungan.classList.add('hidden'); 
             if (fieldMutasi) fieldMutasi.classList.add('hidden');
             if (fieldLulus) fieldLulus.classList.add('hidden');
+            if (fieldRekomendasi) fieldRekomendasi.classList.add('hidden');
             if (successMessage) successMessage.classList.add('hidden'); 
             form.classList.remove('hidden'); 
             
