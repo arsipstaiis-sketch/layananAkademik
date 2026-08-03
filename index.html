@@ -197,38 +197,41 @@
             <p class="text-sm text-gray-600">Data Anda telah masuk ke sistem. Dokumen akan diproses dan dikirimkan ke email Anda dalam waktu dekat.</p>
             <button id="btnReset" class="mt-6 text-sm text-blue-600 font-medium hover:underline">Ajukan surat lainnya</button>
         </div>
-        <!-- 3. SECTION STATUS (Fitur Baru)             -->
-<!-- ========================================== -->
-<div id="sectionStatus" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 hidden">
-    <h2 class="text-xl font-bold text-gray-800 mb-2">Tracking Permohonan Surat</h2>
-    <p class="text-sm text-gray-600 mb-6">Masukkan NIM Anda untuk memantau status pengerjaan surat secara berkala.</p>
+        <!-- ========================================== -->
+        <!-- BAGIAN 2: CEK STATUS (Tab 2)               -->
+        <!-- ========================================== -->
+        <div id="sectionStatus" class="hidden mt-6">
+            <p class="text-sm text-gray-600 mb-6 text-center">Masukkan NIM Anda untuk memantau status pengerjaan surat secara berkala.</p>
 
-    <div class="flex gap-3 mb-8">
-        <input type="text" id="inputNIMStatus" placeholder="Masukkan NIM Anda..." class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 outline-none text-sm">
-        <button id="btnCariStatus" class="bg-green-800 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium text-sm transition min-w-[100px]">Cari</button>
-    </div>
+            <!-- Kolom Pencarian -->
+            <div class="flex gap-3 mb-8">
+                <input type="text" id="inputNIMStatus" placeholder="Ketik NIM Anda..." class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 outline-none text-sm">
+                <button id="btnCariStatus" class="bg-green-800 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium text-sm transition min-w-[100px]">Cari</button>
+            </div>
 
-    <div id="hasilContainerStatus" class="hidden">
-        <h3 class="text-sm font-semibold text-gray-700 mb-4">Riwayat Pengajuan Anda:</h3>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
-                <thead>
-                    <tr class="bg-gray-100 text-gray-700 border-b">
-                        <th class="p-3 rounded-tl-lg">Tanggal</th>
-                        <th class="p-3">Jenis Surat</th>
-                        <th class="p-3">Nomor Surat</th>
-                        <th class="p-3 rounded-tr-lg">Status</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelBodyStatus" class="divide-y divide-gray-100"></tbody>
-            </table>
+            <!-- Tabel Hasil -->
+            <div id="hasilContainerStatus" class="hidden">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Riwayat Pengajuan:</h3>
+                <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                    <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-700 border-b">
+                                <th class="p-3">Tanggal</th>
+                                <th class="p-3">Jenis Surat</th>
+                                <th class="p-3">Nomor Surat</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelBodyStatus" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pesan Jika NIM Tidak Ditemukan -->
+            <div id="pesanKosongStatus" class="hidden text-center py-8 text-gray-500 text-sm">
+                Belum ada riwayat permohonan surat untuk NIM tersebut.
+            </div>
         </div>
-    </div>
-
-    <div id="pesanKosongStatus" class="hidden text-center py-8 text-gray-500 text-sm">
-        Tidak ada riwayat permohonan surat ditemukan.
-    </div>
-</div>
     </div>
     <script src="script.js"></script>
 </body>
