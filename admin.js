@@ -9,57 +9,109 @@ if (pinAkses !== "123456") {
     document.body.innerHTML = "<h2 class='text-center mt-20 text-red-600 font-bold'>Akses Ditolak.</h2>"; 
     throw new Error("Akses Ditolak"); 
 }
+let currentTab = 'baru'; // Tab default saat halaman dibuka
 
 // 1. FUNGSI MEMUAT DATA DARI SERVER
 async function loadData() {
     const tableBody = document.getElementById('adminTableBody');
-    tableBody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">Memuat data...</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="5" class="p-12 text-center text-gray-400 font-medium">Memuat data dari server...</td></tr>';
     
     try {
         const timestamp = new Date().getTime();
         const response = await fetch(`${WEB_APP_URL}?action=getAllAdmin&nocache=${timestamp}`);
         globalData = await response.json();
         
-        tableBody.innerHTML = '';
-        if (globalData.length === 0) { tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Tidak ada data.</td></tr>'; return; }
+        renderTable(); // Setelah data dimuat, panggil fungsi penyaring tabel
+    } catch (error) { 
+        tableBody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Error: ${error.message}</td></tr>`; 
+    }
+}
 
-        globalData.forEach(item => {
-            let statusWarna = "bg-yellow-100 text-yellow-800";
-            if (item.status.includes("Selesai")) statusWarna = "bg-green-100 text-green-800";
-            else if (item.status.includes("Disetujui")) statusWarna = "bg-blue-100 text-blue-800";
-            else if (item.status.includes("Ditolak")) statusWarna = "bg-red-100 text-red-800";
+// 1.A FUNGSI GANTI TAB
+function switchTab(tabId) {
+    currentTab = tabId;
+    
+    // Ubah garis bawah & transparansi warna Tab
+    const btnBaru = document.getElementById('tabBaru');
+    const btnArsip = document.getElementById('tabArsip');
+    
+    if (tabId === 'baru') {
+        btnBaru.className = "text-white border-b-4 border-white pb-3 transition-all";
+        btnArsip.className = "text-white/60 hover:text-white pb-3 transition-all cursor-pointer";
+    } else {
+        btnArsip.className = "text-white border-b-4 border-white pb-3 transition-all";
+        btnBaru.className = "text-white/60 hover:text-white pb-3 transition-all cursor-pointer";
+    }
+    
+    renderTable(); // Gambar ulang isi tabel
+}
 
-            let berkasHTML = "";
-            if(item.linkKTM) berkasHTML += `<a href="${item.linkKTM}" target="_blank" class="text-blue-500 hover:underline">KTM</a> `;
-            if(item.linkBebas) berkasHTML += `| <a href="${item.linkBebas}" target="_blank" class="text-blue-500 hover:underline">Bebas Tangg.</a> `;
-            if(item.linkIjazah) berkasHTML += `| <a href="${item.linkIjazah}" target="_blank" class="text-blue-500 hover:underline">Ijazah</a>`;
-            
-            if(item.linkPDF) {
-                berkasHTML += `<div class="mt-1"><a href="${item.linkPDF}" target="_blank" class="text-indigo-600 font-bold text-xs hover:underline">📄 Lihat Hasil PDF</a></div>`;
-            }
+// 1.B FUNGSI RENDER (SARING & TAMPILKAN TABEL)
+function renderTable() {
+    const tableBody = document.getElementById('adminTableBody');
+    tableBody.innerHTML = '';
+    
+    // Saring data berdasarkan status
+    const dataTampil = globalData.filter(item => {
+        if (currentTab === 'baru') {
+            return item.status === "Menunggu Verifikasi" || item.status.includes("Disetujui");
+        } else {
+            return item.status.includes("Selesai") || item.status.includes("Ditolak");
+        }
+    });
 
-            let aksiHTML = "";
-            if (item.status === "Menunggu Verifikasi") {
-                aksiHTML = `<button onclick="openModal(${item.rowNumber})" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1.5 rounded text-xs font-bold w-full mb-1">🔍 Tinjau & Validasi</button>
-                            <button onclick="tolakSurat(${item.rowNumber})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold w-full">❌ Tolak</button>`;
-            } else if (item.status.includes("Disetujui")) {
-                aksiHTML = `<a href="${item.linkPDF}" target="_blank" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 rounded text-xs font-bold w-full mb-1 block text-center">👁️ Preview Dokumen</a>
-                            <button onclick="kirimEmail(${item.rowNumber})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-bold w-full">✉️ Kirim ke Mahasiswa</button>`;
-            } else if (item.status.includes("Selesai")) {
-                aksiHTML = `<span class="text-green-700 font-semibold text-xs">✅ Sudah Dikirim</span>`;
-            } else { aksiHTML = "-"; }
+    if (dataTampil.length === 0) { 
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-12 text-gray-400 font-medium">Tidak ada data di tab ${currentTab === 'baru' ? 'Permohonan Baru' : 'Arsip Terkirim'}.</td></tr>`; 
+        return; 
+    }
 
-            const row = `
-                <tr class="hover:bg-gray-50">
-                    <td class="p-4 text-xs text-gray-500">${item.tanggal}</td>
-                    <td class="p-4"><div class="font-bold text-gray-800">${item.nama}</div><div class="text-gray-500 text-xs">${item.nim}</div></td>
-                    <td class="p-4"><div class="font-medium text-gray-800">Surat ${item.jenisSurat}</div><div class="text-xs mt-1">${berkasHTML || "-"}</div></td>
-                    <td class="p-4"><span class="px-2.5 py-1 text-xs font-semibold rounded-full ${statusWarna}">${item.status}</span></td>
-                    <td class="p-4">${aksiHTML}</td>
-                </tr>`;
-            tableBody.innerHTML += row;
-        });
-    } catch (error) { tableBody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Error: ${error.message}</td></tr>`; }
+    dataTampil.forEach(item => {
+        let statusWarna = "bg-yellow-100 text-yellow-800";
+        if (item.status.includes("Selesai")) statusWarna = "bg-green-100 text-green-800";
+        else if (item.status.includes("Disetujui")) statusWarna = "bg-blue-100 text-blue-800";
+        else if (item.status.includes("Ditolak")) statusWarna = "bg-red-100 text-red-800";
+
+        let berkasHTML = "";
+        if(item.linkKTM) berkasHTML += `<a href="${item.linkKTM}" target="_blank" class="text-blue-500 hover:underline">KTM</a> `;
+        if(item.linkBebas) berkasHTML += `| <a href="${item.linkBebas}" target="_blank" class="text-blue-500 hover:underline">Bebas Tangg.</a> `;
+        if(item.linkIjazah) berkasHTML += `| <a href="${item.linkIjazah}" target="_blank" class="text-blue-500 hover:underline">Ijazah</a>`;
+        
+        if(item.linkPDF) {
+            berkasHTML += `<div class="mt-1"><a href="${item.linkPDF}" target="_blank" class="text-[#15734b] font-bold text-xs hover:underline">📄 Lihat Arsip PDF</a></div>`;
+        }
+
+        let aksiHTML = "";
+        if (item.status === "Menunggu Verifikasi") {
+            aksiHTML = `<button onclick="openModal(${item.rowNumber})" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1.5 rounded text-xs font-bold w-full mb-1 transition-all">🔍 Tinjau & Validasi</button>
+                        <button onclick="tolakSurat(${item.rowNumber})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold w-full transition-all">❌ Tolak</button>`;
+        } else if (item.status.includes("Disetujui")) {
+            aksiHTML = `<button onclick="kirimEmail(${item.rowNumber})" class="bg-[#15734b] hover:bg-[#0f5436] text-white px-3 py-2 rounded text-xs font-bold w-full transition-all flex items-center justify-center gap-1">✉️ Kirim ke Mahasiswa</button>`;
+        } else if (item.status.includes("Selesai")) {
+            aksiHTML = `<span class="text-[#15734b] font-bold text-xs flex items-center justify-center gap-1">✅ Terkirim</span>`;
+        } else if (item.status.includes("Ditolak")) {
+            aksiHTML = `<span class="text-red-600 font-bold text-xs">Ditolak</span>`;
+        } else { aksiHTML = "-"; }
+
+        const row = `
+            <tr class="hover:bg-gray-50 transition-all border-b border-gray-100 last:border-0">
+                <td class="p-4 text-xs text-gray-500 font-medium whitespace-nowrap">${item.tanggal}</td>
+                <td class="p-4">
+                    <div class="font-bold text-gray-800">${item.nama}</div>
+                    <div class="text-gray-500 text-[11px] uppercase tracking-wide mt-0.5">${item.nim}</div>
+                </td>
+                <td class="p-4">
+                    <div class="font-bold text-gray-800">${item.jenisSurat}</div>
+                    <div class="text-xs mt-1 font-medium">${berkasHTML || "-"}</div>
+                </td>
+                <td class="p-4">
+                    <span class="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider rounded-full ${statusWarna}">
+                        ${item.status}
+                    </span>
+                </td>
+                <td class="p-4 align-middle w-36">${aksiHTML}</td>
+            </tr>`;
+        tableBody.innerHTML += row;
+    });
 }
 
 // 2. FUNGSI KONTROL MODAL
