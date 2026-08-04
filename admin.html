@@ -3,65 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - Monitoring Layanan</title>
-    <!-- Tailwind untuk tata letak cepat -->
+    <title>Sistem Penomoran STAIIS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Link ke CSS Khusus yang baru dibuat -->
     <link rel="stylesheet" href="admin.css">
 </head>
 <body class="min-h-screen antialiased">
 
-    <!-- Header Hijau Gelap -->
-    <header class="header-section text-white pt-10 px-4 sm:px-6 lg:px-8">
+    <!-- HEADER SECTION (REFERENSI BARU) -->
+    <header class="header-section text-white pt-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             
-            <!-- Baris Logo dan Tombol Refresh -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
-                <!-- Pastikan file logo.png sudah Anda upload ke GitHub -->
-                <img src="logo.png" alt="Logo Kampus" class="h-12 w-auto object-contain">
+            <!-- Baris Atas: Logo, Judul & Tombol Logout -->
+            <div class="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
                 
-                <button onclick="loadData()" class="bg-white text-[#0f5841] hover:bg-gray-50 px-5 py-2.5 rounded-lg text-sm font-bold transition shadow-sm border border-gray-100 flex items-center justify-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    Refresh Data
+                <!-- Kiri: Logo dan Teks -->
+                <div class="flex items-center gap-5">
+                    <img src="logo.png" alt="Logo STAIIS" class="w-[72px] h-[72px] object-contain drop-shadow-md">
+                    <div>
+                        <p class="text-xs font-bold tracking-[0.15em] text-[#a0d2be] uppercase mb-1.5">Layanan Administrasi Persuratan</p>
+                        <h1 class="text-3xl md:text-4xl font-serif-title font-bold tracking-wide">Sistem Penomoran STAIIS</h1>
+                    </div>
+                </div>
+
+                <!-- Kanan: Tombol Logout -->
+                <button class="border border-white/40 hover:bg-white/10 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 self-start">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    Logout
                 </button>
             </div>
 
-            <!-- Teks Judul Utama -->
-            <div class="mb-2">
-                <span class="badge-admin mb-5">Admin Dashboard</span>
-                <h1 class="text-4xl md:text-5xl font-serif-title mb-4 tracking-wide">Monitoring Seluruh Layanan</h1>
-                <p class="text-[#a7d0c3] text-sm md:text-base max-w-2xl leading-relaxed">
-                    Pantau antrean dari semua jenis layanan administrasi akademik dalam satu tempat.
-                </p>
+            <!-- Deskripsi -->
+            <p class="text-[#cce8dd] text-sm md:text-base max-w-2xl mb-10 leading-relaxed">
+                Aplikasi pembuatan nomor surat resmi dan arsip dokumen digital.
+            </p>
+
+            <!-- Navigasi Tab -->
+            <div class="flex gap-8 text-sm font-bold uppercase tracking-wider overflow-x-auto custom-scrollbar whitespace-nowrap">
+                <button id="tabBaru" onclick="switchTab('baru')" class="text-white border-b-4 border-white pb-3 transition-all">
+                    Permohonan Baru
+                </button>
+                <button id="tabArsip" onclick="switchTab('arsip')" class="text-white/60 hover:text-white pb-3 transition-all">
+                    Arsip Terkirim
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Konten Utama (Kartu Putih Melayang) -->
+    <!-- KONTEN UTAMA (KARTU MELAYANG) -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pb-16">
-        <div class="overlap-card p-6 md:p-8">
+        <div class="overlap-card p-6 md:p-8 border border-gray-100">
             
-            <!-- Judul Kecil di dalam Kartu -->
-            <div class="flex items-center gap-4 mb-8">
-                <div class="bg-[#e8f2ef] p-3 rounded-full text-[#0f5841]">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg>
+            <!-- Toolbar: Search Bar & Ikon Action -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                <!-- Search Bar (Berfungsi) -->
+                <div class="w-full md:w-[400px]">
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari nomor / keterangan / nama..." 
+                           class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-[#15734b] focus:border-[#15734b] outline-none shadow-sm transition-all">
                 </div>
-                <div>
-                    <h2 class="text-xl font-bold text-gray-800">Status Antrean</h2>
-                    <p class="text-sm text-gray-500 mt-1">Daftar berkas yang sedang menunggu proses persetujuan dan pengiriman</p>
+                
+                <!-- Ikon Tombol Kanan -->
+                <div class="flex gap-3">
+                    <button class="border border-gray-200 p-2.5 rounded-xl hover:bg-gray-50 text-gray-500 transition-all shadow-sm tooltip" title="Filter"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg></button>
+                    <button class="border border-gray-200 p-2.5 rounded-xl hover:bg-gray-50 text-gray-500 transition-all shadow-sm tooltip" title="Urutkan"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg></button>
+                    <!-- Tombol Refresh Asli Dipindah ke sini -->
+                    <button onclick="loadData()" class="border border-gray-200 p-2.5 rounded-xl hover:bg-gray-50 text-gray-500 transition-all shadow-sm tooltip" title="Refresh Data"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
                 </div>
             </div>
 
-            <!-- Area Tabel Anda yang Sudah Ada -->
-            <div class="overflow-x-auto custom-scrollbar border border-gray-100 rounded-xl">
-                <table class="w-full text-left text-sm whitespace-normal">
-                    <thead class="bg-gray-50 text-gray-600 border-b border-gray-100">
+            <!-- Tabel Data Layanan (Struktur Sama) -->
+            <div class="overflow-x-auto custom-scrollbar border border-gray-200 rounded-xl">
+                <table class="w-full text-left text-sm whitespace-normal" id="mainTable">
+                    <thead class="bg-gray-50 text-gray-600 border-b border-gray-200 uppercase text-[11px] font-bold tracking-wider">
                         <tr>
-                            <th class="p-4 font-semibold">Tgl Masuk</th>
-                            <th class="p-4 font-semibold">Pemohon</th>
-                            <th class="p-4 font-semibold">Surat & Berkas</th>
-                            <th class="p-4 font-semibold">Status Saat Ini</th>
-                            <th class="p-4 font-semibold text-center">Aksi / Tindakan</th>
+                            <th class="p-4">Tanggal</th>
+                            <th class="p-4">Pemohon</th>
+                            <th class="p-4">Surat & Berkas</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="adminTableBody" class="divide-y divide-gray-100">
@@ -73,77 +91,77 @@
         </div>
     </main>
 
-    <!-- POP-UP / MODAL TINJAU & EDIT DATA (Tetap Sama) -->
+    <!-- POP-UP MODAL (Struktur Tetap Sama persis dengan sebelumnya) -->
+    <!-- (Salin seluruh tag <div id="modalTinjau">...</div> dari kode sebelumnya ke sini) -->
     <div id="modalTinjau" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-100">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
-                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                    <span class="text-2xl">🔍</span> Tinjau & Validasi Data
-                </h2>
+                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">🔍 Tinjau & Validasi Data</h2>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition text-xl font-bold">&times;</button>
             </div>
             
             <div class="p-6 space-y-5 bg-gray-50/50">
                 <input type="hidden" id="editRowNumber">
-                
-                <!-- Data Umum -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Nama Mahasiswa</label><input type="text" id="editNama" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">NIM</label><input type="text" id="editNim" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Email</label><input type="text" id="editEmail" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Program Studi</label>
-                        <select id="editProdi" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm bg-white focus:ring-[#0f5841] focus:border-[#0f5841]">
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Nama Mahasiswa</label><input type="text" id="editNama" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">NIM</label><input type="text" id="editNim" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Email</label><input type="text" id="editEmail" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Program Studi</label>
+                        <select id="editProdi" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm bg-white focus:ring-[#15734b] focus:border-[#15734b]">
                             <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
                             <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
                         </select>
                     </div>
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Tempat Lahir</label><input type="text" id="editTempatLahir" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Tanggal Lahir</label><input type="date" id="editTanggalLahir" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Tempat Lahir</label><input type="text" id="editTempatLahir" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Tanggal Lahir</label><input type="date" id="editTanggalLahir" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
                 </div>
 
                 <div class="h-px bg-gray-200 my-2"></div>
-                <h3 class="text-sm font-bold text-[#0f5841] flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
-                    Data Khusus: <span id="labelJenisSurat" class="text-gray-800"></span>
-                </h3>
+                <h3 class="text-sm font-bold text-[#15734b]">Data Khusus: <span id="labelJenisSurat" class="text-gray-800"></span></h3>
                 <input type="hidden" id="editJenisSurat">
 
-                <!-- Blok Field Dinamis -->
-                <div id="blokBebas" class="hidden">
-                    <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]">
-                </div>
-
+                <div id="blokBebas" class="hidden"><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
                 <div id="blokMutasi" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Prodi Tujuan</label><input type="text" id="editProdiTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
-                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Alamat Tujuan Lengkap</label><input type="text" id="editAlamatTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Prodi Tujuan</label><input type="text" id="editProdiTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Alamat Tujuan Lengkap</label><input type="text" id="editAlamatTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
                 </div>
-
-                <div id="blokLulus" class="hidden">
-                    <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Tanggal Munaqosyah</label><input type="date" id="editTglMunaqosyah" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]">
-                </div>
-
+                <div id="blokLulus" class="hidden"><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Tanggal Munaqosyah</label><input type="date" id="editTglMunaqosyah" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
                 <div id="blokRekomendasi" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Nama Kegiatan</label><input type="text" id="editNamaKegiatan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
-                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Lokasi Kegiatan</label><input type="text" id="editLokasiKegiatan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Tgl Mulai</label><input type="date" id="editTglMulai" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Tgl Selesai</label><input type="date" id="editTglSelesai" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2.5 text-sm focus:ring-[#0f5841] focus:border-[#0f5841]"></div>
+                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Nama Kegiatan</label><input type="text" id="editNamaKegiatan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Lokasi Kegiatan</label><input type="text" id="editLokasiKegiatan" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Tgl Mulai</label><input type="date" id="editTglMulai" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase">Tgl Selesai</label><input type="date" id="editTglSelesai" class="w-full border-gray-200 shadow-sm rounded-lg px-4 py-2 text-sm focus:ring-[#15734b] focus:border-[#15734b]"></div>
                 </div>
-
             </div>
             
-            <!-- Tombol Modal -->
             <div class="p-6 border-t border-gray-100 flex justify-end gap-3 sticky bottom-0 bg-white rounded-b-2xl">
                 <button onclick="closeModal()" class="px-5 py-2.5 text-gray-500 font-bold hover:bg-gray-100 rounded-lg text-sm transition">Batal</button>
-                <button id="btnSetujui" onclick="saveAndApprove()" class="px-6 py-2.5 bg-[#0f5841] text-white font-bold hover:bg-[#0a4231] rounded-lg text-sm transition shadow-md hover:shadow-lg flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    Simpan & Setujui (Buat PDF)
+                <button id="btnSetujui" onclick="saveAndApprove()" class="px-6 py-2.5 bg-[#15734b] text-white font-bold hover:bg-[#0f5436] rounded-lg text-sm transition shadow-md flex items-center gap-2">
+                    ✅ Simpan & Setujui
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- PENGHUBUNG LOGIKA -->
+    <!-- Script Filter Pencarian & Pemanggil admin.js -->
+    <script>
+        // Fitur Live Search agar kolom pencarian berfungsi
+        function filterTable() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let table = document.getElementById("mainTable");
+            let tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) { // Lewati header (index 0)
+                let rowText = tr[i].innerText.toLowerCase();
+                if (rowText.includes(input)) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    </script>
     <script src="admin.js"></script>
 </body>
 </html>
