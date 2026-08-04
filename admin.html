@@ -213,26 +213,95 @@
         // FUNGSI BACKEND API
         async function saveAndApprove() {
             const btn = document.getElementById('btnSetujui');
-            btn.innerText = "⏳ Sedang Merakit PDF..."; btn.disabled = true;
+            btn.innerText = "⏳ Memproses Logika & Merakit PDF..."; btn.disabled = true;
 
-            const rowData = {
-                nama: document.getElementById('editNama').value, nim: document.getElementById('editNim').value,
-                email: document.getElementById('editEmail').value, prodi: document.getElementById('editProdi').value,
-                tempatLahir: document.getElementById('editTempatLahir').value, tanggalLahir: document.getElementById('editTanggalLahir').value,
-                jenisSurat: document.getElementById('editJenisSurat').value,
+            // 1. AMBIL DATA DARI FORM MODAL
+            const rNum = document.getElementById('editRowNumber').value;
+            const originalData = globalData.find(d => d.rowNumber == rNum);
+            
+            const jnsSurat = document.getElementById('editJenisSurat').value;
+            const prodi = document.getElementById('editProdi').value;
+            const nim = document.getElementById('editNim').value;
+
+            // 2. FUNGSI BANTUAN JS (FORMAT TANGGAL INDONESIA)
+            const bulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const romawiBulan = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+            
+            const formatTgl = (tglMentah) => {
+                if (!tglMentah) return "-";
+                const d = new Date(tglMentah);
+                if (isNaN(d.getTime())) return tglMentah; // Kembalikan string jika bukan objek tanggal valid
+                return `${d.getDate()} ${bulanIndo[d.getMonth()]} ${d.getFullYear()}`;
+            };
+
+            // 3. LOGIKA PERHITUNGAN KHUSUS (DIKERJAKAN OLEH BROWSER/VERCEL)
+            const waktuSekarang = new Date();
+            const datePengajuan = new Date(originalData.tanggalPengajuanRaw);
+            
+            // Hitung Tahun Akademik & Semester
+            const tahunAwal = 2000 + parseInt(nim.substring(0, 2), 10);
+            const blnPengajuan = datePengajuan.getMonth() + 1;
+            const tahunMulaiAkad = (blnPengajuan >= 9) ? datePengajuan.getFullYear() : datePengajuan.getFullYear() - 1;
+            
+            let jmlSemester = ((tahunMulaiAkad - tahunAwal) * 2) + ((blnPengajuan >= 9 || blnPengajuan === 1) ? 1 : 2);
+            if (jmlSemester < 1) jmlSemester = 1;
+            if (jmlSemester > 20) jmlSemester = 20;
+
+            const arrayRomawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
+            const arrayTerbilang = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas", "Dua Belas", "Tiga Belas", "Empat Belas", "Lima Belas", "Enam Belas", "Tujuh Belas", "Delapan Belas", "Sembilan Belas", "Dua Puluh"];
+            
+            // Logika Nomor Surat Acak Frontend (Contoh: 045/Ket-SKet/STAIIS/VIII/26)
+            const nomorUrut = String(Math.floor(Math.random() * 900) + 100).padStart(3, '0');
+            const noSuratJadi = `${nomorUrut}/Ket-SKet/STAIIS/${romawiBulan[waktuSekarang.getMonth() + 1]}/${String(waktuSekarang.getFullYear()).substring(2)}`;
+
+            // Logika Format Tanggal Kegiatan (Rekomendasi)
+            const strMulai = formatTgl(document.getElementById('editTglMulai').value);
+            const strSelesai = formatTgl(document.getElementById('editTglSelesai').value);
+            let tglKegiatanFinal = strMulai;
+            if (strSelesai !== "-" && strSelesai !== strMulai) tglKegiatanFinal += ` sampai ${strSelesai}`;
+
+            // 4. SUSUN DATA MATANG UNTUK DIKIRIM KE BACKEND
+            const rowDataMatang = {
+                nama: document.getElementById('editNama').value, 
+                nim: nim, 
+                email: document.getElementById('editEmail').value, 
+                prodi: prodi,
+                tempatLahir: document.getElementById('editTempatLahir').value, 
+                tanggalLahirRaw: document.getElementById('editTanggalLahir').value,
+                jenisSurat: jnsSurat,
+                
+                // Data Hasil Olahan Frontend
+                nomorSuratFinal: noSuratJadi,
+                strTglSurat: formatTgl(waktuSekarang),
+                strTglLahir: formatTgl(document.getElementById('editTanggalLahir').value),
+                strTglPengajuan: formatTgl(datePengajuan),
+                semester: `${arrayRomawi[jmlSemester]} (${arrayTerbilang[jmlSemester]})`,
+                tahunAkademik: `${tahunMulaiAkad}/${tahunMulaiAkad + 1}`,
+                tahunMasuk: `${tahunAwal}/${tahunAwal + 1}`,
+                gelar: prodi === "Pendidikan Bahasa Arab" ? "Sarjana Pendidikan (S.Pd.)" : "Sarjana Hukum (S.H.)",
+                
+                // Variabel Khusus per Surat
                 tujuanBebas: document.getElementById('editTujuanBebas').value,
-                kampusTujuan: document.getElementById('editKampusTujuan').value, prodiTujuan: document.getElementById('editProdiTujuan').value, alamatTujuan: document.getElementById('editAlamatTujuan').value,
-                tanggalMunaqosyah: document.getElementById('editTglMunaqosyah').value,
-                namaKegiatan: document.getElementById('editNamaKegiatan').value, lokasiKegiatan: document.getElementById('editLokasiKegiatan').value, tglMulaiKegiatan: document.getElementById('editTglMulai').value, tglSelesaiKegiatan: document.getElementById('editTglSelesai').value
+                kampusTujuan: document.getElementById('editKampusTujuan').value, 
+                prodiTujuan: document.getElementById('editProdiTujuan').value, 
+                alamatTujuan: document.getElementById('editAlamatTujuan').value,
+                strTglMunaqosyah: formatTgl(document.getElementById('editTglMunaqosyah').value),
+                namaKegiatan: document.getElementById('editNamaKegiatan').value, 
+                lokasiKegiatan: document.getElementById('editLokasiKegiatan').value, 
+                strTglKegiatanFinal: tglKegiatanFinal
             };
 
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: "updateAndApprove", rowNumber: document.getElementById('editRowNumber').value, rowData: rowData })
+                    body: JSON.stringify({ action: "updateAndApprove", rowNumber: rNum, rowData: rowDataMatang })
                 });
                 const res = await response.json();
-                if(res.status === 'success') { alert('PDF Berhasil Dibuat! Silakan periksa di tab Preview.'); closeModal(); loadData(); }
+                if(res.status === 'success') { 
+                    alert('PDF Berhasil Dibuat dan Dirakit oleh Sistem Frontend!'); 
+                    closeModal(); 
+                    loadData(); 
+                }
             } catch(e) { alert('Error: ' + e); }
             finally { btn.innerText = "✅ Simpan & Setujui (Buat PDF)"; btn.disabled = false; }
         }
