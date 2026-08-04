@@ -114,7 +114,9 @@
             tableBody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">Memuat data...</td></tr>';
             
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=getAllAdmin`);
+                // TAMBAHAN: Kita tambahkan 'nocache' dengan waktu saat ini agar browser selalu mengambil data terbaru dari Spreadsheet
+                const timestamp = new Date().getTime();
+                const response = await fetch(`${WEB_APP_URL}?action=getAllAdmin&nocache=${timestamp}`);
                 globalData = await response.json();
                 
                 tableBody.innerHTML = '';
@@ -131,16 +133,21 @@
                     if(item.linkBebas) berkasHTML += `| <a href="${item.linkBebas}" target="_blank" class="text-blue-500 hover:underline">Bebas Tangg.</a> `;
                     if(item.linkIjazah) berkasHTML += `| <a href="${item.linkIjazah}" target="_blank" class="text-blue-500 hover:underline">Ijazah</a>`;
                     
+                    // TAMBAHAN: Tampilkan juga link PDF Surat yang sudah jadi di kolom Berkas
+                    if(item.linkPDF) {
+                        berkasHTML += `<div class="mt-1"><a href="${item.linkPDF}" target="_blank" class="text-indigo-600 font-bold text-xs hover:underline">📄 Lihat Hasil PDF</a></div>`;
+                    }
+
                     // ALUR TOMBOL AKSI
                     let aksiHTML = "";
                     if (item.status === "Menunggu Verifikasi") {
-                        aksiHTML = `<button onclick="openModal(${item.rowNumber})" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1.5 rounded text-xs font-bold w-full mb-1">🔍 Tinjau & Validasi Data</button>
+                        aksiHTML = `<button onclick="openModal(${item.rowNumber})" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1.5 rounded text-xs font-bold w-full mb-1">🔍 Tinjau & Validasi</button>
                                     <button onclick="tolakSurat(${item.rowNumber})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold w-full">❌ Tolak</button>`;
                     } else if (item.status.includes("Disetujui")) {
                         aksiHTML = `<a href="${item.linkPDF}" target="_blank" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 rounded text-xs font-bold w-full mb-1 block text-center">👁️ Preview Dokumen</a>
                                     <button onclick="kirimEmail(${item.rowNumber})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-bold w-full">✉️ Kirim ke Mahasiswa</button>`;
                     } else if (item.status.includes("Selesai")) {
-                        aksiHTML = `<a href="${item.linkPDF}" target="_blank" class="text-indigo-600 font-semibold text-xs hover:underline">Lihat Arsip Surat</a>`;
+                        aksiHTML = `<span class="text-green-700 font-semibold text-xs">✅ Sudah Dikirim</span>`;
                     } else { aksiHTML = "-"; }
 
                     const row = `
