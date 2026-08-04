@@ -142,9 +142,9 @@ async function saveAndApprove() {
     const arrayRomawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
     const arrayTerbilang = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas", "Dua Belas", "Tiga Belas", "Empat Belas", "Lima Belas", "Enam Belas", "Tujuh Belas", "Delapan Belas", "Sembilan Belas", "Dua Puluh"];
     
-    const nomorUrut = String(Math.floor(Math.random() * 900) + 100).padStart(3, '0');
-    const noSuratJadi = `${nomorUrut}/Ket-SKet/STAIIS/${romawiBulan[waktuSekarang.getMonth() + 1]}/${String(waktuSekarang.getFullYear()).substring(2)}`;
-
+    // Vercel hanya menyusun bagian belakangnya saja (Contoh: /Ket-SKet/STAIIS/VIII/26)
+    const formatBelakangSurat = `/Ket-SKet/STAIIS/${romawiBulan[waktuSekarang.getMonth() + 1]}/${String(waktuSekarang.getFullYear()).substring(2)}`;
+    
     const strMulai = formatTgl(document.getElementById('editTglMulai').value);
     const strSelesai = formatTgl(document.getElementById('editTglSelesai').value);
     let tglKegiatanFinal = strMulai;
@@ -159,7 +159,7 @@ async function saveAndApprove() {
         tanggalLahirRaw: document.getElementById('editTanggalLahir').value,
         jenisSurat: jnsSurat,
         
-        nomorSuratFinal: noSuratJadi,
+        formatBelakangSurat: formatBelakangSurat,
         strTglSurat: formatTgl(waktuSekarang),
         strTglLahir: formatTgl(document.getElementById('editTanggalLahir').value),
         strTglPengajuan: formatTgl(datePengajuan),
