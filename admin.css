@@ -1,10 +1,9 @@
-/* Mengimpor font modern dan serif untuk judul */
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-    --color-primary: #0f5841; /* Hijau gelap sesuai referensi */
-    --color-primary-light: #217358; /* Hijau lencana */
-    --color-bg: #f3f7f6; /* Latar belakang abu-abu kehijauan yang lembut */
+    /* Warna Hijau STAIIS dari referensi */
+    --color-primary: #15734b; 
+    --color-bg: #f5f8f7; 
 }
 
 body {
@@ -13,43 +12,29 @@ body {
     color: #333;
 }
 
+/* Font Serif khusus untuk Judul Utama */
 .font-serif-title {
     font-family: 'Merriweather', serif;
 }
 
-/* Bagian Header Hijau Gelap */
+/* Background Header Hijau */
 .header-section {
     background-color: var(--color-primary);
-    /* Padding bawah yang besar agar kartu tabel bisa menumpuk di atasnya */
-    padding-bottom: 8rem; 
+    padding-bottom: 7rem; /* Ruang untuk kartu melayang */
 }
 
-/* Tombol Lencana 'ADMIN DASHBOARD' */
-.badge-admin {
-    background-color: var(--color-primary-light);
-    color: white;
-    padding: 0.35rem 1rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    display: inline-block;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* Kartu Putih Utama (Tabel) yang menumpuk/melayang */
+/* Efek Kartu Tabel Melayang */
 .overlap-card {
-    margin-top: -6rem; /* Menarik kartu ke atas header */
+    margin-top: -4.5rem;
     background-color: white;
-    border-radius: 1.5rem;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
 }
 
-/* Kostumisasi Scrollbar untuk Tabel */
+/* Kustomisasi Scrollbar Tabel */
 .custom-scrollbar::-webkit-scrollbar {
     height: 8px;
+    width: 8px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
     background: #f1f1f1; 
@@ -61,4 +46,11 @@ body {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #94a3b8; 
+}
+
+/* Transisi Halus untuk Hover */
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
 }
