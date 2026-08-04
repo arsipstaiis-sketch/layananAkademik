@@ -1,0 +1,64 @@
+/* Mengimpor font modern dan serif untuk judul */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+    --color-primary: #0f5841; /* Hijau gelap sesuai referensi */
+    --color-primary-light: #217358; /* Hijau lencana */
+    --color-bg: #f3f7f6; /* Latar belakang abu-abu kehijauan yang lembut */
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--color-bg);
+    color: #333;
+}
+
+.font-serif-title {
+    font-family: 'Merriweather', serif;
+}
+
+/* Bagian Header Hijau Gelap */
+.header-section {
+    background-color: var(--color-primary);
+    /* Padding bawah yang besar agar kartu tabel bisa menumpuk di atasnya */
+    padding-bottom: 8rem; 
+}
+
+/* Tombol Lencana 'ADMIN DASHBOARD' */
+.badge-admin {
+    background-color: var(--color-primary-light);
+    color: white;
+    padding: 0.35rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Kartu Putih Utama (Tabel) yang menumpuk/melayang */
+.overlap-card {
+    margin-top: -6rem; /* Menarik kartu ke atas header */
+    background-color: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+    border: 1px solid #e5e7eb;
+}
+
+/* Kostumisasi Scrollbar untuk Tabel */
+.custom-scrollbar::-webkit-scrollbar {
+    height: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1; 
+    border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; 
+}
