@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Layanan Akademik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen text-gray-800">
+
+    <!-- Navbar -->
+    <header class="bg-indigo-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">Dashboard Admin Akademik</h1>
+            <button onclick="loadData()" class="bg-indigo-700 hover:bg-indigo-600 px-4 py-2 rounded-lg text-sm font-medium transition">🔄 Refresh Data</button>
+        </div>
+    </header>
+
+    <!-- Konten Utama (Tabel) -->
+    <main class="max-w-7xl mx-auto px-4 py-8 relative">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                    <thead class="bg-gray-100 text-gray-600">
+                        <tr>
+                            <th class="p-4 font-semibold">Tgl Masuk</th>
+                            <th class="p-4 font-semibold">Pemohon</th>
+                            <th class="p-4 font-semibold">Surat & Berkas</th>
+                            <th class="p-4 font-semibold">Status Saat Ini</th>
+                            <th class="p-4 font-semibold">Aksi / Tindakan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody" class="divide-y divide-gray-100">
+                        <tr><td colspan="5" class="p-8 text-center text-gray-500">Memuat data dari server...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- POP-UP / MODAL TINJAU & EDIT DATA -->
+    <div id="modalTinjau" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
+                <h2 class="text-xl font-bold text-gray-800">Tinjau & Validasi Data</h2>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-red-500 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="editRowNumber">
+                
+                <!-- Data Umum -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nama Mahasiswa</label><input type="text" id="editNama" class="w-full border rounded px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">NIM</label><input type="text" id="editNim" class="w-full border rounded px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Email</label><input type="text" id="editEmail" class="w-full border rounded px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Program Studi</label>
+                        <select id="editProdi" class="w-full border rounded px-3 py-2 text-sm bg-white">
+                            <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
+                            <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tempat Lahir</label><input type="text" id="editTempatLahir" class="w-full border rounded px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal Lahir</label><input type="date" id="editTanggalLahir" class="w-full border rounded px-3 py-2 text-sm"></div>
+                </div>
+
+                <hr class="my-4">
+                <h3 class="text-sm font-bold text-indigo-800">Detail Khusus: <span id="labelJenisSurat"></span></h3>
+                <input type="hidden" id="editJenisSurat">
+
+                <!-- Blok Field Dinamis -->
+                <div id="blokBebas" class="hidden">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="w-full border rounded px-3 py-2 text-sm">
+                </div>
+
+                <div id="blokMutasi" class="hidden grid grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="w-full border rounded px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Prodi Tujuan</label><input type="text" id="editProdiTujuan" class="w-full border rounded px-3 py-2 text-sm"></div>
+                    <div class="col-span-2"><label class="block text-xs font-semibold text-gray-600 mb-1">Alamat Tujuan Lengkap</label><input type="text" id="editAlamatTujuan" class="w-full border rounded px-3 py-2 text-sm"></div>
+                </div>
+
+                <div id="blokLulus" class="hidden">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal Munaqosyah</label><input type="date" id="editTglMunaqosyah" class="w-full border rounded px-3 py-2 text-sm">
+                </div>
+
+                <div id="blokRekomendasi" class="hidden grid grid-cols-2 gap-4">
+                    <div class="col-span-2"><label class="block text-xs font-semibold text-gray-600 mb-1">Nama Kegiatan</label><input type="text" id="editNamaKegiatan" class="w-full border rounded px-3 py-2 text-sm"></div>
+                    <div class="col-span-2"><label class="block text-xs font-semibold text-gray-600 mb-1">Lokasi Kegiatan</label><input type="text" id="editLokasiKegiatan" class="w-full border rounded px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tgl Mulai</label><input type="date" id="editTglMulai" class="w-full border rounded px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tgl Selesai</label><input type="date" id="editTglSelesai" class="w-full border rounded px-3 py-2 text-sm"></div>
+                </div>
+
+            </div>
+            
+            <!-- Tombol Modal -->
+            <div class="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-gray-50">
+                <button onclick="closeModal()" class="px-4 py-2 text-gray-600 font-medium hover:bg-gray-200 rounded-lg text-sm transition">Batal</button>
+                <button id="btnSetujui" onclick="saveAndApprove()" class="px-4 py-2 bg-indigo-600 text-white font-medium hover:bg-indigo-700 rounded-lg text-sm transition">✅ Simpan & Setujui (Buat PDF)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======= GANTI DENGAN URL DEPLOY APPS SCRIPT ANDA =======
+        const WEB_APP_URL = 'https://script.google.com/macros/s/GANTI_DENGAN_URL_ANDA/exec';
+        
+        let globalData = []; // Simpan data sementara
+
+        const pinAkses = prompt("Masukkan PIN Admin:");
+        if (pinAkses !== "123456") { document.body.innerHTML = "<h2 class='text-center mt-20 text-red-600 font-bold'>Akses Ditolak.</h2>"; throw new Error("Akses Ditolak"); }
+
+        async function loadData() {
+            const tableBody = document.getElementById('adminTableBody');
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">Memuat data...</td></tr>';
+            
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getAllAdmin`);
+                globalData = await response.json();
+                
+                tableBody.innerHTML = '';
+                if (globalData.length === 0) { tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Tidak ada data.</td></tr>'; return; }
+
+                globalData.forEach(item => {
+                    let statusWarna = "bg-yellow-100 text-yellow-800";
+                    if (item.status.includes("Selesai")) statusWarna = "bg-green-100 text-green-800";
+                    else if (item.status.includes("Disetujui")) statusWarna = "bg-blue-100 text-blue-800";
+                    else if (item.status.includes("Ditolak")) statusWarna = "bg-red-100 text-red-800";
+
+                    let berkasHTML = "";
+                    if(item.linkKTM) berkasHTML += `<a href="${item.linkKTM}" target="_blank" class="text-blue-500 hover:underline">KTM</a> `;
+                    if(item.linkBebas) berkasHTML += `| <a href="${item.linkBebas}" target="_blank" class="text-blue-500 hover:underline">Bebas Tangg.</a> `;
+                    if(item.linkIjazah) berkasHTML += `| <a href="${item.linkIjazah}" target="_blank" class="text-blue-500 hover:underline">Ijazah</a>`;
+                    
+                    // ALUR TOMBOL AKSI
+                    let aksiHTML = "";
+                    if (item.status === "Menunggu Verifikasi") {
+                        aksiHTML = `<button onclick="openModal(${item.rowNumber})" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1.5 rounded text-xs font-bold w-full mb-1">🔍 Tinjau & Validasi Data</button>
+                                    <button onclick="tolakSurat(${item.rowNumber})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold w-full">❌ Tolak</button>`;
+                    } else if (item.status.includes("Disetujui")) {
+                        aksiHTML = `<a href="${item.linkPDF}" target="_blank" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 rounded text-xs font-bold w-full mb-1 block text-center">👁️ Preview Dokumen</a>
+                                    <button onclick="kirimEmail(${item.rowNumber})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-bold w-full">✉️ Kirim ke Mahasiswa</button>`;
+                    } else if (item.status.includes("Selesai")) {
+                        aksiHTML = `<a href="${item.linkPDF}" target="_blank" class="text-indigo-600 font-semibold text-xs hover:underline">Lihat Arsip Surat</a>`;
+                    } else { aksiHTML = "-"; }
+
+                    const row = `
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-4 text-xs text-gray-500">${item.tanggal}</td>
+                            <td class="p-4"><div class="font-bold text-gray-800">${item.nama}</div><div class="text-gray-500 text-xs">${item.nim}</div></td>
+                            <td class="p-4"><div class="font-medium text-gray-800">Surat ${item.jenisSurat}</div><div class="text-xs mt-1">${berkasHTML || "-"}</div></td>
+                            <td class="p-4"><span class="px-2.5 py-1 text-xs font-semibold rounded-full ${statusWarna}">${item.status}</span></td>
+                            <td class="p-4">${aksiHTML}</td>
+                        </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) { tableBody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Error: ${error.message}</td></tr>`; }
+        }
+
+        // FUNGSI MODAL
+        function openModal(rowNum) {
+            const data = globalData.find(d => d.rowNumber === rowNum);
+            if(!data) return;
+
+            document.getElementById('editRowNumber').value = data.rowNumber;
+            document.getElementById('editJenisSurat').value = data.jenisSurat;
+            document.getElementById('labelJenisSurat').innerText = data.jenisSurat;
+            
+            // Isi Data Umum
+            document.getElementById('editNama').value = data.nama;
+            document.getElementById('editNim').value = data.nim;
+            document.getElementById('editEmail').value = data.email;
+            document.getElementById('editTempatLahir').value = data.tempatLahir;
+            document.getElementById('editTanggalLahir').value = data.tanggalLahir;
+            document.getElementById('editProdi').value = data.prodi;
+
+            // Sembunyikan & Reset Khusus
+            document.getElementById('blokBebas').classList.add('hidden');
+            document.getElementById('blokMutasi').classList.add('hidden');
+            document.getElementById('blokLulus').classList.add('hidden');
+            document.getElementById('blokRekomendasi').classList.add('hidden');
+
+            if(data.jenisSurat === "Bebas Tanggungan") {
+                document.getElementById('blokBebas').classList.remove('hidden');
+                document.getElementById('editTujuanBebas').value = data.tujuanBebas;
+            } else if(data.jenisSurat === "Mutasi") {
+                document.getElementById('blokMutasi').classList.remove('hidden');
+                document.getElementById('editKampusTujuan').value = data.kampusTujuan;
+                document.getElementById('editProdiTujuan').value = data.prodiTujuan;
+                document.getElementById('editAlamatTujuan').value = data.alamatTujuan;
+            } else if(data.jenisSurat === "Lulus") {
+                document.getElementById('blokLulus').classList.remove('hidden');
+                document.getElementById('editTglMunaqosyah').value = data.tanggalMunaqosyah;
+            } else if(data.jenisSurat === "Rekomendasi") {
+                document.getElementById('blokRekomendasi').classList.remove('hidden');
+                document.getElementById('editNamaKegiatan').value = data.namaKegiatan;
+                document.getElementById('editLokasiKegiatan').value = data.lokasiKegiatan;
+                document.getElementById('editTglMulai').value = data.tglMulaiKegiatan;
+                document.getElementById('editTglSelesai').value = data.tglSelesaiKegiatan;
+            }
+            
+            document.getElementById('modalTinjau').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('modalTinjau').classList.add('hidden'); }
+
+        // FUNGSI BACKEND API
+        async function saveAndApprove() {
+            const btn = document.getElementById('btnSetujui');
+            btn.innerText = "⏳ Sedang Merakit PDF..."; btn.disabled = true;
+
+            const rowData = {
+                nama: document.getElementById('editNama').value, nim: document.getElementById('editNim').value,
+                email: document.getElementById('editEmail').value, prodi: document.getElementById('editProdi').value,
+                tempatLahir: document.getElementById('editTempatLahir').value, tanggalLahir: document.getElementById('editTanggalLahir').value,
+                jenisSurat: document.getElementById('editJenisSurat').value,
+                tujuanBebas: document.getElementById('editTujuanBebas').value,
+                kampusTujuan: document.getElementById('editKampusTujuan').value, prodiTujuan: document.getElementById('editProdiTujuan').value, alamatTujuan: document.getElementById('editAlamatTujuan').value,
+                tanggalMunaqosyah: document.getElementById('editTglMunaqosyah').value,
+                namaKegiatan: document.getElementById('editNamaKegiatan').value, lokasiKegiatan: document.getElementById('editLokasiKegiatan').value, tglMulaiKegiatan: document.getElementById('editTglMulai').value, tglSelesaiKegiatan: document.getElementById('editTglSelesai').value
+            };
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: "updateAndApprove", rowNumber: document.getElementById('editRowNumber').value, rowData: rowData })
+                });
+                const res = await response.json();
+                if(res.status === 'success') { alert('PDF Berhasil Dibuat! Silakan periksa di tab Preview.'); closeModal(); loadData(); }
+            } catch(e) { alert('Error: ' + e); }
+            finally { btn.innerText = "✅ Simpan & Setujui (Buat PDF)"; btn.disabled = false; }
+        }
+
+        async function kirimEmail(rowNum) {
+            if(!confirm("Kirim dokumen ini ke email mahasiswa sekarang?")) return;
+            document.body.style.cursor = 'wait';
+            try {
+                await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "sendToStudent", rowNumber: rowNum }) });
+                alert("Surat berhasil dikirim!"); loadData();
+            } catch(e) { alert('Error: ' + e); }
+            finally { document.body.style.cursor = 'default'; }
+        }
+
+        async function tolakSurat(rowNum) {
+            if(!confirm("Anda yakin ingin menolak permohonan ini?")) return;
+            await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "reject", rowNumber: rowNum }) });
+            loadData();
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>
