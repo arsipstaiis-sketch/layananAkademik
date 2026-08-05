@@ -101,7 +101,7 @@ function renderTable() {
             <tr>
                 <th class="col-tanggal">Tanggal</th>
                 <th>Pemohon</th>
-                <th class="col-ta">Thn. Akd</th>
+                <th class="col-ta">Tahun Akademik</th>
                 <th class="col-jenis">Jenis Surat</th>
                 <th class="col-berkas">Berkas</th>
                 <th>Status</th>
@@ -112,7 +112,7 @@ function renderTable() {
             <tr>
                 <th class="col-tanggal">Tanggal</th>
                 <th>Pemohon</th>
-                <th class="col-ta">Thn. Akd</th>
+                <th class="col-ta">Tahun Akademik</th>
                 <th class="col-jenis">Jenis Surat</th>
                 <th class="col-berkas">Berkas</th>
                 <th>Status</th>
