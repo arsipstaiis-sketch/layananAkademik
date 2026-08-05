@@ -4,159 +4,179 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - STAIIS</title>
+    <!-- Mencegah Browser Menyimpan Cache -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Modern dari Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Memanggil CSS Anda (Ubah ke style.css jika Anda menyimpannya dengan nama itu) -->
     <link rel="stylesheet" href="admin.css">
 </head>
-<body class="min-h-screen antialiased">
+<body>
 
-    <!-- HEADER SECTION -->
-    <header class="header-section text-white pt-10 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-[1140px] mx-auto">
-            <div class="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-5">
-                <div class="flex items-center gap-4">
-                    <img src="logo.png" alt="Logo STAIIS" class="w-[60px] h-[60px] object-contain drop-shadow-md">
-                    <div>
-                        <div class="text-[11px] font-bold tracking-[0.15em] text-[#a0d2be] uppercase mb-1">Layanan Administrasi Persuratan</div>
-                        <h1 class="text-[28px] md:text-[34px] font-serif-title font-bold tracking-wide leading-tight">Dashboard Admin STAIIS</h1>
+    <!-- HEADER MODERN -->
+    <header class="header-section">
+        <div class="header-container">
+            
+            <div class="header-top-wrapper">
+                <!-- KIRI: Logo dan Judul -->
+                <div class="logo-title-group">
+                    <img src="logo.png" alt="Logo STAIIS" class="header-logo">
+                    <div class="header-title-wrapper">
+                        <span class="overline">Layanan Administrasi Persuratan</span>
+                        <h1 class="header-title">Dashboard Admin STAIIS</h1>
                     </div>
                 </div>
-                <button class="border border-white/30 hover:bg-white/10 px-4 py-2 rounded text-[13px] font-semibold transition-all flex items-center gap-2 self-start mt-1">
+
+                <!-- KANAN: Tombol Logout -->
+                <button class="btn-logout" title="Keluar Sistem">
                     <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
                     </svg>
-                    Logout
+                    <span class="logout-text">Logout</span>
                 </button>
             </div>
-            <p class="text-[#cce8dd] text-[15px] max-w-2xl leading-relaxed mb-8">
-                Pantau antrean dari semua jenis layanan administrasi akademik dalam satu tempat.
-            </p>
-            <!-- Navigasi Tab -->
-            <div class="border-b border-white/20 flex gap-8 text-[14px] font-semibold uppercase tracking-wide overflow-x-auto custom-scrollbar whitespace-nowrap">
-                <button id="tabBaru" onclick="switchTab('baru')" class="text-white border-b-[3px] border-white pb-3 px-1 transition-all">Permohonan Baru</button>
-                <button id="tabArsip" onclick="switchTab('arsip')" class="text-white/60 hover:text-white border-b-[3px] border-transparent pb-3 px-1 transition-all">Arsip Terkirim</button>
+
+            <p class="header-subtitle">Pantau antrean dari semua jenis layanan administrasi akademik dalam satu tempat.</p>
+            
+            <!-- NAVIGASI TAB -->
+            <div class="nav-tabs">
+                <button id="tabBaru" class="nav-tab active" onclick="switchTab('baru')">Permohonan Baru</button>
+                <button id="tabArsip" class="nav-tab" onclick="switchTab('arsip')">Arsip Terkirim</button>
             </div>
+            
         </div>
     </header>
 
     <!-- KONTEN UTAMA -->
-    <main class="max-w-[1140px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pb-16">
-        <div class="overlap-card p-6 border border-gray-100 min-h-[400px]">
+    <main class="main-content">
+        <!-- Menggunakan class form-section dari CSS Anda untuk background kartu putih -->
+        <div class="form-section" style="min-height: 400px; padding: 20px;">
             
-            <!-- Toolbar -->
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                <!-- Search Bar -->
-                <div class="w-full md:w-[360px]">
-                    <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nomor / keterangan / nama..." 
-                           class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-[14px] focus:ring-[#15734b] focus:border-[#15734b] outline-none shadow-sm transition-all">
-                </div>
-                
-                <!-- Ikon Tombol Kanan -->
-                <div class="flex gap-3 relative">
-                    <!-- Grup Filter & Sort (Hanya muncul di tab Arsip) -->
-                    <div id="toolbarArsip" class="hidden flex gap-3">
-                        <button onclick="toggleFilterMenu()" class="border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50 text-gray-500 transition-all shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg></button>
-                        <button onclick="toggleSortOrder()" class="border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50 text-gray-500 transition-all shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg></button>
-                        
-                        <!-- Menu Dropdown Filter (Mirip Referensi Gambar) -->
-                        <div id="filterMenu" class="hidden absolute top-12 right-12 w-[220px] bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-4">
-                            <div class="space-y-3.5">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Divisi</label>
-                                    <select id="filterDivisi" onchange="renderTable()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-[12px] focus:outline-none focus:border-[#15734b]"><option value="">Semua Divisi</option></select>
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Jenis Surat</label>
-                                    <select id="filterJenis" onchange="renderTable()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-[12px] focus:outline-none focus:border-[#15734b]"><option value="">Semua Jenis</option></select>
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Tahun Akademik</label>
-                                    <select id="filterTA" onchange="renderTable()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-[12px] focus:outline-none focus:border-[#15734b]"><option value="">Semua Tahun</option></select>
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Berkas PDF</label>
-                                    <select id="filterBerkas" onchange="renderTable()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-[12px] focus:outline-none focus:border-[#15734b]">
+            <!-- TOOLBAR -->
+            <div class="archive-header-wrapper" style="border: none;">
+                <div class="archive-controls">
+                    <!-- Pencarian -->
+                    <div class="search-box">
+                        <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nomor / keterangan / nama..." class="form-control" autocomplete="off">
+                    </div>
+                    
+                    <!-- Aksi Kanan -->
+                    <div class="archive-actions">
+                        <!-- Toolbar Arsip (Filter & Sort) -->
+                        <div id="toolbarArsip" style="display: none; gap: 10px; align-items: center;">
+                            <div class="filter-dropdown-wrapper">
+                                <button class="icon-btn" onclick="toggleFilterMenu()" title="Filter Data">
+                                    <svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                                </button>
+                                <div id="filterMenu" class="filter-menu">
+                                    <label>Divisi</label>
+                                    <select id="filterDivisi" onchange="renderTable()" class="form-control" style="padding: 6px 10px;"><option value="">Semua Divisi</option></select>
+                                    
+                                    <label>Jenis Surat</label>
+                                    <select id="filterJenis" onchange="renderTable()" class="form-control" style="padding: 6px 10px;"><option value="">Semua Jenis</option></select>
+                                    
+                                    <label>Tahun Akademik</label>
+                                    <select id="filterTA" onchange="renderTable()" class="form-control" style="padding: 6px 10px;"><option value="">Semua Tahun</option></select>
+                                    
+                                    <label>Berkas PDF</label>
+                                    <select id="filterBerkas" onchange="renderTable()" class="form-control" style="padding: 6px 10px;">
                                         <option value="">Semua Berkas</option>
                                         <option value="ada">Sudah Generate PDF</option>
                                         <option value="belum">Belum Ada PDF</option>
                                     </select>
+                                    <button onclick="resetFilter()" class="reset-filter-btn">Reset Filter</button>
                                 </div>
-                                <button onclick="resetFilter()" class="w-full bg-[#15734b] hover:bg-[#0f5436] text-white font-bold py-2 rounded text-[12px] transition-all mt-1">Reset Filter</button>
                             </div>
+                            <button class="icon-btn" onclick="toggleSortOrder()" title="Urutkan Tanggal">
+                                <svg viewBox="0 0 24 24"><path d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                            </button>
                         </div>
+                        
+                        <!-- Refresh -->
+                        <button class="icon-btn" onclick="loadData()" title="Segarkan Data">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                                <path d="M21 3v5h-5"></path>
+                            </svg>
+                        </button>
                     </div>
-                    <!-- Tombol Refresh -->
-                    <button onclick="loadData()" class="border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50 text-[#15734b] transition-all shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
                 </div>
             </div>
 
-            <!-- Tabel Data Layanan (Header disuntikkan oleh JS agar dinamis) -->
-            <div class="overflow-x-auto custom-scrollbar border border-gray-200 rounded-lg">
-                <table class="w-full text-left text-[13px] whitespace-normal" id="mainTable">
-                    <thead id="adminTableHeader" class="bg-gray-50 text-gray-500 border-b border-gray-200 uppercase text-[10px] font-bold tracking-wider">
-                        <!-- Header akan dibuat oleh JavaScript -->
+            <!-- TABEL DATA -->
+            <div class="table-scroll-wrapper" style="height: auto; min-height: 250px; border: none; overflow-x: auto;">
+                <table id="mainTable">
+                    <thead id="adminTableHeader">
+                        <!-- Header disuntikkan dari JS -->
                     </thead>
-                    <tbody id="adminTableBody" class="divide-y divide-gray-100">
-                        <tr><td colspan="8" class="p-12 text-center text-gray-400 font-medium">Memuat data dari server...</td></tr>
+                    <tbody id="adminTableBody">
+                        <tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-gray);">Memuat data dari server...</td></tr>
                     </tbody>
                 </table>
             </div>
+
         </div>
     </main>
 
-    <!-- POP-UP MODAL TETAP SAMA (Silakan copy modalTinjau dari kode Anda sebelumnya ke sini) -->
-    <div id="modalTinjau" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-100">
-            <div class="p-5 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
-                <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">🔍 Tinjau & Validasi Data</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition text-xl font-bold">&times;</button>
+    <!-- MODAL TINJAU (Menggunakan class modal-overlay bawaan CSS Anda) -->
+    <div id="modalTinjau" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 style="font-size: 18px; color: var(--text-dark);">🔍 Tinjau & Validasi Data</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             
-            <div class="p-5 space-y-4 bg-gray-50/50">
+            <form id="formTinjau" onsubmit="event.preventDefault(); saveAndApprove();" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <input type="hidden" id="editRowNumber">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Nama Mahasiswa</label><input type="text" id="editNama" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">NIM</label><input type="text" id="editNim" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Email</label><input type="text" id="editEmail" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Program Studi</label>
-                        <select id="editProdi" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] bg-white focus:ring-[#15734b] focus:border-[#15734b]">
-                            <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
-                            <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
-                        </select>
-                    </div>
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Tempat Lahir</label><input type="text" id="editTempatLahir" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Tanggal Lahir</label><input type="date" id="editTanggalLahir" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                
+                <div class="form-group"><label class="form-label">Nama Mahasiswa</label><input type="text" id="editNama" class="form-control"></div>
+                <div class="form-group"><label class="form-label">NIM</label><input type="text" id="editNim" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Email</label><input type="text" id="editEmail" class="form-control"></div>
+                <div class="form-group">
+                    <label class="form-label">Program Studi</label>
+                    <select id="editProdi" class="form-control">
+                        <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
+                        <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
+                    </select>
                 </div>
-
-                <div class="h-px bg-gray-200 my-2"></div>
-                <h3 class="text-[13px] font-bold text-[#15734b]">Data Khusus: <span id="labelJenisSurat" class="text-gray-800"></span></h3>
+                <div class="form-group"><label class="form-label">Tempat Lahir</label><input type="text" id="editTempatLahir" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Tanggal Lahir</label><input type="date" id="editTanggalLahir" class="form-control"></div>
+                
+                <div class="full-width" style="margin-top: 10px; border-bottom: 1px solid var(--border-color);"></div>
+                <div class="full-width">
+                    <h4 style="font-size: 14px; color: var(--primary-dark);">Data Khusus: <span id="labelJenisSurat" style="color: var(--text-dark);"></span></h4>
+                </div>
                 <input type="hidden" id="editJenisSurat">
 
-                <div id="blokBebas" class="hidden"><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                <div id="blokMutasi" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Prodi Tujuan</label><input type="text" id="editProdiTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                    <div class="md:col-span-2"><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Alamat Tujuan Lengkap</label><input type="text" id="editAlamatTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                <!-- Blok Field Dinamis -->
+                <div id="blokBebas" class="form-group full-width" style="display: none;"><label class="form-label">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="form-control"></div>
+                <div id="blokMutasi" class="full-width" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group"><label class="form-label">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Prodi Tujuan</label><input type="text" id="editProdiTujuan" class="form-control"></div>
+                    <div class="form-group full-width"><label class="form-label">Alamat Tujuan Lengkap</label><input type="text" id="editAlamatTujuan" class="form-control"></div>
                 </div>
-                <div id="blokLulus" class="hidden"><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Tanggal Munaqosyah</label><input type="date" id="editTglMunaqosyah" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                <div id="blokRekomendasi" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2"><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Nama Kegiatan</label><input type="text" id="editNamaKegiatan" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                    <div class="md:col-span-2"><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Lokasi Kegiatan</label><input type="text" id="editLokasiKegiatan" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Tgl Mulai</label><input type="date" id="editTglMulai" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
-                    <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Tgl Selesai</label><input type="date" id="editTglSelesai" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
+                <div id="blokLulus" class="form-group full-width" style="display: none;"><label class="form-label">Tanggal Munaqosyah</label><input type="date" id="editTglMunaqosyah" class="form-control"></div>
+                <div id="blokRekomendasi" class="full-width" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group full-width"><label class="form-label">Nama Kegiatan</label><input type="text" id="editNamaKegiatan" class="form-control"></div>
+                    <div class="form-group full-width"><label class="form-label">Lokasi Kegiatan</label><input type="text" id="editLokasiKegiatan" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Tgl Mulai</label><input type="date" id="editTglMulai" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Tgl Selesai</label><input type="date" id="editTglSelesai" class="form-control"></div>
                 </div>
-            </div>
-            
-            <div class="p-5 border-t border-gray-100 flex justify-end gap-3 sticky bottom-0 bg-white rounded-b-xl">
-                <button onclick="closeModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-lg text-[13px] transition">Batal</button>
-                <button id="btnSetujui" onclick="saveAndApprove()" class="px-5 py-2 bg-[#15734b] text-white font-bold hover:bg-[#0f5436] rounded-lg text-[13px] transition shadow-sm flex items-center gap-2">
-                    ✅ Simpan & Setujui
-                </button>
-            </div>
+
+                <div class="full-width" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                    <button type="button" class="btn-cancel" onclick="closeModal()" style="padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer;">Batal</button>
+                    <button type="submit" id="btnSetujui" class="btn-primary" style="margin-top: 0; padding: 10px 20px;">✅ Simpan & Setujui</button>
+                </div>
+            </form>
         </div>
     </div>
+
     <script src="admin.js"></script>
 </body>
 </html>
