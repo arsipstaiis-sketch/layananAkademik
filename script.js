@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
 
                 // ===== GANTI DENGAN URL APPS SCRIPT ANDA =====
-                const API_URL = 'https://script.google.com/macros/s/AKfycbxqHrGD78f0tsu13_i_di6rsTxy_HoOhPqfuphJufdCE7XRrkTec-Xen4BVvFKgnVMeaA/exec';
+                const API_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
 
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btnCariStatus.disabled = true;
 
             // ===== GANTI DENGAN URL APPS SCRIPT ANDA =====
-            const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwDh5GKLgWZl6Re5fDaWkyz3BJW-KQtvRh0QD3iRsk_J2yVxZRwAaOHpXpJi3ZbLBDmlg/exec';
+            const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
 
             try {
                 const response = await fetch(`${WEB_APP_URL}?nim=${nim}`);
