@@ -441,7 +441,7 @@ document.getElementById('btnConfirmAction').addEventListener('click', async func
     } catch(e) { 
         showToast('Error: ' + e, true); 
     } finally { 
-        document.body.style.cursor = 'default'; 
+        document.body.style.cursor = 'default';
     }
 });
 // Panggil data saat halaman pertama kali dibuka
