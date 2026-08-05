@@ -20,7 +20,6 @@ function toggleFilterMenu() {
 function resetFilter() {
     document.getElementById('filterJenis').value = '';
     document.getElementById('filterTA').value = '';
-    document.getElementById('filterBerkas').value = '';
     renderTable();
     document.getElementById('filterMenu').classList.remove('show');
 }
@@ -96,6 +95,7 @@ function renderTable() {
     const thead = document.getElementById('adminTableHeader');
     const tbody = document.getElementById('adminTableBody');
 
+    // --- 1. MENGUBAH HEADER MENJADI "TINDAKAN" ---
     if (currentTab === 'baru') {
         thead.innerHTML = `
             <tr>
@@ -105,7 +105,7 @@ function renderTable() {
                 <th class="col-jenis">Jenis Surat</th>
                 <th class="col-berkas">Berkas</th>
                 <th>Status</th>
-                <th class="col-aksi">Aksi</th>
+                <th class="col-aksi">Tindakan</th> 
             </tr>`;
     } else {
         thead.innerHTML = `
@@ -116,7 +116,7 @@ function renderTable() {
                 <th class="col-jenis">Jenis Surat</th>
                 <th class="col-berkas">Berkas</th>
                 <th>Status</th>
-                <th class="col-aksi">Dokumen & Aksi</th>
+                <th class="col-aksi">Tindakan</th>
             </tr>`;
     }
 
@@ -137,12 +137,9 @@ function renderTable() {
     if (currentTab === 'arsip') {
         let fJen = document.getElementById('filterJenis').value;
         let fTa = document.getElementById('filterTA').value;
-        let fBerkas = document.getElementById('filterBerkas').value;
 
         if (fJen) dataTampil = dataTampil.filter(i => i.jenisSurat === fJen);
         if (fTa) dataTampil = dataTampil.filter(i => i.tahunAkademik === fTa);
-        if (fBerkas === 'ada') dataTampil = dataTampil.filter(i => i.linkPDF);
-        if (fBerkas === 'belum') dataTampil = dataTampil.filter(i => !i.linkPDF);
 
         dataTampil.sort((a, b) => {
             let tA = new Date(a.tanggalPengajuanRaw).getTime();
@@ -158,25 +155,21 @@ function renderTable() {
     }
 
     dataTampil.forEach(item => {
-        // --- 1. WARNA STATUS ---
         let statusWarna = "background: #fef3c7; color: #92400e; border: 1px solid #fde68a;";
         if (item.status.includes("Selesai")) statusWarna = "background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;";
         else if (item.status.includes("Disetujui")) statusWarna = "background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;";
         else if (item.status.includes("Ditolak")) statusWarna = "background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;";
 
-        // --- 2. TEKS STATUS DIPAKSA MENJADI 2 BARIS ---
         let statusTextTampil = item.status;
         let matchKurung = statusTextTampil.match(/\(([^)]+)\)/);
         if (matchKurung) {
             statusTextTampil = matchKurung[1];
         }
-        // Mencari spasi pertama dan menggantinya dengan <br> agar turun baris
         let firstSpace = statusTextTampil.indexOf(" ");
         if (firstSpace !== -1) {
             statusTextTampil = statusTextTampil.substring(0, firstSpace) + "<br>" + statusTextTampil.substring(firstSpace + 1);
         }
 
-        // --- TOMBOL BERKAS BIRU MALAM (MIDNIGHT BLUE) ---
         let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #1e40af; color: #ffffff; border: 1px solid #1e40af; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
         let hoverBerkasIn = "this.style.background='#1d3680'; this.style.borderColor='#1d3680'; this.style.transform='translateY(-1.5px)'; this.style.boxShadow='0 3px 6px rgba(30, 64, 175, 0.25)'";
         let hoverBerkasOut = "this.style.background='#1e40af'; this.style.borderColor='#1e40af'; this.style.transform='translateY(0)'; this.style.boxShadow='none'";
@@ -187,26 +180,25 @@ function renderTable() {
         if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" style="${btnBerkasStyle}" onmouseover="${hoverBerkasIn}" onmouseout="${hoverBerkasOut}">Ijazah</a>`);
         
         let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:5px; min-width:65px;">${arrBerkas.join("")}</div>` : "-";
-        // --- 4. KOLEKSI IKON SVG MINIMALIS MODERN ---
+
         let iconSearch = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
         let iconCross = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
         let iconEye = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
         let iconSend = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
         let iconDoc = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
 
-        // --- 5. TOMBOL AKSI DENGAN IKON ---
         let aksiHTML = "";
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:90px;">
                     <button onclick="openModal(${item.rowNumber})" class="btn-action-tinjau">${iconSearch} Tinjau</button>
-                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#ef4444')" class="btn-action-tolak">${iconCross} Tolak</button>
+                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#991b1b')" class="btn-action-tolak">${iconCross} Tolak</button>
                 </div>`;
         } else if (item.status.includes("Disetujui")) {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:90px;">
                     <a href="${item.linkPDF}" target="_blank" class="btn-action-preview">${iconEye} Preview</a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#15734b')" class="btn-action-kirim">${iconSend} Kirim</button>
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="btn-action-kirim">${iconSend} Kirim</button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
             aksiHTML = `
@@ -215,15 +207,22 @@ function renderTable() {
                         ${iconDoc} Lihat PDF
                     </a>
                 </div>`;
+        
+        // --- 2. MENAMPILKAN ALASAN PENOLAKAN ---
         } else if (item.status.includes("Ditolak")) {
-            aksiHTML = `<span style="color: #dc2626; font-weight: bold; font-size: 11px;">${iconCross} Ditolak</span>`;
+            // Mengambil alasan penolakan dari JSON (Ganti 'alasanPenolakan' jika backend Anda menggunakan nama key lain)
+            let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Ditolak oleh admin.";
+            
+            aksiHTML = `
+                <div style="display:flex; flex-direction:column; gap:4px; min-width:120px; background: #fef2f2; padding: 6px 8px; border-radius: 6px; border: 1px dashed #fca5a5; text-align: left;">
+                    <span style="color: #991b1b; font-weight: bold; font-size: 11px;">${iconCross} Ditolak</span>
+                    <span style="font-size: 9.5px; color: #7f1d1d; line-height: 1.4; font-style: italic;">"${alasan}"</span>
+                </div>`;
         } else { aksiHTML = "-"; }
 
-        // --- 6. CETAK BARIS TABEL (Tanggal lebih kecil) ---
         let row = `
             <tr>
                 <td class="col-tanggal">
-                    <!-- Ukuran font tanggal diperkecil dan ketebalan dikurangi -->
                     <div style="font-weight: 500; font-size: 11.5px; color: var(--text-dark);">${item.dateStr}</div>
                     <div style="font-size: 10px; color: var(--text-gray); margin-top: 4px;">${item.timeStr} WIB</div>
                 </td>
@@ -235,7 +234,6 @@ function renderTable() {
                 <td class="col-jenis" style="font-weight: 600; color: var(--text-gray);">${item.jenisSurat}</td>
                 <td style="text-align:center;">${htmlBerkas}</td>
                 <td style="text-align:center;">
-                    <!-- 'display: inline-block' menjaga agar text 2 baris terpusat dengan rapi -->
                     <span style="display: inline-block; min-width: 90px; padding: 4px 8px; border-radius: 6px; font-size: 9.5px; line-height: 1.35; font-weight: 700; text-transform: uppercase; text-align: center; ${statusWarna}">
                         ${statusTextTampil}
                     </span>
@@ -416,17 +414,62 @@ function bukaConfirmModal(action, rowNum, title, desc, btnText, btnColor) {
     document.getElementById('confirmActionModal').classList.add('show');
 }
 
+// --- SISTEM MODAL KONFIRMASI (Dengan Input Keterangan Penolakan) ---
+let pendingAction = null;
+let pendingRowNum = null;
+
+function bukaConfirmModal(action, rowNum, title, desc, btnText, btnColor) {
+    pendingAction = action;
+    pendingRowNum = rowNum;
+    
+    document.getElementById('confirmTitle').innerText = title;
+    document.getElementById('confirmDesc').innerText = desc;
+    
+    const btnConfirm = document.getElementById('btnConfirmAction');
+    const confirmIcon = document.getElementById('confirmIcon');
+    btnConfirm.innerText = btnText;
+    btnConfirm.style.background = btnColor;
+    
+    // Atur tampilan input alasan penolakan dan warna ikon
+    const rejectContainer = document.getElementById('rejectInputContainer');
+    const rejectInput = document.getElementById('rejectReason');
+    
+    if (action === 'tolak') {
+        rejectContainer.style.display = 'block';
+        rejectInput.value = ''; // Kosongkan form teks
+        confirmIcon.style.background = '#fee2e2'; // Ikon Merah
+        confirmIcon.style.color = '#ef4444';
+    } else {
+        rejectContainer.style.display = 'none';
+        confirmIcon.style.background = '#d1fae5'; // Ikon Hijau (untuk Kirim)
+        confirmIcon.style.color = '#10b981';
+    }
+    
+    document.getElementById('confirmActionModal').classList.add('show');
+}
+
 function tutupConfirmModal() {
     document.getElementById('confirmActionModal').classList.remove('show');
     pendingAction = null;
     pendingRowNum = null;
 }
 
-// Menjalankan fungsi setelah konfirmasi "Ya" ditekan
-document.getElementById('btnConfirmAction').addEventListener('click', async function() {
+// Fungsi eksekusi data ke Server
+async function prosesConfirmAction() {
     const action = pendingAction;
     const rowNum = pendingRowNum;
-    tutupConfirmModal(); // Langsung tutup modal
+    let alasan = "";
+
+    // Validasi penolakan wajib mengisi alasan
+    if (action === 'tolak') {
+        alasan = document.getElementById('rejectReason').value.trim();
+        if (!alasan) {
+            showToast('Alasan penolakan wajib diisi!', true);
+            return; // Hentikan eksekusi jika kosong
+        }
+    }
+
+    tutupConfirmModal(); // Tutup modal jika valid
     document.body.style.cursor = 'wait';
     
     try {
@@ -434,16 +477,20 @@ document.getElementById('btnConfirmAction').addEventListener('click', async func
             await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: "sendToStudent", rowNumber: rowNum }) });
             showToast("Sukses! Surat berhasil dikirim ke mahasiswa.");
         } else if (action === 'tolak') {
-            await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: "reject", rowNumber: rowNum }) });
+            // Mengirim data action, rowNumber, beserta Alasan Penolakan ke Google Apps Script
+            await fetch(WEB_APP_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({ action: "reject", rowNumber: rowNum, alasanPenolakan: alasan }) 
+            });
             showToast("Permohonan telah ditolak.");
         }
         loadData(); // Segarkan tabel
     } catch(e) { 
         showToast('Error: ' + e, true); 
     } finally { 
-        document.body.style.cursor = 'default';
+        document.body.style.cursor = 'default'; 
     }
-});
+}
 // Panggil data saat halaman pertama kali dibuka
 window.onload = loadData;
 // --- SISTEM NOTIFIKASI TOAST ---
