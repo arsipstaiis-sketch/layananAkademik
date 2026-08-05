@@ -324,19 +324,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.length > 0) {
                     if (hasilContainer) hasilContainer.classList.remove('hidden');
                     data.forEach(item => {
+                        // 1. Logika Warna Status (Ditambah Merah untuk Ditolak)
                         let badgeColor = "bg-yellow-100 text-yellow-800";
                         if (item.status.includes("Selesai")) badgeColor = "bg-green-100 text-green-800";
-                        else if (item.status.includes("Memproses")) badgeColor = "bg-blue-100 text-blue-800";
+                        else if (item.status.includes("Memproses") || item.status.includes("Disetujui")) badgeColor = "bg-blue-100 text-blue-800";
+                        else if (item.status.includes("Ditolak")) badgeColor = "bg-red-100 text-red-700 border border-red-200";
 
+                        // 2. Merakit Tampilan Kolom Status & Catatan Penolakan
+                        let statusHTML = `
+                            <span class="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${badgeColor}">
+                                ${item.status}
+                            </span>
+                        `;
+
+                        // Jika ditolak, tambahkan kotak alasan di bawah badge status
+                        if (item.status.includes("Ditolak")) {
+                            let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
+                            statusHTML += `
+                                <div class="mt-2.5 p-2.5 bg-red-50 border-l-[3px] border-red-500 rounded-r-md text-[11px] text-red-800 leading-relaxed">
+                                    <strong class="block mb-0.5 font-bold">Catatan Admin:</strong>
+                                    <span class="italic">"${alasan}"</span>
+                                </div>
+                            `;
+                        }
+
+                        // 3. Merakit Baris Tabel
                         const row = `
-                            <tr class="hover:bg-gray-50 border-b border-gray-100">
-                                <td class="p-3 text-gray-600">${item.tanggal}</td>
-                                <td class="p-3 font-medium text-gray-800">Surat ${item.jenisSurat}</td>
-                                <td class="p-3 text-gray-600">${item.nomorSurat}</td>
-                                <td class="p-3">
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeColor}">
-                                        ${item.status}
-                                    </span>
+                            <tr class="hover:bg-gray-50 border-b border-gray-100 transition-colors">
+                                <td class="p-4 text-sm text-gray-600 whitespace-nowrap">${item.tanggal}</td>
+                                <td class="p-4 font-semibold text-gray-800">Surat ${item.jenisSurat}</td>
+                                <td class="p-4 text-sm text-gray-500">${item.nomorSurat || '-'}</td>
+                                <td class="p-4 align-top w-64">
+                                    ${statusHTML}
                                 </td>
                             </tr>
                         `;
@@ -354,5 +373,3 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-}); // <--- INI ADALAH PENUTUP DOMContentLoaded YANG SANGAT PENTING
