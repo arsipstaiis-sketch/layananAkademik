@@ -75,21 +75,12 @@
                                     <svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
                                 </button>
                                 <div id="filterMenu" class="filter-menu">
-                                    <label>Divisi</label>
-                                    <select id="filterDivisi" onchange="renderTable()" class="form-control" style="padding: 6px 10px;"><option value="">Semua Divisi</option></select>
-                                    
                                     <label>Jenis Surat</label>
                                     <select id="filterJenis" onchange="renderTable()" class="form-control" style="padding: 6px 10px;"><option value="">Semua Jenis</option></select>
                                     
                                     <label>Tahun Akademik</label>
                                     <select id="filterTA" onchange="renderTable()" class="form-control" style="padding: 6px 10px;"><option value="">Semua Tahun</option></select>
                                     
-                                    <label>Berkas PDF</label>
-                                    <select id="filterBerkas" onchange="renderTable()" class="form-control" style="padding: 6px 10px;">
-                                        <option value="">Semua Berkas</option>
-                                        <option value="ada">Sudah Generate PDF</option>
-                                        <option value="belum">Belum Ada PDF</option>
-                                    </select>
                                     <button onclick="resetFilter()" class="reset-filter-btn">Reset Filter</button>
                                 </div>
                             </div>
@@ -176,19 +167,26 @@
             </form>
         </div>
     </div>
-<!-- MODAL KONFIRMASI (Tolak/Kirim Surat) -->
+    <!-- MODAL KONFIRMASI (Tolak/Kirim Surat) -->
     <div id="confirmActionModal" class="custom-modal-overlay">
         <div class="custom-modal-box">
-            <div class="custom-modal-icon" style="background: #fef3c7; color: #d97706;">
+            <div class="custom-modal-icon" id="confirmIcon" style="background: #fef3c7; color: #d97706;">
                 <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
             </div>
             <h3 class="custom-modal-title" id="confirmTitle">Konfirmasi</h3>
             <p class="custom-modal-desc" id="confirmDesc">Apakah Anda yakin?</p>
+            
+            <!-- INPUT KETERANGAN TOLAK (Otomatis muncul/hilang) -->
+            <div id="rejectInputContainer" style="display: none; margin-bottom: 20px; text-align: left;">
+                <label style="font-size: 11px; font-weight: bold; color: var(--text-gray); margin-bottom: 6px; display: block;">Alasan Penolakan (Wajib diisi)</label>
+                <textarea id="rejectReason" class="form-control" rows="2" placeholder="Tuliskan alasan penolakan..." style="font-size: 13px; resize: none;"></textarea>
+            </div>
+
             <div class="custom-modal-actions">
                 <button class="btn-cancel" onclick="tutupConfirmModal()">Batal</button>
-                <button id="btnConfirmAction" class="btn-confirm-logout">Ya, Lanjutkan</button>
+                <button id="btnConfirmAction" onclick="prosesConfirmAction()" class="btn-confirm-logout">Ya, Lanjutkan</button>
             </div>
         </div>
     </div>
