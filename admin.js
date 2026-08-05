@@ -102,7 +102,7 @@ function renderTable() {
             <tr>
                 <th class="col-tanggal">Tanggal</th>
                 <th>Pemohon</th>
-                <th class="col-ta">Thn. Akd</th>
+                <th class="col-ta">Tahun Akademik</th>
                 <th class="col-jenis">Jenis Surat</th>
                 <th class="col-berkas">Berkas</th>
                 <th>Status</th>
@@ -113,7 +113,7 @@ function renderTable() {
             <tr>
                 <th class="col-tanggal">Tanggal</th>
                 <th>Pemohon</th>
-                <th class="col-ta">Thn. Akd</th>
+                <th class="col-ta">Tahun Akademik</th>
                 <th class="col-jenis">Jenis Surat</th>
                 <th class="col-berkas">Berkas</th>
                 <th class="col-berkas">Arsip PDF</th>
@@ -188,7 +188,7 @@ function renderTable() {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:85px;">
                     <a href="${item.linkPDF}" target="_blank" class="btn-action-preview">Preview</a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#15734b')" class="btn-action-kirim">✉️ Kirim</button>
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#15734b')" class="btn-action-kirim">Kirim</button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
             aksiHTML = `<span style="color: var(--staiis-green); font-weight: bold; font-size: 12px;">Selesai</span>`;
