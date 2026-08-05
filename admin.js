@@ -396,23 +396,6 @@ async function tolakSurat(rowNum) {
     await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "reject", rowNumber: rowNum }) });
     loadData();
 }
-// --- SISTEM MODAL KONFIRMASI (Ganti bawaan browser) ---
-let pendingAction = null;
-let pendingRowNum = null;
-
-function bukaConfirmModal(action, rowNum, title, desc, btnText, btnColor) {
-    pendingAction = action;
-    pendingRowNum = rowNum;
-    
-    document.getElementById('confirmTitle').innerText = title;
-    document.getElementById('confirmDesc').innerText = desc;
-    
-    const btnConfirm = document.getElementById('btnConfirmAction');
-    btnConfirm.innerText = btnText;
-    btnConfirm.style.background = btnColor;
-    
-    document.getElementById('confirmActionModal').classList.add('show');
-}
 
 // --- SISTEM MODAL KONFIRMASI (Dengan Input Keterangan Penolakan) ---
 let pendingAction = null;
