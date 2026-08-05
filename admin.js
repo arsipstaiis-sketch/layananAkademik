@@ -203,7 +203,7 @@ function renderTable() {
                     <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#15734b')" class="btn-action-kirim">✉️ Kirim</button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
-            aksiHTML = `<span style="color: var(--staiis-green); font-weight: bold; font-size: 12px;">✅ Selesai</span>`;
+            aksiHTML = `<span style="color: var(--staiis-green); font-weight: bold; font-size: 12px;">Selesai</span>`;
         } else { aksiHTML = "-"; }
 
         // 6. Cetak Baris Tabel (Mengubah font-weight tanggal dari 700 menjadi 500)
@@ -258,6 +258,7 @@ function renderTable() {
         }
         tbody.innerHTML += row;
     });
+}
 // 2. FUNGSI KONTROL MODAL (Disesuaikan untuk CSS Murni)
 function openModal(rowNum) {
     const data = globalData.find(d => d.rowNumber === rowNum);
