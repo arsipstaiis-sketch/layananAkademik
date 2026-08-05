@@ -646,7 +646,7 @@ tr:hover td { background-color: #fafafa; }
 .toast-notification svg {
     color: #10b981; 
 }
-/* --- GAYA & EFEK HOVER TOMBOL AKSI TABEL --- */
+/* --- GAYA & EFEK HOVER TOMBOL AKSI TABEL (DARK & ELEGANT) --- */
 .btn-action-tinjau, .btn-action-tolak, .btn-action-preview, .btn-action-kirim {
     width: 100%; padding: 7px 6px; border-radius: 6px; font-size: 11px; font-weight: bold; 
     cursor: pointer; border: 1px solid; text-align: center; display: flex; align-items: center; justify-content: center;
@@ -654,18 +654,18 @@ tr:hover td { background-color: #fafafa; }
     text-decoration: none; font-family: inherit;
 }
 
-/* Tinjau - Biru Elegan */
-.btn-action-tinjau { background: #2563eb; color: #ffffff; border-color: #2563eb; }
-.btn-action-tinjau:hover { background: #1d4ed8; border-color: #1d4ed8; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(37, 99, 235, 0.25); }
+/* Tinjau - Biru Dongker Elegan */
+.btn-action-tinjau { background: #1e3a8a; color: #ffffff; border-color: #1e3a8a; }
+.btn-action-tinjau:hover { background: #1e293b; border-color: #1e293b; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(30, 58, 138, 0.3); }
 
-/* Tolak - Merah Crimson */
-.btn-action-tolak { background: #e11d48; color: #ffffff; border-color: #e11d48; }
-.btn-action-tolak:hover { background: #be123c; border-color: #be123c; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(225, 29, 72, 0.25); }
+/* Tolak - Merah Marun / Burgundy */
+.btn-action-tolak { background: #991b1b; color: #ffffff; border-color: #991b1b; }
+.btn-action-tolak:hover { background: #7f1d1d; border-color: #7f1d1d; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(153, 27, 27, 0.3); }
 
-/* Preview - Abu-abu Slate (Menetralkan warna agar tidak terlalu mencolok) */
-.btn-action-preview { background: #475569; color: #ffffff; border-color: #475569; }
-.btn-action-preview:hover { background: #334155; border-color: #334155; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(71, 85, 105, 0.25); }
+/* Preview - Charcoal / Abu-abu Gelap Netral */
+.btn-action-preview { background: #334155; color: #ffffff; border-color: #334155; }
+.btn-action-preview:hover { background: #1e293b; border-color: #1e293b; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(51, 65, 85, 0.3); }
 
-/* Kirim - Hijau STAIIS */
-.btn-action-kirim { background: var(--staiis-green); color: #ffffff; border-color: var(--staiis-green); }
-.btn-action-kirim:hover { background: var(--staiis-green-hover); border-color: var(--staiis-green-hover); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(18, 130, 70, 0.25); }
+/* Kirim - Hijau Tua STAIIS */
+.btn-action-kirim { background: #0f5132; color: #ffffff; border-color: #0f5132; }
+.btn-action-kirim:hover { background: #0a3622; border-color: #0a3622; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(15, 81, 50, 0.3); }
