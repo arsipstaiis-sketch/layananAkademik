@@ -4,101 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - STAIIS</title>
-    <!-- Mencegah Browser Menyimpan Cache Halaman -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="admin.css">
 </head>
 <body class="min-h-screen antialiased">
 
-    <!-- HEADER SECTION (Diselaraskan dengan Referensi) -->
+    <!-- HEADER SECTION -->
     <header class="header-section text-white pt-10 px-4 sm:px-6 lg:px-8">
         <div class="max-w-[1140px] mx-auto">
-            
             <div class="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-5">
-                <!-- KIRI: Logo dan Judul -->
                 <div class="flex items-center gap-4">
-                    <!-- Ukuran Logo disesuaikan dengan proporsi referensi -->
                     <img src="logo.png" alt="Logo STAIIS" class="w-[60px] h-[60px] object-contain drop-shadow-md">
                     <div>
                         <div class="text-[11px] font-bold tracking-[0.15em] text-[#a0d2be] uppercase mb-1">Layanan Administrasi Persuratan</div>
                         <h1 class="text-[28px] md:text-[34px] font-serif-title font-bold tracking-wide leading-tight">Dashboard Admin STAIIS</h1>
                     </div>
                 </div>
-
-                <!-- KANAN: Tombol Logout (Ukuran & Ikon identik dengan referensi) -->
                 <button class="border border-white/30 hover:bg-white/10 px-4 py-2 rounded text-[13px] font-semibold transition-all flex items-center gap-2 self-start mt-1">
                     <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>
                     </svg>
                     Logout
                 </button>
             </div>
-
-            <!-- Deskripsi (Margin dan Ukuran disamakan) -->
             <p class="text-[#cce8dd] text-[15px] max-w-2xl leading-relaxed mb-8">
                 Pantau antrean dari semua jenis layanan administrasi akademik dalam satu tempat.
             </p>
-
-            <!-- Navigasi Tab (Border bawah dan padding disamakan) -->
+            <!-- Navigasi Tab -->
             <div class="border-b border-white/20 flex gap-8 text-[14px] font-semibold uppercase tracking-wide overflow-x-auto custom-scrollbar whitespace-nowrap">
-                <button id="tabBaru" onclick="switchTab('baru')" class="text-white border-b-[3px] border-white pb-3 px-1 transition-all">
-                    Permohonan Baru
-                </button>
-                <button id="tabArsip" onclick="switchTab('arsip')" class="text-white/60 hover:text-white border-b-[3px] border-transparent pb-3 px-1 transition-all">
-                    Arsip Terkirim
-                </button>
+                <button id="tabBaru" onclick="switchTab('baru')" class="text-white border-b-[3px] border-white pb-3 px-1 transition-all">Permohonan Baru</button>
+                <button id="tabArsip" onclick="switchTab('arsip')" class="text-white/60 hover:text-white border-b-[3px] border-transparent pb-3 px-1 transition-all">Arsip Terkirim</button>
             </div>
         </div>
     </header>
 
     <!-- KONTEN UTAMA -->
     <main class="max-w-[1140px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pb-16">
-        <div class="overlap-card p-6 border border-gray-100">
+        <div class="overlap-card p-6 border border-gray-100 min-h-[400px]">
             
-            <!-- Toolbar: Search Bar & Ikon Action -->
+            <!-- Toolbar -->
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                 <!-- Search Bar -->
                 <div class="w-full md:w-[360px]">
-                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari nomor / keterangan / nama..." 
+                    <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nomor / keterangan / nama..." 
                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-[14px] focus:ring-[#15734b] focus:border-[#15734b] outline-none shadow-sm transition-all">
                 </div>
                 
                 <!-- Ikon Tombol Kanan -->
-                <div class="flex gap-3">
-                    <button class="border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50 text-gray-500 transition-all shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg></button>
-                    <button class="border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50 text-gray-500 transition-all shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg></button>
-                    <button onclick="loadData()" class="border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50 text-gray-500 transition-all shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+                <div class="flex gap-3 relative">
+                    <!-- Grup Filter & Sort (Hanya muncul di tab Arsip) -->
+                    <div id="toolbarArsip" class="hidden flex gap-3">
+                        <button onclick="toggleFilterMenu()" class="border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50 text-gray-500 transition-all shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg></button>
+                        <button onclick="toggleSortOrder()" class="border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50 text-gray-500 transition-all shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg></button>
+                        
+                        <!-- Menu Dropdown Filter (Mirip Referensi Gambar) -->
+                        <div id="filterMenu" class="hidden absolute top-12 right-12 w-[220px] bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-4">
+                            <div class="space-y-3.5">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Divisi</label>
+                                    <select id="filterDivisi" onchange="renderTable()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-[12px] focus:outline-none focus:border-[#15734b]"><option value="">Semua Divisi</option></select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Jenis Surat</label>
+                                    <select id="filterJenis" onchange="renderTable()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-[12px] focus:outline-none focus:border-[#15734b]"><option value="">Semua Jenis</option></select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Tahun Akademik</label>
+                                    <select id="filterTA" onchange="renderTable()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-[12px] focus:outline-none focus:border-[#15734b]"><option value="">Semua Tahun</option></select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Berkas PDF</label>
+                                    <select id="filterBerkas" onchange="renderTable()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-[12px] focus:outline-none focus:border-[#15734b]">
+                                        <option value="">Semua Berkas</option>
+                                        <option value="ada">Sudah Generate PDF</option>
+                                        <option value="belum">Belum Ada PDF</option>
+                                    </select>
+                                </div>
+                                <button onclick="resetFilter()" class="w-full bg-[#15734b] hover:bg-[#0f5436] text-white font-bold py-2 rounded text-[12px] transition-all mt-1">Reset Filter</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tombol Refresh -->
+                    <button onclick="loadData()" class="border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50 text-[#15734b] transition-all shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
                 </div>
             </div>
 
-            <!-- Tabel Data Layanan -->
+            <!-- Tabel Data Layanan (Header disuntikkan oleh JS agar dinamis) -->
             <div class="overflow-x-auto custom-scrollbar border border-gray-200 rounded-lg">
-                <table class="w-full text-left text-[14px] whitespace-normal" id="mainTable">
-                    <thead class="bg-gray-50 text-gray-500 border-b border-gray-200 uppercase text-[11px] font-bold tracking-wider">
-                        <tr>
-                            <th class="py-3.5 px-4 w-[12%]">Tanggal</th>
-                            <th class="py-3.5 px-4 w-[23%]">Pemohon</th>
-                            <th class="py-3.5 px-4 w-[35%]">Surat & Berkas</th>
-                            <th class="py-3.5 px-4 w-[15%]">Status</th>
-                            <th class="py-3.5 px-4 w-[15%] text-center">Aksi</th>
-                        </tr>
+                <table class="w-full text-left text-[13px] whitespace-normal" id="mainTable">
+                    <thead id="adminTableHeader" class="bg-gray-50 text-gray-500 border-b border-gray-200 uppercase text-[10px] font-bold tracking-wider">
+                        <!-- Header akan dibuat oleh JavaScript -->
                     </thead>
                     <tbody id="adminTableBody" class="divide-y divide-gray-100">
-                        <tr><td colspan="5" class="p-12 text-center text-gray-400 font-medium">Memuat data dari server...</td></tr>
+                        <tr><td colspan="8" class="p-12 text-center text-gray-400 font-medium">Memuat data dari server...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </main>
 
-    <!-- POP-UP MODAL (Tetap sama) -->
-    <!-- ... (Salin bagian <div id="modalTinjau">...</div> persis seperti sebelumnya) ... -->
+    <!-- POP-UP MODAL TETAP SAMA (Silakan copy modalTinjau dari kode Anda sebelumnya ke sini) -->
     <div id="modalTinjau" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-100">
             <div class="p-5 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
@@ -126,7 +134,6 @@
                 <h3 class="text-[13px] font-bold text-[#15734b]">Data Khusus: <span id="labelJenisSurat" class="text-gray-800"></span></h3>
                 <input type="hidden" id="editJenisSurat">
 
-                <!-- Blok Field Dinamis Modal (Sama dengan sebelumnya) -->
                 <div id="blokBebas" class="hidden"><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
                 <div id="blokMutasi" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="w-full border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[13px] focus:ring-[#15734b] focus:border-[#15734b]"></div>
@@ -150,24 +157,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Script Filter Tabel -->
-    <script>
-        function filterTable() {
-            let input = document.getElementById("searchInput").value.toLowerCase();
-            let table = document.getElementById("mainTable");
-            let tr = table.getElementsByTagName("tr");
-
-            for (let i = 1; i < tr.length; i++) {
-                let rowText = tr[i].innerText.toLowerCase();
-                if (rowText.includes(input)) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-        }
-    </script>
     <script src="admin.js"></script>
 </body>
 </html>
