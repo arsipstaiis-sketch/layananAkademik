@@ -32,7 +32,7 @@
                 </div>
 
                 <!-- KANAN: Tombol Logout -->
-                <button class="btn-logout" title="Keluar Sistem">
+                <button class="btn-logout" title="Keluar Sistem" onclick="logoutSistem()">
                     <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>
@@ -176,7 +176,46 @@
             </form>
         </div>
     </div>
+<!-- MODAL KONFIRMASI (Tolak/Kirim Surat) -->
+    <div id="confirmActionModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <div class="custom-modal-icon" style="background: #fef3c7; color: #d97706;">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h3 class="custom-modal-title" id="confirmTitle">Konfirmasi</h3>
+            <p class="custom-modal-desc" id="confirmDesc">Apakah Anda yakin?</p>
+            <div class="custom-modal-actions">
+                <button class="btn-cancel" onclick="tutupConfirmModal()">Batal</button>
+                <button id="btnConfirmAction" class="btn-confirm-logout">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- MODAL LOGOUT -->
+    <div id="logoutModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <div class="custom-modal-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </div>
+            <h3 class="custom-modal-title">Keluar dari sistem?</h3>
+            <p class="custom-modal-desc">Sesi Anda akan diakhiri dan Anda harus login kembali.</p>
+            <div class="custom-modal-actions">
+                <button class="btn-cancel" onclick="tutupLogoutModal()">Batal</button>
+                <button class="btn-confirm-logout" onclick="prosesLogout()">Keluar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION MODERN -->
+    <div id="toastNotification" class="toast-notification">
+        <svg id="toastIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></svg>
+        <span id="toastMessage">Pesan Notifikasi</span>
+    </div>
     <script src="admin.js"></script>
 </body>
 </html>
