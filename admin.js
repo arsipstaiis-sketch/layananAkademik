@@ -484,5 +484,5 @@ function logoutSistem() { document.getElementById('logoutModal').classList.add('
 function tutupLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
 function prosesLogout() {
     sessionStorage.removeItem('userRole'); // Hapus sesi admin
-    window.location.replace('login.html'); // Lempar ke halaman login
+    window.location.replace('index.html'); // Lempar ke halaman login
 }
