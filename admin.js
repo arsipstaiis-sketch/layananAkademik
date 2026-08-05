@@ -176,10 +176,10 @@ function renderTable() {
             statusTextTampil = statusTextTampil.substring(0, firstSpace) + "<br>" + statusTextTampil.substring(firstSpace + 1);
         }
 
-        // --- 3. TOMBOL BERKAS BIRU SOLID (OCEAN BLUE) ---
-        let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #0284c7; color: #ffffff; border: 1px solid #0284c7; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
-        let hoverBerkasIn = "this.style.background='#0369a1'; this.style.borderColor='#0369a1'; this.style.transform='translateY(-1.5px)'; this.style.boxShadow='0 3px 6px rgba(2, 132, 199, 0.2)'";
-        let hoverBerkasOut = "this.style.background='#0284c7'; this.style.borderColor='#0284c7'; this.style.transform='translateY(0)'; this.style.boxShadow='none'";
+        // --- TOMBOL BERKAS BIRU MALAM (MIDNIGHT BLUE) ---
+        let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #1e40af; color: #ffffff; border: 1px solid #1e40af; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
+        let hoverBerkasIn = "this.style.background='#1d3680'; this.style.borderColor='#1d3680'; this.style.transform='translateY(-1.5px)'; this.style.boxShadow='0 3px 6px rgba(30, 64, 175, 0.25)'";
+        let hoverBerkasOut = "this.style.background='#1e40af'; this.style.borderColor='#1e40af'; this.style.transform='translateY(0)'; this.style.boxShadow='none'";
         
         let arrBerkas = [];
         if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="${btnBerkasStyle}" onmouseover="${hoverBerkasIn}" onmouseout="${hoverBerkasOut}">KTM</a>`);
@@ -211,7 +211,7 @@ function renderTable() {
         } else if (item.status.includes("Selesai")) {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:90px;">
-                    <a href="${item.linkPDF}" target="_blank" style="display: block; width: 100%; padding: 8px 0; border-radius: 6px; font-size: 11px; font-weight: bold; background: var(--staiis-green); color: #fff; border: 1px solid var(--staiis-green); text-decoration: none; text-align: center; box-sizing: border-box; transition: all 0.2s; box-shadow: 0 2px 4px rgba(18, 130, 70, 0.1);" onmouseover="this.style.background='var(--staiis-green-hover)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--staiis-green)'; this.style.transform='translateY(0)'">
+                    <a href="${item.linkPDF}" target="_blank" style="display: block; width: 100%; padding: 8px 0; border-radius: 6px; font-size: 11px; font-weight: bold; background: #0f5132; color: #fff; border: 1px solid #0f5132; text-decoration: none; text-align: center; box-sizing: border-box; transition: all 0.2s; box-shadow: 0 2px 4px rgba(15, 81, 50, 0.15);" onmouseover="this.style.background='#0a3622'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#0f5132'; this.style.transform='translateY(0)'">
                         ${iconDoc} Lihat PDF
                     </a>
                 </div>`;
