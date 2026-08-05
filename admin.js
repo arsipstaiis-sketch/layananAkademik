@@ -175,24 +175,23 @@ function renderTable() {
         let arsipPDF = "-";
         if(item.linkPDF) arsipPDF = `<a href="${item.linkPDF}" target="_blank" style="color: var(--staiis-green); font-weight: bold; text-decoration: none;">📄 PDF</a>`;
 
-        // Tombol Aksi menggunakan Style Murni
+        // Tombol Aksi menggunakan Class CSS yang baru kita buat
         let aksiHTML = "";
-        let btnStyle = "width:100%; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid;";
         
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:85px;">
-                    <button onclick="openModal(${item.rowNumber})" style="${btnStyle} background:#eef2ff; color:#4338ca; border-color:#c7d2fe;">Tinjau Data</button>
-                    <button onclick="tolakSurat(${item.rowNumber})" style="${btnStyle} background:#fef2f2; color:#dc2626; border-color:#fecaca;">Tolak</button>
+                    <button onclick="openModal(${item.rowNumber})" class="btn-action-tinjau">Tinjau Data</button>
+                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#ef4444')" class="btn-action-tolak">Tolak</button>
                 </div>`;
         } else if (item.status.includes("Disetujui")) {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:85px;">
-                    <a href="${item.linkPDF}" target="_blank" style="${btnStyle} background:#f9fafb; color:#374151; border-color:#e5e7eb; text-decoration:none; text-align:center; box-sizing:border-box; display:block;">Preview</a>
-                    <button onclick="kirimEmail(${item.rowNumber})" style="${btnStyle} background:var(--staiis-green); color:#fff; border-color:var(--staiis-green);">✉️ Kirim</button>
+                    <a href="${item.linkPDF}" target="_blank" class="btn-action-preview">Preview</a>
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#15734b')" class="btn-action-kirim">✉️ Kirim</button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
-            aksiHTML = `<span style="color: var(--staiis-green); font-weight: bold; font-size: 12px;">✅ Selesai</span>`;
+            aksiHTML = `<span style="color: var(--staiis-green); font-weight: bold; font-size: 12px;">Selesai</span>`;
         } else { aksiHTML = "-"; }
 
         let row = "";
@@ -243,7 +242,6 @@ function renderTable() {
         tbody.innerHTML += row;
     });
 }
-// 2. FUNGSI KONTROL MODAL
 // 2. FUNGSI KONTROL MODAL (Disesuaikan untuk CSS Murni)
 function openModal(rowNum) {
     const data = globalData.find(d => d.rowNumber === rowNum);
@@ -298,7 +296,7 @@ function closeModal() {
 // 3. FUNGSI LOGIKA PERHITUNGAN DAN KIRIM (FRONTEND CERDAS)
 async function saveAndApprove() {
     const btn = document.getElementById('btnSetujui');
-    btn.innerText = "⏳ Memproses Logika & Merakit PDF..."; btn.disabled = true;
+    btn.innerText = "Menyiapkan berkas PDF..."; btn.disabled = true;
 
     const rNum = document.getElementById('editRowNumber').value;
     const originalData = globalData.find(d => d.rowNumber == rNum);
@@ -373,12 +371,12 @@ async function saveAndApprove() {
         });
         const res = await response.json();
         if(res.status === 'success') { 
-            alert('PDF Berhasil Dibuat dan Dirakit oleh Sistem Frontend!'); 
+            showToast('Selesai! PDF berhasil dibuat dan disetujui.'); 
             closeModal(); 
             loadData(); 
         }
     } catch(e) { alert('Error: ' + e); }
-    finally { btn.innerText = "✅ Simpan & Setujui (Buat PDF)"; btn.disabled = false; }
+    finally { btn.innerText = "Simpan"; btn.disabled = false; }
 }
 
 async function kirimEmail(rowNum) {
@@ -396,6 +394,78 @@ async function tolakSurat(rowNum) {
     await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "reject", rowNumber: rowNum }) });
     loadData();
 }
+// --- SISTEM MODAL KONFIRMASI (Ganti bawaan browser) ---
+let pendingAction = null;
+let pendingRowNum = null;
 
+function bukaConfirmModal(action, rowNum, title, desc, btnText, btnColor) {
+    pendingAction = action;
+    pendingRowNum = rowNum;
+    
+    document.getElementById('confirmTitle').innerText = title;
+    document.getElementById('confirmDesc').innerText = desc;
+    
+    const btnConfirm = document.getElementById('btnConfirmAction');
+    btnConfirm.innerText = btnText;
+    btnConfirm.style.background = btnColor;
+    
+    document.getElementById('confirmActionModal').classList.add('show');
+}
+
+function tutupConfirmModal() {
+    document.getElementById('confirmActionModal').classList.remove('show');
+    pendingAction = null;
+    pendingRowNum = null;
+}
+
+// Menjalankan fungsi setelah konfirmasi "Ya" ditekan
+document.getElementById('btnConfirmAction').addEventListener('click', async function() {
+    const action = pendingAction;
+    const rowNum = pendingRowNum;
+    tutupConfirmModal(); // Langsung tutup modal
+    document.body.style.cursor = 'wait';
+    
+    try {
+        if(action === 'kirim') {
+            await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: "sendToStudent", rowNumber: rowNum }) });
+            showToast("Sukses! Surat berhasil dikirim ke mahasiswa.");
+        } else if (action === 'tolak') {
+            await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: "reject", rowNumber: rowNum }) });
+            showToast("Permohonan telah ditolak.");
+        }
+        loadData(); // Segarkan tabel
+    } catch(e) { 
+        showToast('Error: ' + e, true); 
+    } finally { 
+        document.body.style.cursor = 'default'; 
+    }
+});
 // Panggil data saat halaman pertama kali dibuka
 window.onload = loadData;
+// --- SISTEM NOTIFIKASI TOAST ---
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toastNotification');
+    const toastMsg = document.getElementById('toastMessage');
+    const toastIcon = document.getElementById('toastIcon');
+    
+    toastMsg.innerText = message;
+    
+    if (isError) {
+        toast.style.backgroundColor = "#ef4444"; // Merah Error
+        toastIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
+    } else {
+        toast.style.backgroundColor = "#10b981"; // Hijau Sukses
+        toastIcon.innerHTML = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>`;
+    }
+    
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, 3500);
+}
+
+// --- SISTEM LOGOUT ---
+function logoutSistem() { document.getElementById('logoutModal').classList.add('show'); }
+function tutupLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
+function prosesLogout() {
+    sessionStorage.removeItem('userRole'); // Hapus sesi admin
+    window.location.replace('login.html'); // Lempar ke halaman login
+}
