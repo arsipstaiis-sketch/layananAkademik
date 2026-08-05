@@ -1,5 +1,5 @@
 // ======= GANTI DENGAN URL DEPLOY APPS SCRIPT ANDA =======
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxqHrGD78f0tsu13_i_di6rsTxy_HoOhPqfuphJufdCE7XRrkTec-Xen4BVvFKgnVMeaA/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
 
 let globalData = []; 
 
