@@ -648,20 +648,24 @@ tr:hover td { background-color: #fafafa; }
 }
 /* --- GAYA & EFEK HOVER TOMBOL AKSI TABEL --- */
 .btn-action-tinjau, .btn-action-tolak, .btn-action-preview, .btn-action-kirim {
-    width: 100%; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: bold; 
-    cursor: pointer; border: 1px solid; text-align: center; display: block; 
+    width: 100%; padding: 7px 6px; border-radius: 6px; font-size: 11px; font-weight: bold; 
+    cursor: pointer; border: 1px solid; text-align: center; display: flex; align-items: center; justify-content: center;
     box-sizing: border-box; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
     text-decoration: none; font-family: inherit;
 }
 
-.btn-action-tinjau { background: #eef2ff; color: #4338ca; border-color: #c7d2fe; }
-.btn-action-tinjau:hover { background: #e0e7ff; color: #3730a3; border-color: #a5b4fc; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(67, 56, 202, 0.1); }
+/* Tinjau - Biru Elegan */
+.btn-action-tinjau { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+.btn-action-tinjau:hover { background: #1d4ed8; border-color: #1d4ed8; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(37, 99, 235, 0.25); }
 
-.btn-action-tolak { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
-.btn-action-tolak:hover { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1); }
+/* Tolak - Merah Crimson */
+.btn-action-tolak { background: #e11d48; color: #ffffff; border-color: #e11d48; }
+.btn-action-tolak:hover { background: #be123c; border-color: #be123c; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(225, 29, 72, 0.25); }
 
-.btn-action-preview { background: #f9fafb; color: #374151; border-color: #e5e7eb; }
-.btn-action-preview:hover { background: #f3f4f6; color: #1f2937; border-color: #d1d5db; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+/* Preview - Abu-abu Slate (Menetralkan warna agar tidak terlalu mencolok) */
+.btn-action-preview { background: #475569; color: #ffffff; border-color: #475569; }
+.btn-action-preview:hover { background: #334155; border-color: #334155; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(71, 85, 105, 0.25); }
 
-.btn-action-kirim { background: var(--staiis-green); color: #fff; border-color: var(--staiis-green); }
+/* Kirim - Hijau STAIIS */
+.btn-action-kirim { background: var(--staiis-green); color: #ffffff; border-color: var(--staiis-green); }
 .btn-action-kirim:hover { background: var(--staiis-green-hover); border-color: var(--staiis-green-hover); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(18, 130, 70, 0.25); }
