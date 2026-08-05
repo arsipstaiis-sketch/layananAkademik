@@ -160,24 +160,36 @@ function renderTable() {
     }
 
     dataTampil.forEach(item => {
-        // Pemetaan warna status tanpa Tailwind
+        // 1. Logika Warna Status Tetap Sama
         let statusWarna = "background: #fef3c7; color: #92400e; border: 1px solid #fde68a;";
         if (item.status.includes("Selesai")) statusWarna = "background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;";
         else if (item.status.includes("Disetujui")) statusWarna = "background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;";
         else if (item.status.includes("Ditolak")) statusWarna = "background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;";
 
+        // 2. Logika Menyaring Teks Status (Hanya mengambil teks dalam kurung)
+        let statusTextTampil = item.status;
+        let matchKurung = statusTextTampil.match(/\(([^)]+)\)/);
+        if (matchKurung) {
+            statusTextTampil = matchKurung[1]; // Mengambil teks di dalam kurung saja
+        }
+
+        // 3. Desain Tombol Khusus untuk Berkas Upload (Vertikal/Berjejer ke bawah)
+        let btnBerkasStyle = "display: block; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; text-decoration: none; text-align: center; transition: all 0.2s;";
         let arrBerkas = [];
-        if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="color: #3b82f6; text-decoration: none;">KTM</a>`);
-        if(item.linkBebas) arrBerkas.push(`<a href="${item.linkBebas}" target="_blank" style="color: #3b82f6; text-decoration: none;">Bebas</a>`);
-        if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" style="color: #3b82f6; text-decoration: none;">Ijazah</a>`);
-        let htmlBerkas = arrBerkas.join(" | ") || "-";
-
-        let arsipPDF = "-";
-        if(item.linkPDF) arsipPDF = `<a href="${item.linkPDF}" target="_blank" style="color: var(--staiis-green); font-weight: bold; text-decoration: none;">📄 PDF</a>`;
-
-        // Tombol Aksi menggunakan Class CSS yang baru kita buat
-        let aksiHTML = "";
+        if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="${btnBerkasStyle}" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">KTM</a>`);
+        if(item.linkBebas) arrBerkas.push(`<a href="${item.linkBebas}" target="_blank" style="${btnBerkasStyle}" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">Bebas</a>`);
+        if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" style="${btnBerkasStyle}" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">Ijazah</a>`);
         
+        // Gabungkan berkas dalam flexbox kolom (turun ke bawah) jika lebih dari 1
+        let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:4px; min-width:55px;">${arrBerkas.join("")}</div>` : "-";
+
+        // 4. Desain Tombol Khusus untuk Arsip PDF
+        let arsipPDF = "-";
+        let btnPdfStyle = "display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; text-decoration: none; text-align: center; transition: all 0.2s;";
+        if(item.linkPDF) arsipPDF = `<a href="${item.linkPDF}" target="_blank" style="${btnPdfStyle}" onmouseover="this.style.background='#d1fae5'" onmouseout="this.style.background='#ecfdf5'">📄 PDF</a>`;
+
+        // 5. Tombol Aksi menggunakan Class CSS (Tidak diubah)
+        let aksiHTML = "";
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:85px;">
@@ -188,39 +200,20 @@ function renderTable() {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:85px;">
                     <a href="${item.linkPDF}" target="_blank" class="btn-action-preview">Preview</a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#15734b')" class="btn-action-kirim">Kirim</button>
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#15734b')" class="btn-action-kirim">✉️ Kirim</button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
-            aksiHTML = `<span style="color: var(--staiis-green); font-weight: bold; font-size: 12px;">Selesai</span>`;
+            aksiHTML = `<span style="color: var(--staiis-green); font-weight: bold; font-size: 12px;">✅ Selesai</span>`;
         } else { aksiHTML = "-"; }
 
+        // 6. Cetak Baris Tabel (Mengubah font-weight tanggal dari 700 menjadi 500)
         let row = "";
         if (currentTab === 'baru') {
             row = `
                 <tr>
                     <td class="col-tanggal">
-                        <div style="font-weight: 700; color: var(--text-dark);">${item.dateStr}</div>
-                        <div style="font-size: 11px; color: var(--text-gray); margin-top: 4px;">${item.timeStr} WIB</div>
-                    </td>
-                    <td>
-                        <div style="font-weight: 700; color: var(--text-dark);">${item.nama}</div>
-                        <div style="font-size: 11px; color: var(--text-gray); margin-top: 4px; letter-spacing: 0.5px;">${item.nim}</div>
-                    </td>
-                    <td class="col-ta">${item.tahunAkademik}</td>
-                    <td class="col-jenis" style="font-weight: 600; color: var(--primary-dark);">${item.jenisSurat}</td>
-                    <td style="font-size: 11px; text-align:center;">${htmlBerkas}</td>
-                    <td style="text-align:center;">
-                        <span style="padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; ${statusWarna}">
-                            ${item.status}
-                        </span>
-                    </td>
-                    <td class="col-aksi">${aksiHTML}</td>
-                </tr>`;
-        } else {
-            row = `
-                <tr>
-                    <td class="col-tanggal">
-                        <div style="font-weight: 700; color: var(--text-dark);">${item.dateStr}</div>
+                        <!-- font-weight diubah dari 700 ke 500 agar tidak tebal -->
+                        <div style="font-weight: 500; color: var(--text-dark);">${item.dateStr}</div>
                         <div style="font-size: 11px; color: var(--text-gray); margin-top: 4px;">${item.timeStr} WIB</div>
                     </td>
                     <td>
@@ -229,11 +222,35 @@ function renderTable() {
                     </td>
                     <td class="col-ta">${item.tahunAkademik}</td>
                     <td class="col-jenis" style="font-weight: 600; color: var(--text-gray);">${item.jenisSurat}</td>
-                    <td style="font-size: 11px; text-align:center;">${htmlBerkas}</td>
-                    <td style="font-size: 11px; text-align:center;">${arsipPDF}</td>
+                    <td style="text-align:center;">${htmlBerkas}</td>
                     <td style="text-align:center;">
+                        <!-- statusTextTampil digunakan di sini -->
                         <span style="padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; ${statusWarna}">
-                            ${item.status}
+                            ${statusTextTampil}
+                        </span>
+                    </td>
+                    <td class="col-aksi">${aksiHTML}</td>
+                </tr>`;
+        } else {
+            row = `
+                <tr>
+                    <td class="col-tanggal">
+                        <!-- font-weight diubah dari 700 ke 500 agar tidak tebal -->
+                        <div style="font-weight: 500; color: var(--text-dark);">${item.dateStr}</div>
+                        <div style="font-size: 11px; color: var(--text-gray); margin-top: 4px;">${item.timeStr} WIB</div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 700; color: var(--text-dark);">${item.nama}</div>
+                        <div style="font-size: 11px; color: var(--text-gray); margin-top: 4px; letter-spacing: 0.5px;">${item.nim}</div>
+                    </td>
+                    <td class="col-ta">${item.tahunAkademik}</td>
+                    <td class="col-jenis" style="font-weight: 600; color: var(--text-gray);">${item.jenisSurat}</td>
+                    <td style="text-align:center;">${htmlBerkas}</td>
+                    <td style="text-align:center;">${arsipPDF}</td>
+                    <td style="text-align:center;">
+                        <!-- statusTextTampil digunakan di sini -->
+                        <span style="padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; ${statusWarna}">
+                            ${statusTextTampil}
                         </span>
                     </td>
                     <td class="col-aksi">${aksiHTML}</td>
@@ -241,7 +258,6 @@ function renderTable() {
         }
         tbody.innerHTML += row;
     });
-}
 // 2. FUNGSI KONTROL MODAL (Disesuaikan untuk CSS Murni)
 function openModal(rowNum) {
     const data = globalData.find(d => d.rowNumber === rowNum);
