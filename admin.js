@@ -210,13 +210,12 @@ function renderTable() {
         
         // --- 2. MENAMPILKAN ALASAN PENOLAKAN ---
         } else if (item.status.includes("Ditolak")) {
-            // Mengambil alasan penolakan dari JSON (Ganti 'alasanPenolakan' jika backend Anda menggunakan nama key lain)
-            let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Ditolak oleh admin.";
+            let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
             
             aksiHTML = `
-                <div style="display:flex; flex-direction:column; gap:4px; min-width:120px; background: #fef2f2; padding: 6px 8px; border-radius: 6px; border: 1px dashed #fca5a5; text-align: left;">
-                    <span style="color: #991b1b; font-weight: bold; font-size: 11px;">${iconCross} Ditolak</span>
-                    <span style="font-size: 9.5px; color: #7f1d1d; line-height: 1.4; font-style: italic;">"${alasan}"</span>
+                <div style="display:flex; flex-direction:column; gap:4px; min-width:130px; background: #fef2f2; padding: 8px 10px; border-radius: 6px; border-left: 3px solid #ef4444; border: 1px solid #fca5a5; border-left-width: 3px; text-align: left;">
+                    <span style="color: #991b1b; font-weight: bold; font-size: 11px; display: block; margin-bottom: 2px;">Catatan Admin:</span>
+                    <span style="font-size: 10px; color: #7f1d1d; line-height: 1.4; font-style: italic;">"${alasan}"</span>
                 </div>`;
         } else { aksiHTML = "-"; }
 
