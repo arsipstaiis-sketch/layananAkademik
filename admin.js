@@ -176,10 +176,10 @@ function renderTable() {
             statusTextTampil = statusTextTampil.substring(0, firstSpace) + "<br>" + statusTextTampil.substring(firstSpace + 1);
         }
 
-        // --- 3. TOMBOL BERKAS BIRU BLOK ---
-        let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
-        let hoverBerkasIn = "this.style.background='#dbeafe'; this.style.borderColor='#93c5fd'";
-        let hoverBerkasOut = "this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'";
+        // --- 3. TOMBOL BERKAS BIRU SOLID (OCEAN BLUE) ---
+        let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #0284c7; color: #ffffff; border: 1px solid #0284c7; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
+        let hoverBerkasIn = "this.style.background='#0369a1'; this.style.borderColor='#0369a1'; this.style.transform='translateY(-1.5px)'; this.style.boxShadow='0 3px 6px rgba(2, 132, 199, 0.2)'";
+        let hoverBerkasOut = "this.style.background='#0284c7'; this.style.borderColor='#0284c7'; this.style.transform='translateY(0)'; this.style.boxShadow='none'";
         
         let arrBerkas = [];
         if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="${btnBerkasStyle}" onmouseover="${hoverBerkasIn}" onmouseout="${hoverBerkasOut}">KTM</a>`);
@@ -187,7 +187,6 @@ function renderTable() {
         if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" style="${btnBerkasStyle}" onmouseover="${hoverBerkasIn}" onmouseout="${hoverBerkasOut}">Ijazah</a>`);
         
         let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:5px; min-width:65px;">${arrBerkas.join("")}</div>` : "-";
-
         // --- 4. KOLEKSI IKON SVG MINIMALIS MODERN ---
         let iconSearch = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
         let iconCross = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
