@@ -96,13 +96,12 @@ function renderTable() {
     const thead = document.getElementById('adminTableHeader');
     const tbody = document.getElementById('adminTableBody');
 
-    // 1. MENGATUR HEADER
     if (currentTab === 'baru') {
         thead.innerHTML = `
             <tr>
                 <th class="col-tanggal">Tanggal</th>
                 <th>Pemohon</th>
-                <th class="col-ta">Tahun Akademik</th>
+                <th class="col-ta">Thn. Akd</th>
                 <th class="col-jenis">Jenis Surat</th>
                 <th class="col-berkas">Berkas</th>
                 <th>Status</th>
@@ -113,7 +112,7 @@ function renderTable() {
             <tr>
                 <th class="col-tanggal">Tanggal</th>
                 <th>Pemohon</th>
-                <th class="col-ta">Tahun Akademik</th>
+                <th class="col-ta">Thn. Akd</th>
                 <th class="col-jenis">Jenis Surat</th>
                 <th class="col-berkas">Berkas</th>
                 <th>Status</th>
@@ -159,21 +158,28 @@ function renderTable() {
     }
 
     dataTampil.forEach(item => {
+        // --- 1. WARNA STATUS ---
         let statusWarna = "background: #fef3c7; color: #92400e; border: 1px solid #fde68a;";
         if (item.status.includes("Selesai")) statusWarna = "background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;";
         else if (item.status.includes("Disetujui")) statusWarna = "background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;";
         else if (item.status.includes("Ditolak")) statusWarna = "background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;";
 
+        // --- 2. TEKS STATUS DIPAKSA MENJADI 2 BARIS ---
         let statusTextTampil = item.status;
         let matchKurung = statusTextTampil.match(/\(([^)]+)\)/);
         if (matchKurung) {
             statusTextTampil = matchKurung[1];
         }
+        // Mencari spasi pertama dan menggantinya dengan <br> agar turun baris
+        let firstSpace = statusTextTampil.indexOf(" ");
+        if (firstSpace !== -1) {
+            statusTextTampil = statusTextTampil.substring(0, firstSpace) + "<br>" + statusTextTampil.substring(firstSpace + 1);
+        }
 
-        // --- DESAIN BARU: TOMBOL BERKAS BERBENTUK BLOK SOLID ---
-        let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10px; font-weight: 600; background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
-        let hoverBerkasIn = "this.style.background='#f1f5f9'; this.style.color='#0f172a'; this.style.borderColor='#cbd5e1'";
-        let hoverBerkasOut = "this.style.background='#f8fafc'; this.style.color='#475569'; this.style.borderColor='#e2e8f0'";
+        // --- 3. TOMBOL BERKAS BIRU BLOK ---
+        let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
+        let hoverBerkasIn = "this.style.background='#dbeafe'; this.style.borderColor='#93c5fd'";
+        let hoverBerkasOut = "this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'";
         
         let arrBerkas = [];
         if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="${btnBerkasStyle}" onmouseover="${hoverBerkasIn}" onmouseout="${hoverBerkasOut}">KTM</a>`);
@@ -182,41 +188,45 @@ function renderTable() {
         
         let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:5px; min-width:65px;">${arrBerkas.join("")}</div>` : "-";
 
-        // --- DESAIN BARU: TOMBOL PDF BERBENTUK BLOK HIJAU STAIIS DENGAN IKON SVG MINIMALIS ---
+        // --- 4. KOLEKSI IKON SVG MINIMALIS MODERN ---
+        let iconSearch = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+        let iconCross = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+        let iconEye = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        let iconSend = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+        let iconDoc = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+
+        // --- 5. TOMBOL AKSI DENGAN IKON ---
         let aksiHTML = "";
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:90px;">
-                    <button onclick="openModal(${item.rowNumber})" class="btn-action-tinjau">Tinjau Data</button>
-                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#ef4444')" class="btn-action-tolak">Tolak</button>
+                    <button onclick="openModal(${item.rowNumber})" class="btn-action-tinjau">${iconSearch} Tinjau</button>
+                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#ef4444')" class="btn-action-tolak">${iconCross} Tolak</button>
                 </div>`;
         } else if (item.status.includes("Disetujui")) {
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:90px;">
-                    <a href="${item.linkPDF}" target="_blank" class="btn-action-preview">Preview</a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#15734b')" class="btn-action-kirim">✉️ Kirim</button>
+                    <a href="${item.linkPDF}" target="_blank" class="btn-action-preview">${iconEye} Preview</a>
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#15734b')" class="btn-action-kirim">${iconSend} Kirim</button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
-            // Ikon SVG Dokumen Minimalis
-            let svgIcon = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; margin-top: -2px; vertical-align: middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
-            
-            // Tombol Lihat PDF (Blok Penuh Hijau)
             aksiHTML = `
                 <div style="display:flex; flex-direction:column; gap:6px; min-width:90px;">
                     <a href="${item.linkPDF}" target="_blank" style="display: block; width: 100%; padding: 8px 0; border-radius: 6px; font-size: 11px; font-weight: bold; background: var(--staiis-green); color: #fff; border: 1px solid var(--staiis-green); text-decoration: none; text-align: center; box-sizing: border-box; transition: all 0.2s; box-shadow: 0 2px 4px rgba(18, 130, 70, 0.1);" onmouseover="this.style.background='var(--staiis-green-hover)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--staiis-green)'; this.style.transform='translateY(0)'">
-                        ${svgIcon} Lihat PDF
+                        ${iconDoc} Lihat PDF
                     </a>
                 </div>`;
         } else if (item.status.includes("Ditolak")) {
-            aksiHTML = `<span style="color: #dc2626; font-weight: bold; font-size: 11px;">Ditolak</span>`;
+            aksiHTML = `<span style="color: #dc2626; font-weight: bold; font-size: 11px;">${iconCross} Ditolak</span>`;
         } else { aksiHTML = "-"; }
 
-        // 3. CETAK BARIS
+        // --- 6. CETAK BARIS TABEL (Tanggal lebih kecil) ---
         let row = `
             <tr>
                 <td class="col-tanggal">
-                    <div style="font-weight: 500; color: var(--text-dark);">${item.dateStr}</div>
-                    <div style="font-size: 11px; color: var(--text-gray); margin-top: 4px;">${item.timeStr} WIB</div>
+                    <!-- Ukuran font tanggal diperkecil dan ketebalan dikurangi -->
+                    <div style="font-weight: 500; font-size: 11.5px; color: var(--text-dark);">${item.dateStr}</div>
+                    <div style="font-size: 10px; color: var(--text-gray); margin-top: 4px;">${item.timeStr} WIB</div>
                 </td>
                 <td>
                     <div style="font-weight: 700; color: var(--text-dark);">${item.nama}</div>
@@ -226,7 +236,8 @@ function renderTable() {
                 <td class="col-jenis" style="font-weight: 600; color: var(--text-gray);">${item.jenisSurat}</td>
                 <td style="text-align:center;">${htmlBerkas}</td>
                 <td style="text-align:center;">
-                    <span style="padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; ${statusWarna}">
+                    <!-- 'display: inline-block' menjaga agar text 2 baris terpusat dengan rapi -->
+                    <span style="display: inline-block; min-width: 90px; padding: 4px 8px; border-radius: 6px; font-size: 9.5px; line-height: 1.35; font-weight: 700; text-transform: uppercase; text-align: center; ${statusWarna}">
                         ${statusTextTampil}
                     </span>
                 </td>
