@@ -244,10 +244,12 @@ function renderTable() {
     });
 }
 // 2. FUNGSI KONTROL MODAL
+// 2. FUNGSI KONTROL MODAL (Disesuaikan untuk CSS Murni)
 function openModal(rowNum) {
     const data = globalData.find(d => d.rowNumber === rowNum);
     if(!data) return;
 
+    // Isi data umum
     document.getElementById('editRowNumber').value = data.rowNumber;
     document.getElementById('editJenisSurat').value = data.jenisSurat;
     document.getElementById('labelJenisSurat').innerText = data.jenisSurat;
@@ -256,38 +258,43 @@ function openModal(rowNum) {
     document.getElementById('editNim').value = data.nim;
     document.getElementById('editEmail').value = data.email;
     document.getElementById('editTempatLahir').value = data.tempatLahir;
-    document.getElementById('editTanggalLahir').value = data.tanggalLahirRaw.split('T')[0]; // Format penyesuaian kalender html
+    document.getElementById('editTanggalLahir').value = data.tanggalLahirRaw ? data.tanggalLahirRaw.split('T')[0] : ''; 
     document.getElementById('editProdi').value = data.prodi;
 
-    document.getElementById('blokBebas').classList.add('hidden');
-    document.getElementById('blokMutasi').classList.add('hidden');
-    document.getElementById('blokLulus').classList.add('hidden');
-    document.getElementById('blokRekomendasi').classList.add('hidden');
+    // Sembunyikan semua blok khusus terlebih dahulu
+    document.getElementById('blokBebas').style.display = 'none';
+    document.getElementById('blokMutasi').style.display = 'none';
+    document.getElementById('blokLulus').style.display = 'none';
+    document.getElementById('blokRekomendasi').style.display = 'none';
 
+    // Munculkan blok khusus sesuai jenis surat
     if(data.jenisSurat === "Bebas Tanggungan") {
-        document.getElementById('blokBebas').classList.remove('hidden');
-        document.getElementById('editTujuanBebas').value = data.tujuanBebas;
+        document.getElementById('blokBebas').style.display = 'flex'; // form-group menggunakan flex
+        document.getElementById('editTujuanBebas').value = data.tujuanBebas || '';
     } else if(data.jenisSurat === "Mutasi") {
-        document.getElementById('blokMutasi').classList.remove('hidden');
-        document.getElementById('editKampusTujuan').value = data.kampusTujuan;
-        document.getElementById('editProdiTujuan').value = data.prodiTujuan;
-        document.getElementById('editAlamatTujuan').value = data.alamatTujuan;
+        document.getElementById('blokMutasi').style.display = 'grid'; // mutasi menggunakan grid 2 kolom
+        document.getElementById('editKampusTujuan').value = data.kampusTujuan || '';
+        document.getElementById('editProdiTujuan').value = data.prodiTujuan || '';
+        document.getElementById('editAlamatTujuan').value = data.alamatTujuan || '';
     } else if(data.jenisSurat === "Lulus") {
-        document.getElementById('blokLulus').classList.remove('hidden');
+        document.getElementById('blokLulus').style.display = 'flex';
         document.getElementById('editTglMunaqosyah').value = data.tanggalMunaqosyahRaw ? data.tanggalMunaqosyahRaw.split('T')[0] : '';
     } else if(data.jenisSurat === "Rekomendasi") {
-        document.getElementById('blokRekomendasi').classList.remove('hidden');
-        document.getElementById('editNamaKegiatan').value = data.namaKegiatan;
-        document.getElementById('editLokasiKegiatan').value = data.lokasiKegiatan;
+        document.getElementById('blokRekomendasi').style.display = 'grid';
+        document.getElementById('editNamaKegiatan').value = data.namaKegiatan || '';
+        document.getElementById('editLokasiKegiatan').value = data.lokasiKegiatan || '';
         document.getElementById('editTglMulai').value = data.tglMulaiRaw ? data.tglMulaiRaw.split('T')[0] : '';
         document.getElementById('editTglSelesai').value = data.tglSelesaiRaw ? data.tglSelesaiRaw.split('T')[0] : '';
     }
     
-    document.getElementById('modalTinjau').classList.remove('hidden');
+    // Tampilkan pop-up modal ke layar
+    document.getElementById('modalTinjau').style.display = 'flex';
 }
 
-function closeModal() { document.getElementById('modalTinjau').classList.add('hidden'); }
-
+function closeModal() { 
+    // Sembunyikan pop-up modal
+    document.getElementById('modalTinjau').style.display = 'none'; 
+}
 // 3. FUNGSI LOGIKA PERHITUNGAN DAN KIRIM (FRONTEND CERDAS)
 async function saveAndApprove() {
     const btn = document.getElementById('btnSetujui');
