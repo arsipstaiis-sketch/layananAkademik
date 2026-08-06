@@ -451,24 +451,38 @@ async function prosesConfirmAction() {
         }
     }
 
-    tutupConfirmModal(); // Tutup modal jika valid
+    tutupConfirmModal();
     document.body.style.cursor = 'wait';
     
     try {
-        if(action === 'kirim') {
-            await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: "sendToStudent", rowNumber: rowNum }) });
-            showToast("Sukses! Surat berhasil dikirim ke mahasiswa.");
-        } else if (action === 'tolak') {
-            // Mengirim data action, rowNumber, beserta Alasan Penolakan ke Google Apps Script
-            await fetch(WEB_APP_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({ action: "reject", rowNumber: rowNum, alasanPenolakan: alasan }) 
-            });
-            showToast("Permohonan telah ditolak.");
+        let requestBody = { action: action, rowNumber: rowNum };
+        if (action === 'tolak') requestBody.alasanPenolakan = alasan;
+
+        // Tunggu respons dari server
+        let response = await fetch(WEB_APP_URL, { 
+            method: 'POST', 
+            body: JSON.stringify(requestBody) 
+        });
+        
+        // Baca data JSON dari server
+        let result = await response.json();
+
+        // Cek apakah server Google merespons "success"
+        if (result.status === "success") {
+            if(action === 'kirim') {
+                showToast("Sukses! Surat berhasil dikirim ke mahasiswa.");
+            } else if (action === 'tolak') {
+                showToast("Permohonan telah ditolak.");
+            }
+            loadData(); // Segarkan tabel HANYA jika benar-benar sukses
+        } else {
+            // Jika server Google mengembalikan error
+            showToast("Gagal: " + result.message, true);
+            console.error("Server Error:", result.message);
         }
-        loadData(); // Segarkan tabel
+        
     } catch(e) { 
-        showToast('Error: ' + e, true); 
+        showToast('Error koneksi: ' + e.message, true); 
     } finally { 
         document.body.style.cursor = 'default'; 
     }
