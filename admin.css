@@ -669,3 +669,33 @@ tr:hover td { background-color: #fafafa; }
 /* Kirim - Hijau Tua STAIIS */
 .btn-action-kirim { background: #0f5132; color: #ffffff; border-color: #0f5132; }
 .btn-action-kirim:hover { background: #0a3622; border-color: #0a3622; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(15, 81, 50, 0.3); }
+/* --- BUNGKUSAN TABEL (Agar bisa di-scroll) --- */
+.table-responsive {
+    max-height: 70vh; /* Menyesuaikan tinggi maksimal 70% dari layar Anda */
+    overflow-y: auto; /* Memunculkan scrollbar vertikal jika barisnya banyak */
+    overflow-x: auto; /* Memunculkan scrollbar horizontal untuk layar kecil */
+    border-radius: 8px; /* Opsional: agar ujungnya sedikit melengkung */
+    border: 1px solid #e2e8f0;
+}
+
+/* --- STICKY HEADER (Header statis) --- */
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10; /* Agar header selalu berada di atas baris data (tbody) */
+    background-color: #f8fafc; /* WAJIB ADA: Agar baris yang lewat di bawahnya tidak tembus pandang */
+    
+    /* Bayangan tipis di bawah header sebagai pemisah */
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05); 
+}
+
+/* Jika Anda menggunakan border pada tabel, tambahkan ini agar garisnya tidak ikut melayang */
+table {
+    border-collapse: separate; 
+    border-spacing: 0;
+    width: 100%;
+}
+
+thead th, tbody td {
+    border-bottom: 1px solid #e2e8f0;
+}
