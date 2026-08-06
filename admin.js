@@ -442,12 +442,11 @@ async function prosesConfirmAction() {
     const rowNum = pendingRowNum;
     let alasan = "";
 
-    // Validasi penolakan wajib mengisi alasan
     if (action === 'tolak') {
         alasan = document.getElementById('rejectReason').value.trim();
         if (!alasan) {
             showToast('Alasan penolakan wajib diisi!', true);
-            return; // Hentikan eksekusi jika kosong
+            return;
         }
     }
 
@@ -455,7 +454,11 @@ async function prosesConfirmAction() {
     document.body.style.cursor = 'wait';
     
     try {
-        let requestBody = { action: action, rowNumber: rowNum };
+        // --- PERBAIKAN DI SINI ---
+        // Jika action adalah 'kirim', ubah menjadi 'sendToStudent' agar dimengerti oleh Code.gs
+        let actionCode = action === 'kirim' ? 'sendToStudent' : action;
+
+        let requestBody = { action: actionCode, rowNumber: rowNum };
         if (action === 'tolak') requestBody.alasanPenolakan = alasan;
 
         // Tunggu respons dari server
@@ -464,7 +467,6 @@ async function prosesConfirmAction() {
             body: JSON.stringify(requestBody) 
         });
         
-        // Baca data JSON dari server
         let result = await response.json();
 
         // Cek apakah server Google merespons "success"
@@ -476,7 +478,6 @@ async function prosesConfirmAction() {
             }
             loadData(); // Segarkan tabel HANYA jika benar-benar sukses
         } else {
-            // Jika server Google mengembalikan error
             showToast("Gagal: " + result.message, true);
             console.error("Server Error:", result.message);
         }
