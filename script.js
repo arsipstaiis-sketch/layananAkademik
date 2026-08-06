@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const inputSanah = document.getElementById('sanah');
     const wrapperSanah = document.getElementById('wrapper_sanah');
     const inputSemester = document.getElementById('semester');
-    const jenisSurat = document.getElementById('jenisSurat'); // ID HTML pastikan 'jenisSurat'
+    const jenisSurat = document.getElementById('jenisSurat');
     
     const fieldBebasTanggungan = document.getElementById('fieldBebasTanggungan');
     const fieldMutasi = document.getElementById('fieldMutasi');
@@ -90,18 +90,18 @@ document.addEventListener('DOMContentLoaded', function() {
             jenisSurat.value = pilihanSuratSaatIni;
         }
         
-        // Pemicu event otomatis agar kolom dinamis (field mutasi, bebas, dll) menyesuaikan
+        // Pemicu event otomatis agar kolom dinamis menyesuaikan
         jenisSurat.dispatchEvent(new Event('change'));
 
         // --- B. Atur Visibilitas Kolom Sanah ---
         if (prodiTerpilih === "Program Tamhidi") {
-            if (wrapperSanah) wrapperSanah.style.display = 'none';
+            if (wrapperSanah) wrapperSanah.classList.add('hidden');
             if (inputSanah) {
                 inputSanah.required = false;
                 inputSanah.value = ""; 
             }
         } else {
-            if (wrapperSanah) wrapperSanah.style.display = 'block';
+            if (wrapperSanah) wrapperSanah.classList.remove('hidden');
             if (inputSanah) inputSanah.required = true;
         }
 
@@ -155,6 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // --- LOGIKA TAB (FORM VS STATUS) ---
+    // Diperbarui: Menggunakan CSS Native (.active dan .hidden)
     const tabFormBtn = document.getElementById('tabFormBtn');
     const tabStatusBtn = document.getElementById('tabStatusBtn');
     const sectionForm = document.getElementById('sectionForm');
@@ -164,27 +165,20 @@ document.addEventListener('DOMContentLoaded', function() {
         tabFormBtn.addEventListener('click', function() {
             sectionForm.classList.remove('hidden');
             sectionStatus.classList.add('hidden');
-            
-            tabFormBtn.classList.add('text-green-700', 'border-green-700');
-            tabFormBtn.classList.remove('text-gray-500', 'border-transparent');
-            
-            tabStatusBtn.classList.add('text-gray-500', 'border-transparent');
-            tabStatusBtn.classList.remove('text-green-700', 'border-green-700');
+            tabFormBtn.classList.add('active');
+            tabStatusBtn.classList.remove('active');
         });
 
         tabStatusBtn.addEventListener('click', function() {
             sectionStatus.classList.remove('hidden');
             sectionForm.classList.add('hidden');
-            
-            tabStatusBtn.classList.add('text-green-700', 'border-green-700');
-            tabStatusBtn.classList.remove('text-gray-500', 'border-transparent');
-            
-            tabFormBtn.classList.add('text-gray-500', 'border-transparent');
-            tabFormBtn.classList.remove('text-green-700', 'border-green-700');
+            tabStatusBtn.classList.add('active');
+            tabFormBtn.classList.remove('active');
         });
     }
 
     // --- LOGIKA API WILAYAH ---
+    // Diperbarui: Hapus class Tailwind, serahkan styling ke CSS form-control:disabled
     if (selectProvinsi) {
         fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
             .then(response => response.json())
@@ -208,8 +202,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if(selectKecamatan) {
                 selectKecamatan.innerHTML = '<option value="" disabled selected>-- Kecamatan --</option>';
                 selectKecamatan.disabled = true;
-                selectKecamatan.classList.add('bg-gray-100', 'cursor-not-allowed');
-                selectKecamatan.classList.remove('bg-white');
             }
             
             fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${this.value}.json`)
@@ -224,8 +216,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         selectKabupaten.appendChild(option);
                     });
                     selectKabupaten.disabled = false;
-                    selectKabupaten.classList.remove('bg-gray-100', 'cursor-not-allowed');
-                    selectKabupaten.classList.add('bg-white');
                 })
                 .catch(error => console.error('Gagal memuat kabupaten:', error));
         });
@@ -247,8 +237,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         selectKecamatan.appendChild(option);
                     });
                     selectKecamatan.disabled = false;
-                    selectKecamatan.classList.remove('bg-gray-100', 'cursor-not-allowed');
-                    selectKecamatan.classList.add('bg-white');
                 })
                 .catch(error => console.error('Gagal memuat kecamatan:', error));
         });
@@ -265,7 +253,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (fileBebas) fileBebas.required = false;
             if (fileIjazah) fileIjazah.required = false;
 
-            // Pastikan pengecekan value sesuai dengan array master surat
             if (this.value === 'Surat Bebas Tanggungan' || this.value === 'Bebas Tanggungan') {
                 if (fieldBebasTanggungan) fieldBebasTanggungan.classList.remove('hidden');
             } else if (this.value === 'Surat Keterangan Mutasi' || this.value === 'Mutasi') {
@@ -286,7 +273,6 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault(); 
             
             btnSubmit.disabled = true;
-            btnSubmit.classList.add('opacity-75', 'cursor-not-allowed');
             btnText.innerText = 'Mengirim... (Proses Upload)';
             btnSpinner.classList.remove('hidden');
 
@@ -332,7 +318,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     prodi: inputProdi ? inputProdi.value : "",
                     jenis_surat: jenisSurat.value,
                     
-                    // Menambahkan Sanah dan Semester ke Payload agar terekam di Apps Script jika diperlukan
                     sanah: inputSanah ? inputSanah.value : "",
                     semester: inputSemester ? inputSemester.value : "",
                     
@@ -377,8 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Pesan Error:', error);
             } finally {
                 btnSubmit.disabled = false;
-                btnSubmit.classList.remove('opacity-75', 'cursor-not-allowed');
-                btnText.innerText = 'Kirim Permohonan';
+                btnText.innerText = 'Kirim Permohonan Surat';
                 btnSpinner.classList.add('hidden');
             }
         });
@@ -389,7 +373,6 @@ document.addEventListener('DOMContentLoaded', function() {
         btnReset.addEventListener('click', function() {
             if (form) form.reset(); 
             
-            // Panggil ulang fungsi untuk mereset visibilitas form dinamis
             setTimeout(() => {
                 if(inputProdi) tanganiPerubahanProdi();
             }, 10);
@@ -405,19 +388,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (selectKabupaten) {
                 selectKabupaten.innerHTML = '<option value="" disabled selected>-- Kab/Kota --</option>';
                 selectKabupaten.disabled = true;
-                selectKabupaten.classList.add('bg-gray-100', 'cursor-not-allowed');
-                selectKabupaten.classList.remove('bg-white');
             }
             if (selectKecamatan) {
                 selectKecamatan.innerHTML = '<option value="" disabled selected>-- Kecamatan --</option>';
                 selectKecamatan.disabled = true;
-                selectKecamatan.classList.add('bg-gray-100', 'cursor-not-allowed');
-                selectKecamatan.classList.remove('bg-white');
             }
         });
     }
 
     // --- LOGIKA PENCARIAN STATUS ---
+    // Diperbarui: Merakit HTML Tabel menggunakan struktur CSS Native
     const btnCariStatus = document.getElementById('btnCariStatus');
     if (btnCariStatus) {
         btnCariStatus.addEventListener('click', async function() {
@@ -447,35 +427,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.length > 0) {
                     if (hasilContainer) hasilContainer.classList.remove('hidden');
                     data.forEach(item => {
-                        let badgeColor = "bg-yellow-100 text-yellow-800";
-                        if (item.status.includes("Selesai")) badgeColor = "bg-green-100 text-green-800";
-                        else if (item.status.includes("Memproses") || item.status.includes("Disetujui")) badgeColor = "bg-blue-100 text-blue-800";
-                        else if (item.status.includes("Ditolak")) badgeColor = "bg-red-100 text-red-700 border border-red-200";
+                        
+                        // Menyesuaikan Badge Status ke Native CSS
+                        let badgeClass = "badge-proses";
+                        if (item.status.includes("Selesai")) badgeClass = "badge-selesai";
+                        else if (item.status.includes("Ditolak")) badgeClass = "badge-tolak";
 
-                        let statusHTML = `
-                            <span class="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${badgeColor}">
-                                ${item.status}
-                            </span>
-                        `;
+                        let statusHTML = `<span class="badge ${badgeClass}">${item.status}</span>`;
 
                         if (item.status.includes("Ditolak")) {
                             let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
                             statusHTML += `
-                                <div class="mt-2.5 p-2.5 bg-red-50 border-l-[3px] border-red-500 rounded-r-md text-[11px] text-red-800 leading-relaxed">
-                                    <strong class="block mb-0.5 font-bold">Catatan Admin:</strong>
-                                    <span class="italic">"${alasan}"</span>
+                                <div class="alasan-tolak">
+                                    <strong style="display:block; margin-bottom:2px;">Catatan Admin:</strong>
+                                    <span style="font-style:italic">"${alasan}"</span>
                                 </div>
                             `;
                         }
 
+                        // Merakit Row Tabel dengan Native CSS
                         const row = `
-                            <tr class="hover:bg-gray-50 border-b border-gray-100 transition-colors">
-                                <td class="p-4 text-sm text-gray-600 whitespace-nowrap">${item.tanggal}</td>
-                                <td class="p-4 font-semibold text-gray-800">Surat ${item.jenisSurat}</td>
-                                <td class="p-4 text-sm text-gray-500">${item.nomorSurat || '-'}</td>
-                                <td class="p-4 align-top w-64">
-                                    ${statusHTML}
-                                </td>
+                            <tr>
+                                <td>${item.tanggal}</td>
+                                <td><b>Surat ${item.jenisSurat}</b><br><span style="font-size:11px;color:var(--text-muted);">${item.nomorSurat || '-'}</span></td>
+                                <td>${statusHTML}</td>
                             </tr>
                         `;
                         tabelBody.innerHTML += row;
@@ -487,7 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Gagal mengambil data dari server. Periksa koneksi internet Anda.');
                 console.error(error);
             } finally {
-                btnCariStatus.innerText = 'Cari';
+                btnCariStatus.innerText = 'Cari Data';
                 btnCariStatus.disabled = false;
             }
         });
