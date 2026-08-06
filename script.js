@@ -56,9 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "Surat Keterangan Lulus",
         "Surat Bebas Tanggungan",
         "Surat Rekomendasi",
-        "Surat Keterangan Cuti",
-        "Surat Keterangan Mutasi",
-        "Surat Keterangan Berkelakuan Baik"
+        "Surat Keterangan Mutasi"
     ];
 
     const suratTamhidi = [
