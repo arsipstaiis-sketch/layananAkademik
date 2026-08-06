@@ -417,6 +417,31 @@ tr:hover td { background-color: #fafafa; }
 .table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
     background-color: #94a3b8;
 }
+/* ==========================================================
+   STICKY HEADER (Khusus Tabel Utama Admin)
+   ========================================================== */
+
+/* Menggunakan ID #mainTable agar tabel lain tidak ikut terpengaruh */
+#mainTable {
+    border-collapse: separate; 
+    border-spacing: 0;
+    width: 100%;
+}
+
+/* Hanya header di tabel admin yang mengambang */
+#adminTableHeader th {
+    position: sticky;
+    top: 0;
+    z-index: 10; 
+    background-color: #f7f9fc; /* Warna background wajib ada */
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05); /* Efek bayangan pembatas */
+    border-bottom: 1px solid var(--border-light, #e2e8f0);
+}
+
+/* Garis pembatas antar baris data */
+#adminTableBody td {
+    border-bottom: 1px solid var(--border-light, #e2e8f0);
+}
 /* --- KUSTOM MODAL KONFIRMASI (LOGOUT) --- */
 .custom-modal-overlay {
     display: none; /* Sembunyikan secara default */
@@ -676,26 +701,4 @@ tr:hover td { background-color: #fafafa; }
     overflow-x: auto; /* Memunculkan scrollbar horizontal untuk layar kecil */
     border-radius: 8px; /* Opsional: agar ujungnya sedikit melengkung */
     border: 1px solid #e2e8f0;
-}
-
-/* --- STICKY HEADER (Header statis) --- */
-thead th {
-    position: sticky;
-    top: 0;
-    z-index: 10; /* Agar header selalu berada di atas baris data (tbody) */
-    background-color: #f8fafc; /* WAJIB ADA: Agar baris yang lewat di bawahnya tidak tembus pandang */
-    
-    /* Bayangan tipis di bawah header sebagai pemisah */
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05); 
-}
-
-/* Jika Anda menggunakan border pada tabel, tambahkan ini agar garisnya tidak ikut melayang */
-table {
-    border-collapse: separate; 
-    border-spacing: 0;
-    width: 100%;
-}
-
-thead th, tbody td {
-    border-bottom: 1px solid #e2e8f0;
 }
