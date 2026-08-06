@@ -2,24 +2,24 @@
    RESET & VARIABEL GLOBAL
    ========================================= */
 :root {
-    /* 🎨 Sesuaikan warna ini dengan warna dominan pada Logo Anda */
-    --primary: #0f4a8a;       /* Warna Utama (Misal: Biru Tua STAIIS) */
-    --primary-hover: #0c3968;
-    --accent: #eab308;        /* Warna Aksen (Kuning/Emas jika ada di logo) */
+    /* 🎨 Disesuaikan dengan warna hijau pada Logo STAIIS */
+    --primary: #0f6c3e;       /* Hijau Tua STAIIS */
+    --primary-hover: #0a4d2c; /* Hijau lebih gelap saat tombol disorot */
+    --accent: #facc15;        /* Aksen Emas (mengambil dari warna buku di logo) */
     
     --success: #10b981;
     --success-hover: #059669;
     --danger: #ef4444;
     
-    /* Warna Background Gradasi */
-    --bg-body-start: #e0e7ff; /* Biru sangat muda */
-    --bg-body-end: #f3f4f6;   /* Abu-abu terang */
+    /* Gradasi latar belakang yang senada dengan nuansa hijau lembut */
+    --bg-body-start: #e6f4ed; 
+    --bg-body-end: #f3f4f6;   
     
     --bg-card: #ffffff;
     --text-main: #1f2937;
     --text-muted: #6b7280;
     --border: #e5e7eb;
-    --input-focus: rgba(15, 74, 138, 0.15); /* Transparansi dari warna primary */
+    --input-focus: rgba(15, 108, 62, 0.15); /* Efek fokus mengikuti warna hijau utama */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
