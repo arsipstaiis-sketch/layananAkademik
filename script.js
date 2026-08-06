@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const row = `
                             <tr>
                                 <td>${item.tanggal}</td>
-                                <td><b>Surat ${item.jenisSurat}</b><br><span style="font-size:11px;color:var(--text-muted);">${item.nomorSurat || '-'}</span></td>
+                                <td><b>Surat ${item.jenisSurat}</b><br><span style="font-size:11px;color:var(--text-muted);">${item.nomorSurat || ''}</span></td>
                                 <td>${statusHTML}</td>
                             </tr>
                         `;
