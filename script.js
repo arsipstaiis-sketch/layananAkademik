@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const prodiTerpilih = inputProdi.value;
         const waktuSemester = cekStatusSemesterWaktu(); 
         
-        inputSemester.innerHTML = '<option value="" disabled selected>-- Pilih Semester --</option>';
+        inputSemester.innerHTML = '<option value="" disabled selected>-</option>';
         let hasilSemester = "";
 
         if (prodiTerpilih === "Program Tamhidi") {
