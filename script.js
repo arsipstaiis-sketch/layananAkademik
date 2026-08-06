@@ -18,7 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- DEKLARASI ELEMEN FORM ---
     const form = document.getElementById('suratForm');
-    const jenisSurat = document.getElementById('jenisSurat');
+    
+    // Elemen Dinamis Baru
+    const inputProdi = document.getElementById('prodi');
+    const inputSanah = document.getElementById('sanah');
+    const wrapperSanah = document.getElementById('wrapper_sanah');
+    const inputSemester = document.getElementById('semester');
+    const jenisSurat = document.getElementById('jenisSurat'); // ID HTML pastikan 'jenisSurat'
     
     const fieldBebasTanggungan = document.getElementById('fieldBebasTanggungan');
     const fieldMutasi = document.getElementById('fieldMutasi');
@@ -39,6 +45,116 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileBebas = document.getElementById('fileBebas');
     const fileIjazah = document.getElementById('fileIjazah'); 
     const tanggalMunaqosyah = document.getElementById('tanggalMunaqosyah'); 
+
+
+    // =======================================================
+    // FITUR DINAMIS: PRODI -> SANAH -> JENIS SURAT & SEMESTER
+    // =======================================================
+
+    const semuaJenisSurat = [
+        "Surat Keterangan Aktif",
+        "Surat Keterangan Lulus",
+        "Surat Bebas Tanggungan",
+        "Surat Rekomendasi",
+        "Surat Keterangan Cuti",
+        "Surat Keterangan Mutasi",
+        "Surat Keterangan Berkelakuan Baik"
+    ];
+
+    const suratTamhidi = [
+        "Surat Keterangan Aktif",
+        "Surat Bebas Tanggungan",
+        "Surat Rekomendasi"
+    ];
+
+    function cekStatusSemesterWaktu() {
+        const bulanSekarang = new Date().getMonth() + 1; // Januari = 1
+        return (bulanSekarang >= 2 && bulanSekarang <= 7) ? "Genap" : "Ganjil";
+    }
+
+    function tanganiPerubahanProdi() {
+        if (!inputProdi || !jenisSurat || !inputSemester) return;
+        const prodiTerpilih = inputProdi.value;
+
+        // --- A. Atur Jenis Surat ---
+        const pilihanSuratSaatIni = jenisSurat.value;
+        jenisSurat.innerHTML = '<option value="" disabled selected>-- Pilih Jenis Surat --</option>';
+        
+        let opsiSurat = (prodiTerpilih === "Program Tamhidi") ? suratTamhidi : semuaJenisSurat;
+        opsiSurat.forEach(surat => {
+            let opt = document.createElement('option');
+            opt.value = surat; 
+            opt.innerHTML = surat;
+            jenisSurat.appendChild(opt);
+        });
+        
+        if (opsiSurat.includes(pilihanSuratSaatIni)) {
+            jenisSurat.value = pilihanSuratSaatIni;
+        }
+        
+        // Pemicu event otomatis agar kolom dinamis (field mutasi, bebas, dll) menyesuaikan
+        jenisSurat.dispatchEvent(new Event('change'));
+
+        // --- B. Atur Visibilitas Kolom Sanah ---
+        if (prodiTerpilih === "Program Tamhidi") {
+            if (wrapperSanah) wrapperSanah.style.display = 'none';
+            if (inputSanah) {
+                inputSanah.required = false;
+                inputSanah.value = ""; 
+            }
+        } else {
+            if (wrapperSanah) wrapperSanah.style.display = 'block';
+            if (inputSanah) inputSanah.required = true;
+        }
+
+        // --- C. Hitung Ulang Semester ---
+        hitungSemesterAkhir();
+    }
+
+    function hitungSemesterAkhir() {
+        if (!inputSemester || !inputProdi) return;
+        const prodiTerpilih = inputProdi.value;
+        const waktuSemester = cekStatusSemesterWaktu(); 
+        
+        inputSemester.innerHTML = '<option value="" disabled selected>-- Pilih Semester --</option>';
+        let hasilSemester = "";
+
+        if (prodiTerpilih === "Program Tamhidi") {
+            hasilSemester = waktuSemester; 
+        } 
+        else if (prodiTerpilih === "Pendidikan Bahasa Arab" || prodiTerpilih === "Hukum Keluarga Islam") {
+            const sanahTerpilih = inputSanah ? inputSanah.value : "";
+            
+            if (sanahTerpilih) {
+                if (waktuSemester === "Ganjil") {
+                    if (sanahTerpilih === "Sanah Ula") hasilSemester = "I (Satu)";
+                    else if (sanahTerpilih === "Sanah Tsaniyah") hasilSemester = "III (Tiga)";
+                    else if (sanahTerpilih === "Sanah Tsalisah") hasilSemester = "V (Lima)";
+                    else if (sanahTerpilih === "Sanah Robiah") hasilSemester = "VII (Tujuh)";
+                    else if (sanahTerpilih === "Menunggu Munaqosyah") hasilSemester = "IX (Sembilan)";
+                } else { // Genap
+                    if (sanahTerpilih === "Sanah Ula") hasilSemester = "II (Dua)";
+                    else if (sanahTerpilih === "Sanah Tsaniyah") hasilSemester = "IV (Empat)";
+                    else if (sanahTerpilih === "Sanah Tsalisah") hasilSemester = "VI (Enam)";
+                    else if (sanahTerpilih === "Sanah Robiah") hasilSemester = "VIII (Delapan)";
+                    else if (sanahTerpilih === "Menunggu Munaqosyah") hasilSemester = "X (Sepuluh)";
+                }
+            }
+        }
+
+        if (hasilSemester) {
+            let opt = document.createElement('option');
+            opt.value = hasilSemester;
+            opt.innerHTML = hasilSemester;
+            opt.selected = true;
+            inputSemester.appendChild(opt);
+        }
+    }
+
+    // Pasang Event Listener ke elemen Prodi dan Sanah
+    if (inputProdi) inputProdi.addEventListener('change', tanganiPerubahanProdi);
+    if (inputSanah) inputSanah.addEventListener('change', hitungSemesterAkhir);
+
 
     // --- LOGIKA TAB (FORM VS STATUS) ---
     const tabFormBtn = document.getElementById('tabFormBtn');
@@ -151,15 +267,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (fileBebas) fileBebas.required = false;
             if (fileIjazah) fileIjazah.required = false;
 
-            if (this.value === 'Bebas Tanggungan') {
+            // Pastikan pengecekan value sesuai dengan array master surat
+            if (this.value === 'Surat Bebas Tanggungan' || this.value === 'Bebas Tanggungan') {
                 if (fieldBebasTanggungan) fieldBebasTanggungan.classList.remove('hidden');
-            } else if (this.value === 'Mutasi') {
+            } else if (this.value === 'Surat Keterangan Mutasi' || this.value === 'Mutasi') {
                 if (fieldMutasi) fieldMutasi.classList.remove('hidden');
                 if (fileBebas) fileBebas.required = true; 
-            } else if (this.value === 'Lulus') {
+            } else if (this.value === 'Surat Keterangan Lulus' || this.value === 'Lulus') {
                 if (fieldLulus) fieldLulus.classList.remove('hidden');
                 if (fileIjazah) fileIjazah.required = true; 
-            } else if (this.value === 'Rekomendasi') {
+            } else if (this.value === 'Surat Rekomendasi' || this.value === 'Rekomendasi') {
                 if (fieldRekomendasi) fieldRekomendasi.classList.remove('hidden');
             }
         });
@@ -177,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 let alamatLengkap = "";
-                if (jenisSurat.value === 'Mutasi') {
+                if (jenisSurat.value === 'Surat Keterangan Mutasi' || jenisSurat.value === 'Mutasi') {
                     const namaProvinsi = selectProvinsi.options[selectProvinsi.selectedIndex]?.dataset?.name || "";
                     const namaKabupaten = selectKabupaten.options[selectKabupaten.selectedIndex]?.dataset?.name || "";
                     const namaKecamatan = selectKecamatan ? selectKecamatan.value : "";
@@ -196,13 +313,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     ktmObj.mime = fileKTM.files[0].type;
                 }
 
-                if (fileBebas && fileBebas.files[0] && jenisSurat.value === 'Mutasi') {
+                if (fileBebas && fileBebas.files[0] && (jenisSurat.value === 'Surat Keterangan Mutasi' || jenisSurat.value === 'Mutasi')) {
                     bebasObj.base64 = await getBase64(fileBebas.files[0]);
                     bebasObj.name = fileBebas.files[0].name;
                     bebasObj.mime = fileBebas.files[0].type;
                 }
 
-                if (fileIjazah && fileIjazah.files[0] && jenisSurat.value === 'Lulus') {
+                if (fileIjazah && fileIjazah.files[0] && (jenisSurat.value === 'Surat Keterangan Lulus' || jenisSurat.value === 'Lulus')) {
                     ijazahObj.base64 = await getBase64(fileIjazah.files[0]);
                     ijazahObj.name = fileIjazah.files[0].name;
                     ijazahObj.mime = fileIjazah.files[0].type;
@@ -214,8 +331,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     email: document.getElementById('email') ? document.getElementById('email').value : "",
                     tempat_lahir: document.getElementById('tempatLahir') ? document.getElementById('tempatLahir').value : "",
                     tanggal_lahir: document.getElementById('tanggalLahir') ? document.getElementById('tanggalLahir').value : "",
-                    prodi: document.getElementById('prodi') ? document.getElementById('prodi').value : "",
+                    prodi: inputProdi ? inputProdi.value : "",
                     jenis_surat: jenisSurat.value,
+                    
+                    // Menambahkan Sanah dan Semester ke Payload agar terekam di Apps Script jika diperlukan
+                    sanah: inputSanah ? inputSanah.value : "",
+                    semester: inputSemester ? inputSemester.value : "",
                     
                     tujuan_bebas: document.getElementById('tujuanBebas') ? document.getElementById('tujuanBebas').value : "",
                     kampus_tujuan: document.getElementById('kampusTujuan') ? document.getElementById('kampusTujuan').value : "",
@@ -236,7 +357,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     file_ijazah: ijazahObj
                 };
 
-                // ===== GANTI DENGAN URL APPS SCRIPT ANDA =====
                 const API_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
 
                 const response = await fetch(API_URL, {
@@ -270,6 +390,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnReset) {
         btnReset.addEventListener('click', function() {
             if (form) form.reset(); 
+            
+            // Panggil ulang fungsi untuk mereset visibilitas form dinamis
+            setTimeout(() => {
+                if(inputProdi) tanganiPerubahanProdi();
+            }, 10);
+
             if (fieldBebasTanggungan) fieldBebasTanggungan.classList.add('hidden'); 
             if (fieldMutasi) fieldMutasi.classList.add('hidden');
             if (fieldLulus) fieldLulus.classList.add('hidden');
@@ -310,7 +436,6 @@ document.addEventListener('DOMContentLoaded', function() {
             btnCariStatus.innerText = 'Mencari...';
             btnCariStatus.disabled = true;
 
-            // ===== GANTI DENGAN URL APPS SCRIPT ANDA =====
             const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
 
             try {
@@ -324,20 +449,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.length > 0) {
                     if (hasilContainer) hasilContainer.classList.remove('hidden');
                     data.forEach(item => {
-                        // 1. Logika Warna Status (Ditambah Merah untuk Ditolak)
                         let badgeColor = "bg-yellow-100 text-yellow-800";
                         if (item.status.includes("Selesai")) badgeColor = "bg-green-100 text-green-800";
                         else if (item.status.includes("Memproses") || item.status.includes("Disetujui")) badgeColor = "bg-blue-100 text-blue-800";
                         else if (item.status.includes("Ditolak")) badgeColor = "bg-red-100 text-red-700 border border-red-200";
 
-                        // 2. Merakit Tampilan Kolom Status & Catatan Penolakan
                         let statusHTML = `
                             <span class="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${badgeColor}">
                                 ${item.status}
                             </span>
                         `;
 
-                        // Jika ditolak, tambahkan kotak alasan di bawah badge status
                         if (item.status.includes("Ditolak")) {
                             let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
                             statusHTML += `
@@ -348,7 +470,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             `;
                         }
 
-                        // 3. Merakit Baris Tabel
                         const row = `
                             <tr class="hover:bg-gray-50 border-b border-gray-100 transition-colors">
                                 <td class="p-4 text-sm text-gray-600 whitespace-nowrap">${item.tanggal}</td>
@@ -373,4 +494,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    });
+});
