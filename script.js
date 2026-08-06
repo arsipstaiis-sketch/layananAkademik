@@ -52,17 +52,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // =======================================================
 
     const semuaJenisSurat = [
-        "Surat Keterangan Aktif",
-        "Surat Keterangan Lulus",
-        "Surat Bebas Tanggungan",
-        "Surat Rekomendasi",
-        "Surat Keterangan Mutasi"
+        "Keterangan Aktif",
+        "Keterangan Lulus",
+        "Bebas Tanggungan",
+        "Rekomendasi",
+        "Keterangan Mutasi"
     ];
 
     const suratTamhidi = [
-        "Surat Keterangan Aktif",
-        "Surat Bebas Tanggungan",
-        "Surat Rekomendasi"
+        "Keterangan Aktif",
+        "Bebas Tanggungan",
+        "Rekomendasi"
     ];
 
     function cekStatusSemesterWaktu() {
