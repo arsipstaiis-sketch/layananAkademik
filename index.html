@@ -3,263 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layanan Administrasi Mahasiswa</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Layanan Administrasi - STAIIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 antialiased">
-    <div class="bg-white max-w-lg w-full rounded-xl shadow-lg p-6 md:p-8">
-        
-        <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-800">Layanan Administrasi</h1>
-            <p class="text-sm text-gray-500 mt-2">Ajukan surat permohonan Anda dengan cepat dan mudah.</p>
+<body>
+
+    <div class="main-container">
+        <!-- HEADER LOGO -->
+        <div class="header-top">
+            <img src="logo.png" alt="Logo STAIIS" class="logo" onerror="this.style.display='none'">
+            <h1 class="app-title">Layanan Administrasi Mahasiswa</h1>
+            <p class="app-subtitle">Ajukan permohonan surat atau pantau status dokumen Anda.</p>
         </div>
 
-        <div class="max-w-4xl w-full mx-auto px-4 mt-6 mb-4">
-            <div class="flex border-b border-gray-200">
-                <button id="tabFormBtn" class="w-1/2 py-3 text-sm font-semibold text-green-700 border-b-2 border-green-700 transition outline-none">📝 Ajukan Surat</button>
-                <button id="tabStatusBtn" class="w-1/2 py-3 text-sm font-semibold text-gray-500 border-b-2 border-transparent hover:text-green-700 transition outline-none">🔍 Cek Status</button>
-            </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- BAGIAN 1: FORM PENGAJUAN (Tab 1)           -->
-        <!-- ========================================== -->
-        <div id="sectionForm" class="block">
-            <form id="suratForm" class="space-y-5">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                    <input type="text" id="nama" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Masukkan nama lengkap">
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">NIM</label>
-                        <input type="number" id="nim" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Contoh: 12345678">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Mahasiswa</label>
-                        <input type="email" id="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="email@kampus.ac.id">
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tempat Lahir</label>
-                        <input type="text" id="tempatLahir" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Contoh: Cianjur">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
-                        <input type="date" id="tanggalLahir" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
-                    </div>
-                </div>
-
-                <!-- Kolom Prodi (Diperbarui dengan opsi Tamhidi) -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Program Studi</label>
-                    <select id="prodi" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
-                        <option value="" disabled selected>-- Pilih Program Studi --</option>
-                        <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
-                        <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
-                        <option value="Program Tamhidi">Program Tamhidi</option>
-                    </select>
-                </div>
-
-                <!-- Kolom Sanah (Disembunyikan secara default, diatur oleh JS) -->
-                <div id="wrapper_sanah" style="display: none;">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Sanah (Tingkatan)</label>
-                    <select id="sanah" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
-                        <option value="" disabled selected>-- Pilih Sanah --</option>
-                        <option value="Sanah Ula">Sanah Ula</option>
-                        <option value="Sanah Tsaniyah">Sanah Tsaniyah</option>
-                        <option value="Sanah Tsalisah">Sanah Tsalisah</option>
-                        <option value="Sanah Robiah">Sanah Robiah</option>
-                        <option value="Menunggu Munaqosyah">Menunggu Munaqosyah</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Kolom Jenis Surat -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Surat</label>
-                        <select id="jenisSurat" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
-                            <!-- Isinya akan di-generate otomatis oleh JavaScript -->
-                            <option value="" disabled selected>-- Pilih Jenis Surat --</option>
-                        </select>
-                    </div>
-
-                    <!-- Kolom Semester Baru -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Semester Aktif</label>
-                        <select id="semester" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-gray-50 cursor-not-allowed pointer-events-none appearance-none text-center">
-                            <!-- Isinya otomatis terisi oleh JS berdasarkan Prodi dan Sanah -->
-                            <option value="" disabled selected>-</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Data Tambahan Dinamis (Bebas, Mutasi, Lulus, Rekomendasi) -->
-                <div id="fieldBebasTanggungan" class="hidden space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                    <p class="text-xs font-semibold text-blue-800 mb-2">Data Tambahan Bebas Tanggungan</p>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tujuan Keperluan</label>
-                        <input type="text" id="tujuanBebas" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Misal: Persyaratan Wisuda">
-                    </div>
-                </div>
-
-                <div id="fieldMutasi" class="hidden space-y-4 p-4 bg-orange-50 rounded-lg border border-orange-100">
-                    <p class="text-xs font-semibold text-orange-800 mb-2">Data Tambahan Mutasi</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Universitas Tujuan</label>
-                            <input type="text" id="kampusTujuan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Nama kampus tujuan">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Program Studi Tujuan</label>
-                            <input type="text" id="prodiTujuan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Contoh: Manajemen Pendidikan">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Provinsi Tujuan</label>
-                            <select id="provinsiTujuan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-white text-sm">
-                                <option value="" disabled selected>-- Provinsi --</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Kabupaten/Kota</label>
-                            <select id="kabupatenTujuan" disabled class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-gray-100 cursor-not-allowed text-sm">
-                                <option value="" disabled selected>-- Kab/Kota --</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Kecamatan</label>
-                            <select id="kecamatanTujuan" disabled class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-gray-100 cursor-not-allowed text-sm">
-                                <option value="" disabled selected>-- Kecamatan --</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Detail Alamat Kampus</label>
-                        <textarea id="detailAlamat" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Nama jalan, nama gedung, dsb."></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Alasan Pindah</label>
-                        <textarea id="alasanMutasi" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Jelaskan alasan secara singkat"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Upload Bebas Tanggungan <span class="text-red-500">*</span></label>
-                        <input type="file" id="fileBebas" accept=".pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
-                        <p class="text-xs text-gray-500 mt-1">Format: PDF. Wajib untuk permohonan Mutasi.</p>
-                    </div>
-                </div>
-                
-                <div id="fieldLulus" class="hidden space-y-4 p-4 bg-green-50 rounded-lg border border-green-100">
-                    <p class="text-xs font-semibold text-green-800 mb-2">Data Tambahan Surat Lulus</p>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Munaqosyah</label>
-                        <input type="date" id="tanggalMunaqosyah" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Upload Berkas Persyaratan Ijazah <span class="text-red-500">*</span></label>
-                        <input type="file" id="fileIjazah" accept=".pdf, .jpg, .jpeg" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
-                        <p class="text-xs text-gray-500 mt-1">Format: PDF/JPG. Wajib diisi untuk permohonan SKL.</p>
-                    </div>
-                </div>
-
-                <div id="fieldRekomendasi" class="hidden space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
-                    <p class="text-xs font-semibold text-purple-800 mb-2">Data Kegiatan (Surat Rekomendasi)</p>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kegiatan <span class="text-red-500">*</span></label>
-                        <input type="text" id="namaKegiatan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" placeholder="Contoh: Lomba Debat Bahasa Arab Tingkat Nasional">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Lokasi Kegiatan <span class="text-red-500">*</span></label>
-                        <input type="text" id="lokasiKegiatan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" placeholder="Contoh: Universitas Gadjah Mada, Yogyakarta">
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai <span class="text-red-500">*</span></label>
-                            <input type="date" id="tglMulaiKegiatan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai (Opsional)</label>
-                            <input type="date" id="tglSelesaiKegiatan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
-                            <p class="text-xs text-gray-500 mt-1">Kosongkan jika kegiatan hanya 1 hari.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Upload Kartu Tanda Mahasiswa (KTM) <span class="text-red-500">*</span></label>
-                    <input type="file" id="fileKTM" required accept=".pdf, .jpg, .jpeg" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                    <p class="text-xs text-gray-500 mt-1">Format: PDF atau JPG. Maks 3MB.</p>
-                </div>
-
-                <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors flex justify-center items-center">
-                    <span id="btnText">Kirim Permohonan</span>
-                    <svg id="btnSpinner" class="hidden animate-spin ml-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+        <div class="card">
+            <!-- TAB MENU NAVIGASI -->
+            <div class="nav-menu">
+                <button id="tabFormBtn" class="nav-btn active">
+                    <span style="font-size: 20px;">📝</span>
+                    Pengajuan Surat Baru
                 </button>
-            </form>
-            
-            <div id="successMessage" class="hidden text-center py-8">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
-                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
+                <button id="tabStatusBtn" class="nav-btn">
+                    <span style="font-size: 20px;">🔍</span>
+                    Verifikasi & Cek Status
+                </button>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- BAGIAN 1: FORM PENGAJUAN (Tab 1)           -->
+            <!-- ========================================== -->
+            <div id="sectionForm">
+                <form id="suratForm" class="form-section">
+                    
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="nama" class="form-control" required placeholder="Sesuai Ijazah terakhir">
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Nomor Induk Mahasiswa (NIM)</label>
+                            <input type="number" id="nim" class="form-control" required placeholder="Contoh: 12345678">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Aktif</label>
+                            <input type="email" id="email" class="form-control" required placeholder="Email untuk pengiriman dokumen">
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Tempat Lahir</label>
+                            <input type="text" id="tempatLahir" class="form-control" required placeholder="Kota lahir">
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Lahir</label>
+                            <input type="date" id="tanggalLahir" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Program Studi</label>
+                        <select id="prodi" class="form-control" required>
+                            <option value="" disabled selected>-- Pilih Program Studi --</option>
+                            <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
+                            <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
+                            <option value="Program Tamhidi">Program Tamhidi</option>
+                        </select>
+                    </div>
+
+                    <div id="wrapper_sanah" class="form-group hidden">
+                        <label>Sanah (Tingkatan Tahun)</label>
+                        <select id="sanah" class="form-control">
+                            <option value="" disabled selected>-- Pilih Sanah --</option>
+                            <option value="Sanah Ula">Sanah Ula (Tahun ke-1)</option>
+                            <option value="Sanah Tsaniyah">Sanah Tsaniyah (Tahun ke-2)</option>
+                            <option value="Sanah Tsalisah">Sanah Tsalisah (Tahun ke-3)</option>
+                            <option value="Sanah Robiah">Sanah Robiah (Tahun ke-4)</option>
+                            <option value="Menunggu Munaqosyah">Menunggu Munaqosyah</option>
+                        </select>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Jenis Surat</label>
+                            <select id="jenisSurat" class="form-control" required>
+                                <option value="" disabled selected>-- Pilih Jenis Surat --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Semester Aktif</label>
+                            <select id="semester" class="form-control appearance-none" required disabled>
+                                <option value="" disabled selected>-- Terisi Otomatis --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- BLOK DINAMIS -->
+                    <div id="fieldBebasTanggungan" class="dynamic-box box-blue hidden">
+                        <div class="box-title text-blue">Data Tambahan Bebas Tanggungan</div>
+                        <div class="form-group">
+                            <label>Tujuan Keperluan</label>
+                            <input type="text" id="tujuanBebas" class="form-control" placeholder="Misal: Persyaratan Wisuda">
+                        </div>
+                    </div>
+
+                    <div id="fieldMutasi" class="dynamic-box box-orange hidden form-section">
+                        <div class="box-title">Data Tambahan Mutasi</div>
+                        <div class="grid-2">
+                            <div class="form-group"><label>Kampus Tujuan</label><input type="text" id="kampusTujuan" class="form-control"></div>
+                            <div class="form-group"><label>Prodi Tujuan</label><input type="text" id="prodiTujuan" class="form-control"></div>
+                        </div>
+                        <div class="grid-3">
+                            <div class="form-group"><label>Provinsi</label><select id="provinsiTujuan" class="form-control"><option value="">-- Provinsi --</option></select></div>
+                            <div class="form-group"><label>Kabupaten</label><select id="kabupatenTujuan" class="form-control" disabled><option value="">-- Kab/Kota --</option></select></div>
+                            <div class="form-group"><label>Kecamatan</label><select id="kecamatanTujuan" class="form-control" disabled><option value="">-- Kecamatan --</option></select></div>
+                        </div>
+                        <div class="form-group"><label>Jalan / Detail Alamat</label><textarea id="detailAlamat" class="form-control" rows="2"></textarea></div>
+                        <div class="form-group"><label>Alasan Pindah</label><textarea id="alasanMutasi" class="form-control" rows="2"></textarea></div>
+                        <div class="form-group"><label>Upload Bebas Tanggungan (PDF)</label><input type="file" id="fileBebas" accept=".pdf" class="form-control"></div>
+                    </div>
+                    
+                    <div id="fieldLulus" class="dynamic-box box-green hidden form-section">
+                        <div class="box-title">Data Tambahan Surat Lulus</div>
+                        <div class="form-group"><label>Tanggal Munaqosyah</label><input type="date" id="tanggalMunaqosyah" class="form-control"></div>
+                        <div class="form-group"><label>Upload Berkas Persyaratan Ijazah</label><input type="file" id="fileIjazah" accept=".pdf,.jpg" class="form-control"></div>
+                    </div>
+
+                    <div id="fieldRekomendasi" class="dynamic-box box-blue hidden form-section">
+                        <div class="box-title">Data Kegiatan (Rekomendasi)</div>
+                        <div class="form-group"><label>Nama Kegiatan</label><input type="text" id="namaKegiatan" class="form-control"></div>
+                        <div class="form-group"><label>Lokasi Kegiatan</label><input type="text" id="lokasiKegiatan" class="form-control"></div>
+                        <div class="grid-2">
+                            <div class="form-group"><label>Tgl Mulai</label><input type="date" id="tglMulaiKegiatan" class="form-control"></div>
+                            <div class="form-group"><label>Tgl Selesai (Opsional)</label><input type="date" id="tglSelesaiKegiatan" class="form-control"></div>
+                        </div>
+                    </div>
+                    
+                    <hr style="border: 0; border-top: 1px solid var(--border); margin: 5px 0;">
+
+                    <div class="form-group">
+                        <label>Upload Kartu Tanda Mahasiswa (KTM)</label>
+                        <input type="file" id="fileKTM" required accept=".pdf, .jpg, .jpeg" class="form-control">
+                        <span style="font-size:11px; color:var(--text-muted);">Format: PDF/JPG. Maks 3MB.</span>
+                    </div>
+
+                    <button type="submit" id="btnSubmit" class="btn-submit">
+                        <span id="btnText">Kirim Permohonan Surat</span>
+                    </button>
+                </form>
+                
+                <div id="successMessage" class="hidden" style="text-align:center; padding: 40px 20px;">
+                    <div style="font-size: 50px; margin-bottom:10px;">✅</div>
+                    <h2>Permohonan Berhasil!</h2>
+                    <p style="color:var(--text-muted); margin-top:10px;">Data Anda telah masuk ke sistem. Dokumen akan diproses dan dikirimkan ke email Anda.</p>
+                    <button id="btnReset" style="margin-top:20px; background:none; border:none; color:var(--primary); font-weight:bold; cursor:pointer;">Ajukan surat lainnya</button>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800 mb-2">Permohonan Berhasil!</h2>
-                <p class="text-sm text-gray-600">Data Anda telah masuk ke sistem. Dokumen akan diproses dan dikirimkan ke email Anda dalam waktu dekat.</p>
-                <button id="btnReset" class="mt-6 text-sm text-blue-600 font-medium hover:underline">Ajukan surat lainnya</button>
-            </div>
-            
-        </div> <!-- Penutup Tab 1 -->
-
-        <!-- ========================================== -->
-        <!-- BAGIAN 2: CEK STATUS (Tab 2)               -->
-        <!-- ========================================== -->
-        <div id="sectionStatus" class="hidden mt-6">
-            <p class="text-sm text-gray-600 mb-6 text-center">Masukkan NIM Anda untuk memantau status pengajuan.</p>
-
-            <div class="flex gap-3 mb-8">
-                <input type="text" id="inputNIMStatus" placeholder="Ketik NIM Anda..." class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 outline-none text-sm">
-                <button id="btnCariStatus" class="bg-green-800 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium text-sm transition min-w-[100px]">Cari</button>
             </div>
 
-            <div id="hasilContainerStatus" class="hidden">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">Riwayat Pengajuan:</h3>
-                <div class="overflow-x-auto border border-gray-200 rounded-lg">
-                    <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-700 border-b">
-                                <th class="p-3">Tanggal</th>
-                                <th class="p-3">Jenis Surat</th>
-                                <th class="p-3">Nomor Surat</th>
-                                <th class="p-3">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelBodyStatus" class="divide-y divide-gray-100"></tbody>
-                    </table>
+            <!-- ========================================== -->
+            <!-- BAGIAN 2: CEK STATUS (Tab 2)               -->
+            <!-- ========================================== -->
+            <div id="sectionStatus" class="hidden">
+                <div class="search-bar">
+                    <input type="text" id="inputNIMStatus" placeholder="Masukkan NIM Anda..." class="form-control">
+                    <button id="btnCariStatus" class="btn-search">Cari Data</button>
+                </div>
+
+                <div id="hasilContainerStatus" class="hidden">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Jenis Surat</th>
+                                    <th>Status Dokumen</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelBodyStatus"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="pesanKosongStatus" class="hidden" style="text-align:center; padding:30px; color:var(--text-muted);">
+                    Tidak ada riwayat permohonan untuk NIM tersebut.
                 </div>
             </div>
-
-            <div id="pesanKosongStatus" class="hidden text-center py-8 text-gray-500 text-sm">
-                Belum ada riwayat permohonan surat untuk NIM tersebut.
-            </div>
+            
         </div>
-        
     </div>
     <script src="script.js"></script>
 </body>
