@@ -9,195 +9,190 @@
 </head>
 <body>
 
-    <!-- HEADER PENUH & STICKY MENGIKUTI REFERENSI -->
-    <header class="header-section">
-        <div class="header-container">
-            <div class="header-top-wrapper">
-                <div class="logo-title-group">
-                    <img src="logo.png" alt="Logo STAIIS" class="header-logo" onerror="this.style.display='none'">
-                    <div>
-                        <span class="overline">Layanan Administrasi Persuratan</span>
-                        <h1 class="header-title">Sistem Administrasi STAIIS</h1>
-                    </div>
-                </div>
-            </div>
-            
-            <p class="header-subtitle">Aplikasi pengajuan surat resmi dan arsip dokumen digital mahasiswa.</p>
-            
-            <!-- NAVIGASI TAB -->
-            <div class="nav-tabs">
-                <button id="tabFormBtn" class="nav-tab active">AMBIL SURAT</button>
-                <button id="tabStatusBtn" class="nav-tab">CEK STATUS & VERIFIKASI</button>
-            </div>
+    <div class="main-container">
+        <!-- HEADER LOGO -->
+        <div class="header-top">
+            <img src="logo.png" alt="Logo STAIIS" class="logo" onerror="this.style.display='none'">
+            <h1 class="app-title">Layanan Administrasi Mahasiswa</h1>
+            <p class="app-subtitle">Ajukan permohonan surat atau pantau status dokumen Anda.</p>
         </div>
-    </header>
 
-    <!-- KONTEN UTAMA -->
-    <main class="main-content">
         <div class="card">
-            
-            <!-- KOTAK ISIAN DENGAN BATAS TINGGI (CALC) & SCROLLBAR -->
-            <div class="form-scroll-container">
-                
-                <!-- BAGIAN 1: FORM PENGAJUAN -->
-                <div id="sectionForm">
-                    <form id="suratForm" class="form-section">
-                        
-                        <div class="form-group">
-                            <label>Nama Lengkap</label>
-                            <input type="text" id="nama" class="form-control" required placeholder="Sesuai ijazah terakhir">
-                        </div>
+            <!-- TAB MENU NAVIGASI -->
+            <div class="nav-menu">
+                <button id="tabFormBtn" class="nav-btn active">
+                    <span style="font-size: 20px;">📝</span>
+                    Pengajuan Surat Baru
+                </button>
+                <button id="tabStatusBtn" class="nav-btn">
+                    <span style="font-size: 20px;">🔍</span>
+                    Verifikasi & Cek Status
+                </button>
+            </div>
 
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label>Nomor Induk Mahasiswa (NIM)</label>
-                                <input type="number" id="nim" class="form-control" required placeholder="Contoh: 12345678">
-                            </div>
-                            <div class="form-group">
-                                <label>Email Mahasiswa</label>
-                                <input type="email" id="email" class="form-control" required placeholder="email@kampus.ac.id">
-                            </div>
-                        </div>
-                        
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label>Tempat Lahir</label>
-                                <input type="text" id="tempatLahir" class="form-control" required placeholder="Kota lahir">
-                            </div>
-                            <div class="form-group">
-                                <label>Tanggal Lahir</label>
-                                <input type="date" id="tanggalLahir" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Program Studi</label>
-                            <select id="prodi" class="form-control" required>
-                                <option value="" disabled selected>-- Pilih Program Studi --</option>
-                                <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
-                                <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
-                                <option value="Program Tamhidi">Program Tamhidi</option>
-                            </select>
-                        </div>
-
-                        <div id="wrapper_sanah" class="form-group hidden">
-                            <label>Sanah (Tingkatan Tahun)</label>
-                            <select id="sanah" class="form-control">
-                                <option value="" disabled selected>-- Pilih Sanah --</option>
-                                <option value="Sanah Ula">Sanah Ula (Tahun ke-1)</option>
-                                <option value="Sanah Tsaniyah">Sanah Tsaniyah (Tahun ke-2)</option>
-                                <option value="Sanah Tsalisah">Sanah Tsalisah (Tahun ke-3)</option>
-                                <option value="Sanah Robiah">Sanah Robiah (Tahun ke-4)</option>
-                                <option value="Menunggu Munaqosyah">Menunggu Munaqosyah</option>
-                            </select>
-                        </div>
-
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label>Jenis Surat</label>
-                                <select id="jenisSurat" class="form-control" required>
-                                    <option value="" disabled selected>-- Pilih Jenis Surat --</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Semester Aktif</label>
-                                <select id="semester" class="form-control appearance-none" required disabled>
-                                    <option value="" disabled selected>-</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- BLOK DINAMIS -->
-                        <div id="fieldBebasTanggungan" class="dynamic-box box-blue hidden">
-                            <div class="box-title">Data Tambahan Bebas Tanggungan</div>
-                            <div class="form-group">
-                                <label>Tujuan Keperluan</label>
-                                <input type="text" id="tujuanBebas" class="form-control" placeholder="Misal: Persyaratan Wisuda">
-                            </div>
-                        </div>
-
-                        <div id="fieldMutasi" class="dynamic-box box-orange hidden form-section">
-                            <div class="box-title">Data Tambahan Mutasi</div>
-                            <div class="grid-2">
-                                <div class="form-group"><label>Kampus Tujuan</label><input type="text" id="kampusTujuan" class="form-control"></div>
-                                <div class="form-group"><label>Prodi Tujuan</label><input type="text" id="prodiTujuan" class="form-control"></div>
-                            </div>
-                            <div class="grid-3">
-                                <div class="form-group"><label>Provinsi</label><select id="provinsiTujuan" class="form-control"><option value="">-- Provinsi --</option></select></div>
-                                <div class="form-group"><label>Kabupaten</label><select id="kabupatenTujuan" class="form-control" disabled><option value="">-- Kab/Kota --</option></select></div>
-                                <div class="form-group"><label>Kecamatan</label><select id="kecamatanTujuan" class="form-control" disabled><option value="">-- Kecamatan --</option></select></div>
-                            </div>
-                            <div class="form-group"><label>Detail Alamat Kampus</label><textarea id="detailAlamat" class="form-control" rows="2"></textarea></div>
-                            <div class="form-group"><label>Alasan Pindah</label><textarea id="alasanMutasi" class="form-control" rows="2"></textarea></div>
-                            <div class="form-group"><label>Upload Bebas Tanggungan (PDF)</label><input type="file" id="fileBebas" accept=".pdf" class="form-control"></div>
-                        </div>
-                        
-                        <div id="fieldLulus" class="dynamic-box box-green hidden form-section">
-                            <div class="box-title">Data Tambahan Surat Lulus</div>
-                            <div class="form-group"><label>Tanggal Munaqosyah</label><input type="date" id="tanggalMunaqosyah" class="form-control"></div>
-                            <div class="form-group"><label>Upload Berkas Persyaratan Ijazah</label><input type="file" id="fileIjazah" accept=".pdf,.jpg" class="form-control"></div>
-                        </div>
-
-                        <div id="fieldRekomendasi" class="dynamic-box box-blue hidden form-section">
-                            <div class="box-title">Data Kegiatan (Rekomendasi)</div>
-                            <div class="form-group"><label>Nama Kegiatan</label><input type="text" id="namaKegiatan" class="form-control"></div>
-                            <div class="form-group"><label>Lokasi Kegiatan</label><input type="text" id="lokasiKegiatan" class="form-control"></div>
-                            <div class="grid-2">
-                                <div class="form-group"><label>Tanggal Mulai</label><input type="date" id="tglMulaiKegiatan" class="form-control"></div>
-                                <div class="form-group"><label>Tanggal Selesai (Opsional)</label><input type="date" id="tglSelesaiKegiatan" class="form-control"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Upload Kartu Tanda Mahasiswa (KTM)</label>
-                            <input type="file" id="fileKTM" required accept=".pdf, .jpg, .jpeg" class="form-control">
-                            <span style="font-size:11px; color:var(--text-muted);">Format: PDF atau JPG. Maks 3MB.</span>
-                        </div>
-
-                        <button type="submit" id="btnSubmit" class="btn-submit">
-                            <span id="btnText">Kirim Permohonan Surat</span>
-                        </button>
-                    </form>
+            <!-- ========================================== -->
+            <!-- BAGIAN 1: FORM PENGAJUAN (Tab 1)           -->
+            <!-- ========================================== -->
+            <div id="sectionForm">
+                <form id="suratForm" class="form-section">
                     
-                    <div id="successMessage" class="hidden" style="text-align:center; padding: 40px 20px;">
-                        <div style="font-size: 50px; margin-bottom:10px;">✅</div>
-                        <h2>Permohonan Berhasil!</h2>
-                        <p style="color:var(--text-muted); margin-top:10px;">Data Anda telah masuk ke sistem. Dokumen akan diproses dan dikirimkan ke email Anda.</p>
-                        <button id="btnReset" style="margin-top:20px; background:none; border:none; color:var(--primary); font-weight:bold; cursor:pointer;">Ajukan surat lainnya</button>
-                    </div>
-                </div>
-
-                <!-- BAGIAN 2: CEK STATUS -->
-                <div id="sectionStatus" class="hidden">
-                    <div class="search-bar">
-                        <input type="text" id="inputNIMStatus" placeholder="Masukkan NIM Anda..." class="form-control">
-                        <button id="btnCariStatus" class="btn-search">Cari Data</button>
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="nama" class="form-control" required placeholder="Sesuai Ijazah terakhir">
                     </div>
 
-                    <div id="hasilContainerStatus" class="hidden">
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Tanggal</th>
-                                        <th>Jenis Surat</th>
-                                        <th>Status Dokumen</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabelBodyStatus"></tbody>
-                            </table>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Nomor Induk Mahasiswa (NIM)</label>
+                            <input type="number" id="nim" class="form-control" required placeholder="Contoh: 12345678">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Aktif</label>
+                            <input type="email" id="email" class="form-control" required placeholder="Email untuk pengiriman dokumen">
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Tempat Lahir</label>
+                            <input type="text" id="tempatLahir" class="form-control" required placeholder="Kota lahir">
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Lahir</label>
+                            <input type="date" id="tanggalLahir" class="form-control" required>
                         </div>
                     </div>
 
-                    <div id="pesanKosongStatus" class="hidden" style="text-align:center; padding:30px; color:var(--text-muted);">
-                        Tidak ada riwayat permohonan untuk NIM tersebut.
+                    <div class="form-group">
+                        <label>Program Studi</label>
+                        <select id="prodi" class="form-control" required>
+                            <option value="" disabled selected>-- Pilih Program Studi --</option>
+                            <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
+                            <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
+                            <option value="Program Tamhidi">Program Tamhidi</option>
+                        </select>
+                    </div>
+
+                    <div id="wrapper_sanah" class="form-group hidden">
+                        <label>Sanah (Tingkatan Tahun)</label>
+                        <select id="sanah" class="form-control">
+                            <option value="" disabled selected>-- Pilih Sanah --</option>
+                            <option value="Sanah Ula">Sanah Ula (Tahun ke-1)</option>
+                            <option value="Sanah Tsaniyah">Sanah Tsaniyah (Tahun ke-2)</option>
+                            <option value="Sanah Tsalisah">Sanah Tsalisah (Tahun ke-3)</option>
+                            <option value="Sanah Robiah">Sanah Robiah (Tahun ke-4)</option>
+                            <option value="Menunggu Munaqosyah">Menunggu Munaqosyah</option>
+                        </select>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Jenis Surat</label>
+                            <select id="jenisSurat" class="form-control" required>
+                                <option value="" disabled selected>-- Pilih Jenis Surat --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Semester Aktif</label>
+                            <select id="semester" class="form-control appearance-none" required disabled>
+                                <option value="" disabled selected>-- Terisi Otomatis --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- BLOK DINAMIS -->
+                    <div id="fieldBebasTanggungan" class="dynamic-box box-blue hidden">
+                        <div class="box-title text-blue">Data Tambahan Bebas Tanggungan</div>
+                        <div class="form-group">
+                            <label>Tujuan Keperluan</label>
+                            <input type="text" id="tujuanBebas" class="form-control" placeholder="Misal: Persyaratan Wisuda">
+                        </div>
+                    </div>
+
+                    <div id="fieldMutasi" class="dynamic-box box-orange hidden form-section">
+                        <div class="box-title">Data Tambahan Mutasi</div>
+                        <div class="grid-2">
+                            <div class="form-group"><label>Kampus Tujuan</label><input type="text" id="kampusTujuan" class="form-control"></div>
+                            <div class="form-group"><label>Prodi Tujuan</label><input type="text" id="prodiTujuan" class="form-control"></div>
+                        </div>
+                        <div class="grid-3">
+                            <div class="form-group"><label>Provinsi</label><select id="provinsiTujuan" class="form-control"><option value="">-- Provinsi --</option></select></div>
+                            <div class="form-group"><label>Kabupaten</label><select id="kabupatenTujuan" class="form-control" disabled><option value="">-- Kab/Kota --</option></select></div>
+                            <div class="form-group"><label>Kecamatan</label><select id="kecamatanTujuan" class="form-control" disabled><option value="">-- Kecamatan --</option></select></div>
+                        </div>
+                        <div class="form-group"><label>Jalan / Detail Alamat</label><textarea id="detailAlamat" class="form-control" rows="2"></textarea></div>
+                        <div class="form-group"><label>Alasan Pindah</label><textarea id="alasanMutasi" class="form-control" rows="2"></textarea></div>
+                        <div class="form-group"><label>Upload Bebas Tanggungan (PDF)</label><input type="file" id="fileBebas" accept=".pdf" class="form-control"></div>
+                    </div>
+                    
+                    <div id="fieldLulus" class="dynamic-box box-green hidden form-section">
+                        <div class="box-title">Data Tambahan Surat Lulus</div>
+                        <div class="form-group"><label>Tanggal Munaqosyah</label><input type="date" id="tanggalMunaqosyah" class="form-control"></div>
+                        <div class="form-group"><label>Upload Berkas Persyaratan Ijazah</label><input type="file" id="fileIjazah" accept=".pdf,.jpg" class="form-control"></div>
+                    </div>
+
+                    <div id="fieldRekomendasi" class="dynamic-box box-blue hidden form-section">
+                        <div class="box-title">Data Kegiatan (Rekomendasi)</div>
+                        <div class="form-group"><label>Nama Kegiatan</label><input type="text" id="namaKegiatan" class="form-control"></div>
+                        <div class="form-group"><label>Lokasi Kegiatan</label><input type="text" id="lokasiKegiatan" class="form-control"></div>
+                        <div class="grid-2">
+                            <div class="form-group"><label>Tgl Mulai</label><input type="date" id="tglMulaiKegiatan" class="form-control"></div>
+                            <div class="form-group"><label>Tgl Selesai (Opsional)</label><input type="date" id="tglSelesaiKegiatan" class="form-control"></div>
+                        </div>
+                    </div>
+                    
+                    <hr style="border: 0; border-top: 1px solid var(--border); margin: 5px 0;">
+
+                    <div class="form-group">
+                        <label>Upload Kartu Tanda Mahasiswa (KTM)</label>
+                        <input type="file" id="fileKTM" required accept=".pdf, .jpg, .jpeg" class="form-control">
+                        <span style="font-size:11px; color:var(--text-muted);">Format: PDF/JPG. Maks 3MB.</span>
+                    </div>
+
+                    <button type="submit" id="btnSubmit" class="btn-submit">
+                        <span id="btnText">Kirim Permohonan Surat</span>
+                    </button>
+                </form>
+                
+                <div id="successMessage" class="hidden" style="text-align:center; padding: 40px 20px;">
+                    <div style="font-size: 50px; margin-bottom:10px;">✅</div>
+                    <h2>Permohonan Berhasil!</h2>
+                    <p style="color:var(--text-muted); margin-top:10px;">Data Anda telah masuk ke sistem. Dokumen akan diproses dan dikirimkan ke email Anda.</p>
+                    <button id="btnReset" style="margin-top:20px; background:none; border:none; color:var(--primary); font-weight:bold; cursor:pointer;">Ajukan surat lainnya</button>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- BAGIAN 2: CEK STATUS (Tab 2)               -->
+            <!-- ========================================== -->
+            <div id="sectionStatus" class="hidden">
+                <div class="search-bar">
+                    <input type="text" id="inputNIMStatus" placeholder="Masukkan NIM Anda..." class="form-control">
+                    <button id="btnCariStatus" class="btn-search">Cari Data</button>
+                </div>
+
+                <div id="hasilContainerStatus" class="hidden">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Jenis Surat</th>
+                                    <th>Status Dokumen</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelBodyStatus"></tbody>
+                        </table>
                     </div>
                 </div>
 
-            </div> <!-- Penutup form-scroll-container -->
+                <div id="pesanKosongStatus" class="hidden" style="text-align:center; padding:30px; color:var(--text-muted);">
+                    Tidak ada riwayat permohonan untuk NIM tersebut.
+                </div>
+            </div>
             
         </div>
-    </main>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
