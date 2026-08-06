@@ -137,3 +137,13 @@ tr:hover td { background-color: #f9fafb; }
 
 /* Icon Sukses */
 .success-icon { width: 80px; height: 80px; color: var(--success); margin: 0 auto 20px; stroke-width: 1.5; }
+/* Animasi Putar untuk Spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Pastikan class hidden menyembunyikan elemen dengan sempurna */
+.hidden {
+    display: none !important;
+}
