@@ -155,7 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // --- LOGIKA TAB (FORM VS STATUS) ---
-    // Diperbarui: Menggunakan CSS Native (.active dan .hidden)
     const tabFormBtn = document.getElementById('tabFormBtn');
     const tabStatusBtn = document.getElementById('tabStatusBtn');
     const sectionForm = document.getElementById('sectionForm');
@@ -178,7 +177,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- LOGIKA API WILAYAH ---
-    // Diperbarui: Hapus class Tailwind, serahkan styling ke CSS form-control:disabled
     if (selectProvinsi) {
         fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
             .then(response => response.json())
@@ -255,10 +253,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (this.value === 'Surat Bebas Tanggungan' || this.value === 'Bebas Tanggungan') {
                 if (fieldBebasTanggungan) fieldBebasTanggungan.classList.remove('hidden');
-            } else if (this.value === 'Surat Keterangan Mutasi' || this.value === 'Mutasi') {
+            } else if (this.value === 'Surat Keterangan Mutasi' || this.value === 'Keterangan Mutasi') {
                 if (fieldMutasi) fieldMutasi.classList.remove('hidden');
                 if (fileBebas) fileBebas.required = true; 
-            } else if (this.value === 'Surat Keterangan Lulus' || this.value === 'Lulus') {
+            } else if (this.value === 'Surat Keterangan Lulus' || this.value === 'Keterangan Lulus') {
                 if (fieldLulus) fieldLulus.classList.remove('hidden');
                 if (fileIjazah) fileIjazah.required = true; 
             } else if (this.value === 'Surat Rekomendasi' || this.value === 'Rekomendasi') {
@@ -274,11 +272,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             btnSubmit.disabled = true;
             btnText.innerText = 'Mengirim... (Proses Upload)';
-            btnSpinner.classList.remove('hidden');
+            if (btnSpinner) btnSpinner.classList.remove('hidden');
 
             try {
                 let alamatLengkap = "";
-                if (jenisSurat.value === 'Surat Keterangan Mutasi' || jenisSurat.value === 'Mutasi') {
+                if (jenisSurat.value === 'Surat Keterangan Mutasi' || jenisSurat.value === 'Keterangan Mutasi') {
                     const namaProvinsi = selectProvinsi.options[selectProvinsi.selectedIndex]?.dataset?.name || "";
                     const namaKabupaten = selectKabupaten.options[selectKabupaten.selectedIndex]?.dataset?.name || "";
                     const namaKecamatan = selectKecamatan ? selectKecamatan.value : "";
@@ -297,13 +295,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     ktmObj.mime = fileKTM.files[0].type;
                 }
 
-                if (fileBebas && fileBebas.files[0] && (jenisSurat.value === 'Surat Keterangan Mutasi' || jenisSurat.value === 'Mutasi')) {
+                if (fileBebas && fileBebas.files[0] && (jenisSurat.value === 'Surat Keterangan Mutasi' || jenisSurat.value === 'Keterangan Mutasi')) {
                     bebasObj.base64 = await getBase64(fileBebas.files[0]);
                     bebasObj.name = fileBebas.files[0].name;
                     bebasObj.mime = fileBebas.files[0].type;
                 }
 
-                if (fileIjazah && fileIjazah.files[0] && (jenisSurat.value === 'Surat Keterangan Lulus' || jenisSurat.value === 'Lulus')) {
+                if (fileIjazah && fileIjazah.files[0] && (jenisSurat.value === 'Surat Keterangan Lulus' || jenisSurat.value === 'Keterangan Lulus')) {
                     ijazahObj.base64 = await getBase64(fileIjazah.files[0]);
                     ijazahObj.name = fileIjazah.files[0].name;
                     ijazahObj.mime = fileIjazah.files[0].type;
@@ -351,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    form.classList.add('hidden'); 
+                    if (form) form.classList.add('hidden'); 
                     if (successMessage) successMessage.classList.remove('hidden'); 
                 } else {
                     alert('Terjadi kesalahan sistem di server: ' + data.message);
@@ -363,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } finally {
                 btnSubmit.disabled = false;
                 btnText.innerText = 'Kirim Permohonan Surat';
-                btnSpinner.classList.add('hidden');
+                if (btnSpinner) btnSpinner.classList.add('hidden');
             }
         });
     }
@@ -397,7 +395,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- LOGIKA PENCARIAN STATUS ---
-    // Diperbarui: Merakit HTML Tabel menggunakan struktur CSS Native
     const btnCariStatus = document.getElementById('btnCariStatus');
     if (btnCariStatus) {
         btnCariStatus.addEventListener('click', async function() {
@@ -428,14 +425,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (hasilContainer) hasilContainer.classList.remove('hidden');
                     data.forEach(item => {
                         
-                        // Menyesuaikan Badge Status ke Native CSS
-                        let badgeClass = "badge-proses";
-                        if (item.status.includes("Selesai")) badgeClass = "badge-selesai";
-                        else if (item.status.includes("Ditolak")) badgeClass = "badge-tolak";
+                        // 1. LOGIKA WARNA STATUS BARU
+                        let badgeClass = "badge-verifikasi"; // Default: Kuning/Orange (Menunggu Verifikasi)
+                        let statusText = item.status.toLowerCase();
+
+                        if (statusText.includes("sudah dikirim") || statusText.includes("selesai")) {
+                            badgeClass = "badge-selesai"; // Hijau
+                        } else if (statusText.includes("menunggu dikirim")) {
+                            badgeClass = "badge-dikirim"; // Biru
+                        } else if (statusText.includes("tolak")) {
+                            badgeClass = "badge-tolak";   // Merah
+                        }
 
                         let statusHTML = `<span class="badge ${badgeClass}">${item.status}</span>`;
 
-                        if (item.status.includes("Ditolak")) {
+                        if (statusText.includes("tolak")) {
                             let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
                             statusHTML += `
                                 <div class="alasan-tolak">
@@ -445,12 +449,31 @@ document.addEventListener('DOMContentLoaded', function() {
                             `;
                         }
 
-                        // Merakit Row Tabel dengan Native CSS
+                        // 2. LOGIKA MEMISAHKAN TANGGAL & JAM MENJADI 2 BARIS
+                        let tanggalString = item.tanggal ? item.tanggal.trim() : "";
+                        let tglArr = tanggalString.split(' '); 
+                        
+                        let teksTanggal = tglArr[0] || "-";
+                        let teksJam = tglArr.length > 1 ? tglArr.slice(1).join(' ') : ""; 
+                        
+                        // Merakit HTML Waktu (Tanggal di atas, Jam di bawah dengan ikon)
+                        let htmlWaktu = `
+                            <div style="font-weight: 600; color: var(--text-main); font-size: 13px;">${teksTanggal}</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                ${teksJam ? teksJam + ' WIB' : '-'}
+                            </div>
+                        `;
+
+                        // 3. MERAKIT BARIS TABEL (Menerapkan perataan tengah di CSS dan di sel tabel)
                         const row = `
                             <tr>
-                                <td>${item.tanggal}</td>
-                                <td><b>Surat ${item.jenisSurat}</b><br><span style="font-size:11px;color:var(--text-muted);">${item.nomorSurat || ''}</span></td>
-                                <td>${statusHTML}</td>
+                                <td style="width: 25%; text-align: center;">${htmlWaktu}</td>
+                                <td style="text-align: center; width: 45%;">
+                                    <b>Surat ${item.jenisSurat}</b><br>
+                                    <span style="font-size:11.5px;color:var(--text-muted);">${item.nomorSurat || '-'}</span>
+                                </td>
+                                <td style="width: 30%; text-align: center;">${statusHTML}</td>
                             </tr>
                         `;
                         tabelBody.innerHTML += row;
