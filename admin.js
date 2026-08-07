@@ -155,21 +155,26 @@ function renderTable() {
     }
 
     dataTampil.forEach(item => {
-        let statusWarna = "background: #fef3c7; color: #92400e; border: 1px solid #fde68a;";
-        if (item.status.includes("Selesai")) statusWarna = "background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;";
-        else if (item.status.includes("Disetujui")) statusWarna = "background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;";
-        else if (item.status.includes("Ditolak")) statusWarna = "background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;";
+        
+        // --- 1. LOGIKA STATUS (2 BARIS SESUAI CSS BARU) ---
+        let badgeClass = "badge-verifikasi"; 
+        let statusText = item.status.toLowerCase();
+        let statusDisplay = "MENUNGGU<br>VERIFIKASI"; 
 
-        let statusTextTampil = item.status;
-        let matchKurung = statusTextTampil.match(/\(([^)]+)\)/);
-        if (matchKurung) {
-            statusTextTampil = matchKurung[1];
-        }
-        let firstSpace = statusTextTampil.indexOf(" ");
-        if (firstSpace !== -1) {
-            statusTextTampil = statusTextTampil.substring(0, firstSpace) + "<br>" + statusTextTampil.substring(firstSpace + 1);
+        if (statusText.includes("sudah dikirim") || statusText.includes("selesai")) {
+            badgeClass = "badge-selesai"; 
+            statusDisplay = "SELESAI<br><span style='font-size: 9px; font-weight: 500; text-transform: none; letter-spacing: 0;'>(Email Terkirim)</span>";
+        } else if (statusText.includes("menunggu dikirim") || statusText.includes("disetujui")) {
+            badgeClass = "badge-dikirim"; 
+            statusDisplay = "DISETUJUI<br><span style='font-size: 9px; font-weight: 500; text-transform: none; letter-spacing: 0;'>(Menunggu Dikirim)</span>";
+        } else if (statusText.includes("tolak")) {
+            badgeClass = "badge-tolak";   
+            statusDisplay = "DITOLAK";
         }
 
+        let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 6px 14px; display: inline-block; min-width: 95px;">${statusDisplay}</span>`;
+
+        // --- 2. LOGIKA BERKAS LAMPIRAN ---
         let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #1e40af; color: #ffffff; border: 1px solid #1e40af; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
         let hoverBerkasIn = "this.style.background='#1d3680'; this.style.borderColor='#1d3680'; this.style.transform='translateY(-1.5px)'; this.style.boxShadow='0 3px 6px rgba(30, 64, 175, 0.25)'";
         let hoverBerkasOut = "this.style.background='#1e40af'; this.style.borderColor='#1e40af'; this.style.transform='translateY(0)'; this.style.boxShadow='none'";
@@ -181,43 +186,44 @@ function renderTable() {
         
         let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:5px; min-width:65px;">${arrBerkas.join("")}</div>` : "-";
 
-        let iconSearch = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
-        let iconCross = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-        let iconEye = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-        let iconSend = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
-        let iconDoc = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle; margin-top:-2px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+        // IKON SVG
+        let iconSearch = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+        let iconCross = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+        let iconEye = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        let iconSend = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+        let iconDoc = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" style="width:14px; height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
 
+        // --- 3. LOGIKA TOMBOL TINDAKAN (BERSEBELAHAN SESUAI CSS BARU) ---
         let aksiHTML = "";
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
-                <div style="display:flex; flex-direction:column; gap:6px; min-width:90px;">
-                    <button onclick="openModal(${item.rowNumber})" class="btn-action-tinjau">${iconSearch} Tinjau</button>
-                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#991b1b')" class="btn-action-tolak">${iconCross} Tolak</button>
+                <div class="action-group">
+                    <button onclick="openModal(${item.rowNumber})" class="action-btn btn-action-tinjau">${iconSearch} Tinjau</button>
+                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#991b1b')" class="action-btn btn-action-tolak">${iconCross} Tolak</button>
                 </div>`;
         } else if (item.status.includes("Disetujui")) {
             aksiHTML = `
-                <div style="display:flex; flex-direction:column; gap:6px; min-width:90px;">
-                    <a href="${item.linkPDF}" target="_blank" class="btn-action-preview">${iconEye} Preview</a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="btn-action-kirim">${iconSend} Kirim</button>
+                <div class="action-group">
+                    <a href="${item.linkPDF}" target="_blank" class="action-btn btn-action-preview">${iconEye} Preview</a>
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="action-btn btn-action-kirim">${iconSend} Kirim</button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
             aksiHTML = `
-                <div style="display:flex; flex-direction:column; gap:6px; min-width:90px;">
-                    <a href="${item.linkPDF}" target="_blank" style="display: block; width: 100%; padding: 8px 0; border-radius: 6px; font-size: 11px; font-weight: bold; background: #0f5132; color: #fff; border: 1px solid #0f5132; text-decoration: none; text-align: center; box-sizing: border-box; transition: all 0.2s; box-shadow: 0 2px 4px rgba(15, 81, 50, 0.15);" onmouseover="this.style.background='#0a3622'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#0f5132'; this.style.transform='translateY(0)'">
+                <div class="action-group">
+                    <a href="${item.linkPDF}" target="_blank" class="action-btn btn-action-kirim" style="width:100%; border-radius:6px; box-shadow: 0 2px 4px rgba(15, 81, 50, 0.15);">
                         ${iconDoc} Lihat PDF
                     </a>
                 </div>`;
-        
-        // --- 2. MENAMPILKAN ALASAN PENOLAKAN ---
         } else if (item.status.includes("Ditolak")) {
             let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
-            
             aksiHTML = `
-                <div style="display:flex; flex-direction:column; gap:4px; min-width:130px; background: #fef2f2; padding: 8px 10px; border-radius: 6px; border-left: 3px solid #ef4444; border: 1px solid #fca5a5; border-left-width: 3px; text-align: left;">
-                    <span style="color: #991b1b; font-weight: bold; font-size: 11px; display: block; margin-bottom: 2px;">Catatan Admin:</span>
-                    <span style="font-size: 10px; color: #7f1d1d; line-height: 1.4; font-style: italic;">"${alasan}"</span>
+                <div class="alasan-tolak" style="margin-top:0;">
+                    <strong style="display:block; margin-bottom:2px;">Catatan Admin:</strong>
+                    <span style="font-style:italic">"${alasan}"</span>
                 </div>`;
-        } else { aksiHTML = "-"; }
+        } else { 
+            aksiHTML = "-"; 
+        }
 
         let row = `
             <tr>
@@ -232,17 +238,14 @@ function renderTable() {
                 <td class="col-ta">${item.tahunAkademik}</td>
                 <td class="col-jenis" style="font-weight: 600; color: var(--text-gray);">${item.jenisSurat}</td>
                 <td style="text-align:center;">${htmlBerkas}</td>
-                <td style="text-align:center;">
-                    <span style="display: inline-block; min-width: 90px; padding: 4px 8px; border-radius: 6px; font-size: 9.5px; line-height: 1.35; font-weight: 700; text-transform: uppercase; text-align: center; ${statusWarna}">
-                        ${statusTextTampil}
-                    </span>
-                </td>
+                <td style="text-align:center;">${statusHTML}</td>
                 <td class="col-aksi">${aksiHTML}</td>
             </tr>`;
         
         tbody.innerHTML += row;
     });
 }
+
 // 2. FUNGSI KONTROL MODAL (Disesuaikan untuk CSS Murni)
 function openModal(rowNum) {
     const data = globalData.find(d => d.rowNumber === rowNum);
@@ -294,6 +297,7 @@ function closeModal() {
     // Sembunyikan pop-up modal
     document.getElementById('modalTinjau').style.display = 'none'; 
 }
+
 // 3. FUNGSI LOGIKA PERHITUNGAN DAN KIRIM (FRONTEND CERDAS)
 async function saveAndApprove() {
     const btn = document.getElementById('btnSetujui');
@@ -329,7 +333,7 @@ async function saveAndApprove() {
     const arrayRomawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
     const arrayTerbilang = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas", "Dua Belas", "Tiga Belas", "Empat Belas", "Lima Belas", "Enam Belas", "Tujuh Belas", "Delapan Belas", "Sembilan Belas", "Dua Puluh"];
     
-    // Vercel hanya menyusun bagian belakangnya saja (Contoh: /Ket-SKet/STAIIS/VIII/26)
+    // Vercel hanya menyusun bagian belakangnya saja
     const formatBelakangSurat = `/Ket-SKet/STAIIS/${romawiBulan[waktuSekarang.getMonth() + 1]}/${String(waktuSekarang.getFullYear()).substring(2)}`;
     
     const strMulai = formatTgl(document.getElementById('editTglMulai').value);
@@ -454,8 +458,6 @@ async function prosesConfirmAction() {
     document.body.style.cursor = 'wait';
     
     try {
-        // --- PERBAIKAN DI SINI ---
-        // Jika action adalah 'kirim', ubah menjadi 'sendToStudent' agar dimengerti oleh Code.gs
         let actionCode = action === 'kirim' ? 'sendToStudent' : action;
 
         let requestBody = { action: actionCode, rowNumber: rowNum };
