@@ -425,19 +425,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (hasilContainer) hasilContainer.classList.remove('hidden');
                     data.forEach(item => {
                         
-                        // 1. LOGIKA WARNA STATUS BARU
-                        let badgeClass = "badge-verifikasi"; // Default: Kuning/Orange (Menunggu Verifikasi)
+                        // 1. LOGIKA WARNA & FORMAT TEKS STATUS (2 BARIS)
+                        let badgeClass = "badge-verifikasi"; 
                         let statusText = item.status.toLowerCase();
+                        let statusDisplay = "MENUNGGU<br>VERIFIKASI"; // Default
 
                         if (statusText.includes("sudah dikirim") || statusText.includes("selesai")) {
-                            badgeClass = "badge-selesai"; // Hijau
-                        } else if (statusText.includes("menunggu dikirim")) {
-                            badgeClass = "badge-dikirim"; // Biru
+                            badgeClass = "badge-selesai"; 
+                            statusDisplay = "SELESAI<br><span style='font-size: 9px; font-weight: 500; text-transform: none; letter-spacing: 0;'>(Email Terkirim)</span>";
+                        } else if (statusText.includes("menunggu dikirim") || statusText.includes("disetujui")) {
+                            badgeClass = "badge-dikirim"; 
+                            statusDisplay = "DISETUJUI<br><span style='font-size: 9px; font-weight: 500; text-transform: none; letter-spacing: 0;'>(Menunggu Dikirim)</span>";
                         } else if (statusText.includes("tolak")) {
-                            badgeClass = "badge-tolak";   // Merah
+                            badgeClass = "badge-tolak";   
+                            statusDisplay = "DITOLAK"; // Ditolak tetap 1 baris
                         }
 
-                        let statusHTML = `<span class="badge ${badgeClass}">${item.status}</span>`;
+                        // Memasukkan hasil format 2 baris ke dalam badge
+                        let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 6px 14px;">${statusDisplay}</span>`;
 
                         if (statusText.includes("tolak")) {
                             let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
