@@ -3,16 +3,41 @@ const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6V
 
 let globalData = []; 
 
-// Proteksi PIN Sederhana
-const pinAkses = prompt("Masukkan PIN Admin:");
-if (pinAkses !== "123456") { 
-    document.body.innerHTML = "<h2 class='text-center mt-20 text-red-600 font-bold'>Akses Ditolak.</h2>"; 
-    throw new Error("Akses Ditolak"); 
+// 1. KEAMANAN SISI SERVER: Ambil PIN dari localStorage atau minta sekali lewat prompt aman
+let adminPin = localStorage.getItem('adminPin') || prompt("Masukkan PIN Admin:");
+if (!adminPin) {
+    document.body.innerHTML = "<h2 class='text-center mt-20 text-red-600 font-bold'>Akses Dibatalkan.</h2>";
+    throw new Error("Akses Dibatalkan");
 }
+localStorage.setItem('adminPin', adminPin);
+
 let currentTab = 'baru'; 
 let sortAscending = false;
 
-// Tampilkan/Sembunyikan Menu Filter (Ubah class bawaan CSS Anda)
+// Fungsi pembantu terpusat untuk mengirim PIN & Data ke Google Apps Script secara aman
+async function secureFetch(payload) {
+    // Selalu sisipkan PIN ke dalam objek payload yang dikirim ke server
+    payload.pin = adminPin;
+
+    const response = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    });
+    
+    const result = await response.json();
+
+    // Jika server menolak karena PIN salah, bersihkan memori dan muat ulang
+    if (result.status === "error" && result.message && result.message.includes("Akses Ditolak")) {
+        localStorage.removeItem('adminPin');
+        alert("PIN Admin Salah! Akses ditolak oleh server.");
+        location.reload();
+    }
+
+    return result;
+}
+
+// Tampilkan/Sembunyikan Menu Filter
 function toggleFilterMenu() {
     document.getElementById('filterMenu').classList.toggle('show');
 }
@@ -31,12 +56,21 @@ function toggleSortOrder() {
 
 async function loadData() {
     const tableBody = document.getElementById('adminTableBody');
-    tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:#6b7280;">Memuat data dari server...</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#6b7280;">Memuat data dari server...</td></tr>';
     
     try {
         const timestamp = new Date().getTime();
-        const response = await fetch(`${WEB_APP_URL}?action=getAllAdmin&nocache=${timestamp}`);
+        // Menggunakan secureFetch untuk GET data dengan menyertakan PIN di query parameter
+        const response = await fetch(`${WEB_APP_URL}?action=getAllAdmin&pin=${encodeURIComponent(adminPin)}&nocache=${timestamp}`);
         let rawData = await response.json();
+
+        // Cek jika server menolak akses data
+        if (rawData.status === "error") {
+            localStorage.removeItem('adminPin');
+            alert("PIN Salah atau Sesi Berakhir.");
+            location.reload();
+            return;
+        }
         
         globalData = rawData.map(item => {
             let d = new Date(item.tanggalPengajuanRaw);
@@ -54,7 +88,7 @@ async function loadData() {
         populateFilterOptions();
         renderTable(); 
     } catch (error) { 
-        tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:#ef4444; font-weight:bold;">Gagal memuat: ${error.message}</td></tr>`; 
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#ef4444; font-weight:bold;">Gagal memuat: ${error.message}</td></tr>`; 
     }
 }
 
@@ -78,7 +112,6 @@ function populateFilterOptions() {
 function switchTab(tabId) {
     currentTab = tabId;
     
-    // Ganti class 'active' standar CSS Anda
     if (tabId === 'baru') {
         document.getElementById('tabBaru').classList.add('active');
         document.getElementById('tabArsip').classList.remove('active');
@@ -95,7 +128,6 @@ function renderTable() {
     const thead = document.getElementById('adminTableHeader');
     const tbody = document.getElementById('adminTableBody');
 
-    // --- 1. MENGUBAH HEADER MENJADI "TINDAKAN" ---
     if (currentTab === 'baru') {
         thead.innerHTML = `
             <tr>
@@ -155,8 +187,6 @@ function renderTable() {
     }
 
     dataTampil.forEach(item => {
-        
-        // --- 1. LOGIKA STATUS (2 BARIS SESUAI CSS BARU) ---
         let badgeClass = "badge-verifikasi"; 
         let statusText = item.status.toLowerCase();
         let statusDisplay = "MENUNGGU<br>VERIFIKASI"; 
@@ -174,7 +204,6 @@ function renderTable() {
 
         let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 6px 14px; display: inline-block; min-width: 95px;">${statusDisplay}</span>`;
 
-        // --- 2. LOGIKA BERKAS LAMPIRAN ---
         let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #1e40af; color: #ffffff; border: 1px solid #1e40af; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
         let hoverBerkasIn = "this.style.background='#1d3680'; this.style.borderColor='#1d3680'; this.style.transform='translateY(-1.5px)'; this.style.boxShadow='0 3px 6px rgba(30, 64, 175, 0.25)'";
         let hoverBerkasOut = "this.style.background='#1e40af'; this.style.borderColor='#1e40af'; this.style.transform='translateY(0)'; this.style.boxShadow='none'";
@@ -186,14 +215,12 @@ function renderTable() {
         
         let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:5px; min-width:65px;">${arrBerkas.join("")}</div>` : "-";
 
-        // IKON SVG
         let iconSearch = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
         let iconCross = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
         let iconEye = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
         let iconSend = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
         let iconDoc = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" style="width:14px; height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
 
-        // --- 3. LOGIKA TOMBOL TINDAKAN (BERSEBELAHAN SESUAI CSS BARU) ---
         let aksiHTML = "";
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
@@ -246,12 +273,10 @@ function renderTable() {
     });
 }
 
-// 2. FUNGSI KONTROL MODAL (Disesuaikan untuk CSS Murni)
 function openModal(rowNum) {
     const data = globalData.find(d => d.rowNumber === rowNum);
     if(!data) return;
 
-    // Isi data umum
     document.getElementById('editRowNumber').value = data.rowNumber;
     document.getElementById('editJenisSurat').value = data.jenisSurat;
     document.getElementById('labelJenisSurat').innerText = data.jenisSurat;
@@ -263,18 +288,16 @@ function openModal(rowNum) {
     document.getElementById('editTanggalLahir').value = data.tanggalLahirRaw ? data.tanggalLahirRaw.split('T')[0] : ''; 
     document.getElementById('editProdi').value = data.prodi;
 
-    // Sembunyikan semua blok khusus terlebih dahulu
     document.getElementById('blokBebas').style.display = 'none';
     document.getElementById('blokMutasi').style.display = 'none';
     document.getElementById('blokLulus').style.display = 'none';
     document.getElementById('blokRekomendasi').style.display = 'none';
 
-    // Munculkan blok khusus sesuai jenis surat
     if(data.jenisSurat === "Bebas Tanggungan") {
-        document.getElementById('blokBebas').style.display = 'flex'; // form-group menggunakan flex
+        document.getElementById('blokBebas').style.display = 'flex';
         document.getElementById('editTujuanBebas').value = data.tujuanBebas || '';
     } else if(data.jenisSurat === "Mutasi") {
-        document.getElementById('blokMutasi').style.display = 'grid'; // mutasi menggunakan grid 2 kolom
+        document.getElementById('blokMutasi').style.display = 'grid';
         document.getElementById('editKampusTujuan').value = data.kampusTujuan || '';
         document.getElementById('editProdiTujuan').value = data.prodiTujuan || '';
         document.getElementById('editAlamatTujuan').value = data.alamatTujuan || '';
@@ -289,16 +312,13 @@ function openModal(rowNum) {
         document.getElementById('editTglSelesai').value = data.tglSelesaiRaw ? data.tglSelesaiRaw.split('T')[0] : '';
     }
     
-    // Tampilkan pop-up modal ke layar
     document.getElementById('modalTinjau').style.display = 'flex';
 }
 
 function closeModal() { 
-    // Sembunyikan pop-up modal
     document.getElementById('modalTinjau').style.display = 'none'; 
 }
 
-// 3. FUNGSI LOGIKA PERHITUNGAN DAN KIRIM (FRONTEND CERDAS)
 async function saveAndApprove() {
     const btn = document.getElementById('btnSetujui');
     btn.innerText = "Menyiapkan berkas PDF..."; btn.disabled = true;
@@ -333,7 +353,6 @@ async function saveAndApprove() {
     const arrayRomawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
     const arrayTerbilang = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas", "Dua Belas", "Tiga Belas", "Empat Belas", "Lima Belas", "Enam Belas", "Tujuh Belas", "Delapan Belas", "Sembilan Belas", "Dua Puluh"];
     
-    // Vercel hanya menyusun bagian belakangnya saja
     const formatBelakangSurat = `/Ket-SKet/STAIIS/${romawiBulan[waktuSekarang.getMonth() + 1]}/${String(waktuSekarang.getFullYear()).substring(2)}`;
     
     const strMulai = formatTgl(document.getElementById('editTglMulai').value);
@@ -370,37 +389,24 @@ async function saveAndApprove() {
     };
 
     try {
-        const response = await fetch(WEB_APP_URL, {
-            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: "updateAndApprove", rowNumber: rNum, rowData: rowDataMatang })
+        // Menggunakan secureFetch agar membawa PIN ke server
+        const res = await secureFetch({
+            action: "updateAndApprove",
+            rowNumber: rNum,
+            rowData: rowDataMatang
         });
-        const res = await response.json();
+
         if(res.status === 'success') { 
             showToast('Selesai! PDF berhasil dibuat dan disetujui.'); 
             closeModal(); 
             loadData(); 
+        } else {
+            showToast('Gagal: ' + res.message, true);
         }
     } catch(e) { alert('Error: ' + e); }
     finally { btn.innerText = "Simpan"; btn.disabled = false; }
 }
 
-async function kirimEmail(rowNum) {
-    if(!confirm("Kirim dokumen ini ke email mahasiswa sekarang?")) return;
-    document.body.style.cursor = 'wait';
-    try {
-        await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "sendToStudent", rowNumber: rowNum }) });
-        alert("Surat berhasil dikirim!"); loadData();
-    } catch(e) { alert('Error: ' + e); }
-    finally { document.body.style.cursor = 'default'; }
-}
-
-async function tolakSurat(rowNum) {
-    if(!confirm("Anda yakin ingin menolak permohonan ini?")) return;
-    await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "reject", rowNumber: rowNum }) });
-    loadData();
-}
-
-// --- SISTEM MODAL KONFIRMASI (Dengan Input Keterangan Penolakan) ---
 let pendingAction = null;
 let pendingRowNum = null;
 
@@ -416,18 +422,17 @@ function bukaConfirmModal(action, rowNum, title, desc, btnText, btnColor) {
     btnConfirm.innerText = btnText;
     btnConfirm.style.background = btnColor;
     
-    // Atur tampilan input alasan penolakan dan warna ikon
     const rejectContainer = document.getElementById('rejectInputContainer');
     const rejectInput = document.getElementById('rejectReason');
     
     if (action === 'tolak') {
         rejectContainer.style.display = 'block';
-        rejectInput.value = ''; // Kosongkan form teks
-        confirmIcon.style.background = '#fee2e2'; // Ikon Merah
+        rejectInput.value = ''; 
+        confirmIcon.style.background = '#fee2e2'; 
         confirmIcon.style.color = '#ef4444';
     } else {
         rejectContainer.style.display = 'none';
-        confirmIcon.style.background = '#d1fae5'; // Ikon Hijau (untuk Kirim)
+        confirmIcon.style.background = '#d1fae5'; 
         confirmIcon.style.color = '#10b981';
     }
     
@@ -440,7 +445,6 @@ function tutupConfirmModal() {
     pendingRowNum = null;
 }
 
-// Fungsi eksekusi data ke Server
 async function prosesConfirmAction() {
     const action = pendingAction;
     const rowNum = pendingRowNum;
@@ -460,28 +464,21 @@ async function prosesConfirmAction() {
     try {
         let actionCode = action === 'kirim' ? 'sendToStudent' : action;
 
-        let requestBody = { action: actionCode, rowNumber: rowNum };
+        let requestBody = { rowNumber: rowNum };
         if (action === 'tolak') requestBody.alasanPenolakan = alasan;
 
-        // Tunggu respons dari server
-        let response = await fetch(WEB_APP_URL, { 
-            method: 'POST', 
-            body: JSON.stringify(requestBody) 
-        });
-        
-        let result = await response.json();
+        // Kirim permintaan via secureFetch (otomatis membawa PIN)
+        let result = await secureFetch(Object.assign({ action: actionCode }, requestBody));
 
-        // Cek apakah server Google merespons "success"
         if (result.status === "success") {
             if(action === 'kirim') {
                 showToast("Sukses! Surat berhasil dikirim ke mahasiswa.");
             } else if (action === 'tolak') {
                 showToast("Permohonan telah ditolak.");
             }
-            loadData(); // Segarkan tabel HANYA jika benar-benar sukses
+            loadData(); 
         } else {
             showToast("Gagal: " + result.message, true);
-            console.error("Server Error:", result.message);
         }
         
     } catch(e) { 
@@ -490,9 +487,9 @@ async function prosesConfirmAction() {
         document.body.style.cursor = 'default'; 
     }
 }
-// Panggil data saat halaman pertama kali dibuka
+
 window.onload = loadData;
-// --- SISTEM NOTIFIKASI TOAST ---
+
 function showToast(message, isError = false) {
     const toast = document.getElementById('toastNotification');
     const toastMsg = document.getElementById('toastMessage');
@@ -501,10 +498,10 @@ function showToast(message, isError = false) {
     toastMsg.innerText = message;
     
     if (isError) {
-        toast.style.backgroundColor = "#ef4444"; // Merah Error
+        toast.style.backgroundColor = "#ef4444"; 
         toastIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
     } else {
-        toast.style.backgroundColor = "#10b981"; // Hijau Sukses
+        toast.style.backgroundColor = "#10b981"; 
         toastIcon.innerHTML = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>`;
     }
     
@@ -512,10 +509,10 @@ function showToast(message, isError = false) {
     setTimeout(() => { toast.classList.remove('show'); }, 3500);
 }
 
-// --- SISTEM LOGOUT ---
 function logoutSistem() { document.getElementById('logoutModal').classList.add('show'); }
 function tutupLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
 function prosesLogout() {
-    sessionStorage.removeItem('userRole'); // Hapus sesi admin
-    window.location.replace('index.html'); // Lempar ke halaman permohonan
+    sessionStorage.removeItem('userRole'); 
+    localStorage.removeItem('adminPin'); // Hapus PIN dari memori saat logout
+    window.location.replace('index.html'); 
 }
