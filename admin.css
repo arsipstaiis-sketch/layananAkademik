@@ -425,8 +425,8 @@ tr:hover td { background-color: #fafafa; }
 .btn-icon-tolak { background: #991b1b; box-shadow: 0 2px 4px rgba(153, 27, 27, 0.15); }
 .btn-icon-tolak:hover { background: #7f1d1d; box-shadow: 0 6px 12px rgba(153, 27, 27, 0.3); }
 
-.btn-icon-preview { background: #0d9488; box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2); }
-.btn-icon-preview:hover { background: #0f766e; box-shadow: 0 6px 12px rgba(13, 148, 136, 0.35); }
+.btn-icon-preview { background: #d9ab06; box-shadow: 0 2px 4px rgba(217, 171, 6, 0.2); }
+.btn-icon-preview:hover { background: #b89105; box-shadow: 0 6px 12px rgba(184, 145, 5, 0.35); }
 
 .btn-icon-kirim { background: #0f5132; box-shadow: 0 2px 4px rgba(15, 81, 50, 0.15); }
 .btn-icon-kirim:hover { background: #0a3622; box-shadow: 0 6px 12px rgba(15, 81, 50, 0.3); }
