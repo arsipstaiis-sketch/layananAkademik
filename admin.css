@@ -419,14 +419,14 @@ tr:hover td { background-color: #fafafa; }
 }
 
 /* Warna-warna Spesifik Elegan */
-.btn-icon-tinjau { background: #1e3a8a; box-shadow: 0 2px 4px rgba(30, 58, 138, 0.15); }
-.btn-icon-tinjau:hover { background: #1e293b; box-shadow: 0 6px 12px rgba(30, 58, 138, 0.3); }
+.btn-icon-tinjau { background: #0284c7; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
+.btn-icon-tinjau:hover { background: #0369a1; box-shadow: 0 6px 12px rgba(2, 132, 199, 0.35); }
 
 .btn-icon-tolak { background: #991b1b; box-shadow: 0 2px 4px rgba(153, 27, 27, 0.15); }
 .btn-icon-tolak:hover { background: #7f1d1d; box-shadow: 0 6px 12px rgba(153, 27, 27, 0.3); }
 
-.btn-icon-preview { background: #334155; box-shadow: 0 2px 4px rgba(51, 65, 85, 0.15); }
-.btn-icon-preview:hover { background: #1e293b; box-shadow: 0 6px 12px rgba(51, 65, 85, 0.3); }
+.btn-icon-preview { background: #0d9488; box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2); }
+.btn-icon-preview:hover { background: #0f766e; box-shadow: 0 6px 12px rgba(13, 148, 136, 0.35); }
 
 .btn-icon-kirim { background: #0f5132; box-shadow: 0 2px 4px rgba(15, 81, 50, 0.15); }
 .btn-icon-kirim:hover { background: #0a3622; box-shadow: 0 6px 12px rgba(15, 81, 50, 0.3); }
