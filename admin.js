@@ -187,6 +187,7 @@ function renderTable() {
     }
 
     dataTampil.forEach(item => {
+        // --- 1. LOGIKA STATUS (LEBIH RAMPING) ---
         let badgeClass = "badge-verifikasi"; 
         let statusText = item.status.toLowerCase();
         let statusDisplay = "MENUNGGU<br>VERIFIKASI"; 
@@ -202,8 +203,10 @@ function renderTable() {
             statusDisplay = "DITOLAK";
         }
 
-        let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 6px 14px; display: inline-block; min-width: 95px;">${statusDisplay}</span>`;
+        // PERUBAHAN: min-width diperkecil menjadi 85px dan padding disesuaikan agar lebih ramping
+        let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 5px 8px; display: inline-block; min-width: 85px;">${statusDisplay}</span>`;
 
+        // --- 2. LOGIKA BERKAS LAMPIRAN (TETAP SAMA) ---
         let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #1e40af; color: #ffffff; border: 1px solid #1e40af; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
         let hoverBerkasIn = "this.style.background='#1d3680'; this.style.borderColor='#1d3680'; this.style.transform='translateY(-1.5px)'; this.style.boxShadow='0 3px 6px rgba(30, 64, 175, 0.25)'";
         let hoverBerkasOut = "this.style.background='#1e40af'; this.style.borderColor='#1e40af'; this.style.transform='translateY(0)'; this.style.boxShadow='none'";
@@ -215,29 +218,40 @@ function renderTable() {
         
         let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:5px; min-width:65px;">${arrBerkas.join("")}</div>` : "-";
 
-        let iconSearch = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
-        let iconCross = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-        let iconEye = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-        let iconSend = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
-        let iconDoc = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" style="width:14px; height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+        // IKON SVG FUTURISTIK & MINIMALIS
+        let iconSearch = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+        let iconCross = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+        let iconEye = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        let iconSend = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+        let iconDoc = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
 
+        // --- 3. LOGIKA TOMBOL TINDAKAN (IKON SAJA DENGAN TOOLTIP) ---
         let aksiHTML = "";
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
                 <div class="action-group">
-                    <button onclick="openModal(${item.rowNumber})" class="action-btn btn-action-tinjau">${iconSearch} Tinjau</button>
-                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#991b1b')" class="action-btn btn-action-tolak">${iconCross} Tolak</button>
+                    <button onclick="openModal(${item.rowNumber})" class="action-btn-icon btn-icon-tinjau" title="Tinjau Permohonan">
+                        ${iconSearch}
+                    </button>
+                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#991b1b')" class="action-btn-icon btn-icon-tolak" title="Tolak Permohonan">
+                        ${iconCross}
+                    </button>
                 </div>`;
         } else if (item.status.includes("Disetujui")) {
             aksiHTML = `
                 <div class="action-group">
-                    <a href="${item.linkPDF}" target="_blank" class="action-btn btn-action-preview">${iconEye} Preview</a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="action-btn btn-action-kirim">${iconSend} Kirim</button>
+                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-preview" title="Preview PDF (Tab Baru)">
+                        ${iconEye}
+                    </a>
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="action-btn-icon btn-icon-kirim" title="Kirim Email ke Mahasiswa">
+                        ${iconSend}
+                    </button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
+            // Karena cuma 1 tombol, kita buat melebar dengan teks agar tidak terlihat bolong
             aksiHTML = `
                 <div class="action-group">
-                    <a href="${item.linkPDF}" target="_blank" class="action-btn btn-action-kirim" style="width:100%; border-radius:6px; box-shadow: 0 2px 4px rgba(15, 81, 50, 0.15);">
+                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-kirim btn-icon-full" title="Buka Dokumen PDF">
                         ${iconDoc} Lihat PDF
                     </a>
                 </div>`;
