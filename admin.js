@@ -206,18 +206,22 @@ function renderTable() {
         // PERUBAHAN: min-width diperkecil menjadi 85px dan padding disesuaikan agar lebih ramping
         let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 5px 8px; display: inline-block; min-width: 85px;">${statusDisplay}</span>`;
 
-        // --- 2. LOGIKA BERKAS LAMPIRAN (TETAP SAMA) ---
-        let btnBerkasStyle = "display: block; width: 100%; padding: 6px 0; border-radius: 6px; font-size: 10.5px; font-weight: 600; background: #1e40af; color: #ffffff; border: 1px solid #1e40af; text-decoration: none; text-align: center; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.3px;";
-        let hoverBerkasIn = "this.style.background='#1d3680'; this.style.borderColor='#1d3680'; this.style.transform='translateY(-1.5px)'; this.style.boxShadow='0 3px 6px rgba(30, 64, 175, 0.25)'";
-        let hoverBerkasOut = "this.style.background='#1e40af'; this.style.borderColor='#1e40af'; this.style.transform='translateY(0)'; this.style.boxShadow='none'";
+        // --- 2. LOGIKA BERKAS LAMPIRAN (TEKS & IKON) ---
+        let linkStyle = "display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 11.5px; font-weight: 600; color: #2563eb; text-decoration: none; transition: all 0.2s ease;";
+        let hoverIn = "this.style.color='#1e40af'; this.style.textDecoration='underline';";
+        let hoverOut = "this.style.color='#2563eb'; this.style.textDecoration='none';";
+        
+        // Ikon attachment (penjepit kertas) kecil agar mudah dikenali sebagai lampiran
+        let iconFile = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>`;
         
         let arrBerkas = [];
-        if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="${btnBerkasStyle}" onmouseover="${hoverBerkasIn}" onmouseout="${hoverBerkasOut}">KTM</a>`);
-        if(item.linkBebas) arrBerkas.push(`<a href="${item.linkBebas}" target="_blank" style="${btnBerkasStyle}" onmouseover="${hoverBerkasIn}" onmouseout="${hoverBerkasOut}">Bebas</a>`);
-        if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" style="${btnBerkasStyle}" onmouseover="${hoverBerkasIn}" onmouseout="${hoverBerkasOut}">Ijazah</a>`);
+        if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="${linkStyle}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${iconFile} KTM</a>`);
+        if(item.linkBebas) arrBerkas.push(`<a href="${item.linkBebas}" target="_blank" style="${linkStyle}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${iconFile} Bebas</a>`);
+        if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" style="${linkStyle}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${iconFile} Ijazah</a>`);
         
-        let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:5px; min-width:65px;">${arrBerkas.join("")}</div>` : "-";
-
+        // Gap 8px memberikan jarak antar teks agar mudah diklik di layar sentuh
+        let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:8px; align-items: center;">${arrBerkas.join("")}</div>` : "-";
+        
         // IKON SVG FUTURISTIK & MINIMALIS
         let iconSearch = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
         let iconCross = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
