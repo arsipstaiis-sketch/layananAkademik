@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function cekStatusSemesterWaktu() {
         const bulanSekarang = new Date().getMonth() + 1; // Januari = 1
-        return (bulanSekarang >= 2 && bulanSekarang <= 7) ? "Genap" : "Ganjil";
+        return (bulanSekarang >= 2 && bulanSekarang <= 8) ? "Genap" : "Ganjil";
     }
 
     function tanganiPerubahanProdi() {
