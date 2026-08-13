@@ -476,7 +476,12 @@ async function prosesConfirmAction() {
         }
     }
 
-    tutupConfirmModal();
+    // --- 1. UBAH TOMBOL MENJADI LOADING & TAHAN MODAL ---
+    const btnConfirm = document.getElementById('btnConfirmAction');
+    const originalText = btnConfirm.innerText; // Simpan teks asli tombol ("Kirim Sekarang" / "Tolak Surat")
+    
+    btnConfirm.disabled = true; // Kunci tombol agar tidak diklik 2 kali
+    btnConfirm.innerHTML = '<span class="spinner"></span> Memproses...'; // Munculkan animasi putar
     document.body.style.cursor = 'wait';
     
     try {
@@ -487,6 +492,9 @@ async function prosesConfirmAction() {
 
         // Kirim permintaan via secureFetch (otomatis membawa PIN)
         let result = await secureFetch(Object.assign({ action: actionCode }, requestBody));
+
+        // --- 2. TUTUP MODAL SETELAH SERVER SELESAI MEMPROSES ---
+        tutupConfirmModal();
 
         if (result.status === "success") {
             if(action === 'kirim') {
@@ -500,8 +508,13 @@ async function prosesConfirmAction() {
         }
         
     } catch(e) { 
+        // Jika jaringan terputus/error, tutup modal dan tampilkan pesan
+        tutupConfirmModal();
         showToast('Error koneksi: ' + e.message, true); 
     } finally { 
+        // --- 3. KEMBALIKAN KONDISI TOMBOL SEPERTI SEMULA ---
+        btnConfirm.disabled = false;
+        btnConfirm.innerText = originalText;
         document.body.style.cursor = 'default'; 
     }
 }
