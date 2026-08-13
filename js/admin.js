@@ -339,8 +339,8 @@ function closeModal() {
 
 async function saveAndApprove() {
     const btn = document.getElementById('btnSetujui');
-    btn.innerText = "Menyiapkan berkas PDF..."; btn.disabled = true;
-
+    btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...'; 
+    btn.disabled = true;
     const rNum = document.getElementById('editRowNumber').value;
     const originalData = globalData.find(d => d.rowNumber == rNum);
     const jnsSurat = document.getElementById('editJenisSurat').value;
