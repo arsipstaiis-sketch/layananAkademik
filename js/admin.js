@@ -571,46 +571,36 @@ function prosesLogout() {
     window.location.replace('index.html'); 
 }
 function updateStatistik() {
+    // 1. Pastikan data tidak kosong
+    if (!globalData || globalData.length === 0) return;
+
     let pending = 0;
     let done = 0;
     let reject = 0;
     
-    // Looping semua data untuk menghitung status
+    // 2. Hitung jumlah masing-masing status
     globalData.forEach(item => {
+        if (!item.status) return; // Lewati jika tidak ada status
+        
         let status = item.status.toLowerCase();
         
         if (status.includes("menunggu verifikasi")) {
             pending++;
         } else if (status.includes("selesai") || status.includes("disetujui") || status.includes("dikirim")) {
-            // Gabungan Disetujui (Menunggu Dikirim) dan Selesai
             done++;
         } else if (status.includes("tolak")) {
             reject++;
         }
     });
 
-    // Jalankan efek animasi angka (Opsional tapi keren)
-    animateValue("countPending", pending);
-    animateValue("countDone", done);
-    animateValue("countReject", reject);
-    animateValue("countTotal", globalData.length);
-}
+    // 3. Tembak langsung angkanya ke HTML (Anti-Gagal)
+    const elPending = document.getElementById("countPending");
+    const elDone = document.getElementById("countDone");
+    const elReject = document.getElementById("countReject");
+    const elTotal = document.getElementById("countTotal");
 
-// Fungsi pembantu agar angka bergerak naik (animasi)
-function animateValue(id, endValue) {
-    let obj = document.getElementById(id);
-    if (!obj) return;
-    
-    let startTimestamp = null;
-    const duration = 800; // Durasi animasi (milidetik)
-
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        obj.innerHTML = Math.floor(progress * endValue);
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
-        }
-    };
-    window.requestAnimationFrame(step);
+    if (elPending) elPending.innerText = pending;
+    if (elDone) elDone.innerText = done;
+    if (elReject) elReject.innerText = reject;
+    if (elTotal) elTotal.innerText = globalData.length;
 }
