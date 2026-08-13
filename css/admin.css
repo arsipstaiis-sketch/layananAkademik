@@ -188,7 +188,7 @@ form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     overflow-x: auto; 
     overflow-y: auto;
     position: relative;
-    height: calc(100vh - 280px); 
+    height: calc(80vh - 280px); 
     min-height: 300px; 
     border: 1px solid var(--border-light); 
     border-radius: 12px; 
