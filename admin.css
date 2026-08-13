@@ -439,6 +439,16 @@ tr:hover td { background-color: #fafafa; }
     font-weight: 700;
     font-family: inherit;
     gap: 6px;
+    background: #0f5132; /* Warna hijau tua */
+    color: #ffffff; /* Memastikan teks dan ikon berwarna putih */
+    border: none; /* Menghilangkan garis pinggir jika ada */
+    box-shadow: 0 2px 4px rgba(15, 81, 50, 0.2); /* Bayangan lembut */
+}
+
+/* Efek saat kursor diarahkan (Hover) */
+.btn-icon-full:hover {
+    background: #0a3622; /* Hijau menjadi lebih gelap */
+    box-shadow: 0 6px 12px rgba(15, 81, 50, 0.35); /* Bayangan membesar */
 }
 
 /* =========================================
