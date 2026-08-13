@@ -103,7 +103,8 @@ async function loadData() {
         });
         
         populateFilterOptions();
-        renderTable(); 
+        renderTable();
+        updateStatistik();
     } catch (error) { 
         tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#ef4444; font-weight:bold;">Gagal memuat: ${error.message}</td></tr>`; 
     }
@@ -568,4 +569,48 @@ function prosesLogout() {
     sessionStorage.removeItem('userRole'); 
     localStorage.removeItem('adminPin'); // Hapus PIN dari memori saat logout
     window.location.replace('index.html'); 
+}
+function updateStatistik() {
+    let pending = 0;
+    let done = 0;
+    let reject = 0;
+    
+    // Looping semua data untuk menghitung status
+    globalData.forEach(item => {
+        let status = item.status.toLowerCase();
+        
+        if (status.includes("menunggu verifikasi")) {
+            pending++;
+        } else if (status.includes("selesai") || status.includes("disetujui") || status.includes("dikirim")) {
+            // Gabungan Disetujui (Menunggu Dikirim) dan Selesai
+            done++;
+        } else if (status.includes("tolak")) {
+            reject++;
+        }
+    });
+
+    // Jalankan efek animasi angka (Opsional tapi keren)
+    animateValue("countPending", pending);
+    animateValue("countDone", done);
+    animateValue("countReject", reject);
+    animateValue("countTotal", globalData.length);
+}
+
+// Fungsi pembantu agar angka bergerak naik (animasi)
+function animateValue(id, endValue) {
+    let obj = document.getElementById(id);
+    if (!obj) return;
+    
+    let startTimestamp = null;
+    const duration = 800; // Durasi animasi (milidetik)
+
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = Math.floor(progress * endValue);
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
 }
