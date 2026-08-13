@@ -496,3 +496,66 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+// ==========================================
+// AUTO-FORMAT TULISAN (PROPER CASE & UPPER CASE)
+// ==========================================
+
+// 1. Fungsi pengubah ke Proper Case (Contoh: "budi santoso" -> "Budi Santoso")
+function toProperCase(str) {
+    return str.toLowerCase().replace(/\b\w/g, function(char) {
+        return char.toUpperCase();
+    });
+}
+
+// 2. Fungsi Utama Auto-Format
+function aktifkanAutoFormat() {
+    // Gabungan ID dari Form Mahasiswa dan Modal Admin
+    // (Tambahkan atau sesuaikan jika ada ID yang berbeda di HTML Anda)
+    const properCaseIds = [
+        // ID di Modal Admin
+        'editNama', 'editTempatLahir', 'editNamaKegiatan', 'editLokasiKegiatan', 'editAlamatTujuan',
+        // ID di Form Mahasiswa (sesuaikan dengan id pada form mahasiswa Anda)
+        'nama', 'tempatLahir', 'tempat_lahir', 'namaKegiatan', 'nama_kegiatan', 
+        'lokasiKegiatan', 'lokasi_kegiatan', 'alamatTujuan', 'alamat_tujuan'
+    ];
+
+    const upperCaseIds = [
+        // ID di Modal Admin
+        'editKampusTujuan', 'editProdiTujuan',
+        // ID di Form Mahasiswa
+        'kampusTujuan', 'kampus_tujuan', 'prodiTujuan', 'prodi_tujuan'
+    ];
+
+    // Pasang listener untuk PROPER CASE
+    properCaseIds.forEach(id => {
+        const inputEl = document.getElementById(id);
+        if (inputEl) { // Hanya pasang jika elemen tersebut ada di halaman
+            inputEl.addEventListener('input', function() {
+                let kursorStart = this.selectionStart;
+                let kursorEnd = this.selectionEnd;
+                
+                this.value = toProperCase(this.value);
+                
+                this.setSelectionRange(kursorStart, kursorEnd);
+            });
+        }
+    });
+
+    // Pasang listener untuk UPPER CASE
+    upperCaseIds.forEach(id => {
+        const inputEl = document.getElementById(id);
+        if (inputEl) {
+            inputEl.addEventListener('input', function() {
+                let kursorStart = this.selectionStart;
+                let kursorEnd = this.selectionEnd;
+                
+                this.value = this.value.toUpperCase();
+                
+                this.setSelectionRange(kursorStart, kursorEnd);
+            });
+        }
+    });
+}
+window.onload = function() {
+    aktifkanAutoFormat(); // Mengaktifkan auto-format saat mahasiswa mengetik
+};
