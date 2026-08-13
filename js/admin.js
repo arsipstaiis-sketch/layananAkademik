@@ -463,7 +463,13 @@ function tutupConfirmModal() {
     pendingRowNum = null;
 }
 
-async function prosesConfirmAction() {
+// Tambahkan kata 'event' di dalam kurung
+async function prosesConfirmAction(event) {
+    // 1. BLOKIR REFRESH HALAMAN SECARA PAKSA
+    if (event) {
+        event.preventDefault(); 
+    }
+
     const action = pendingAction;
     const rowNum = pendingRowNum;
     let alasan = "";
@@ -476,12 +482,12 @@ async function prosesConfirmAction() {
         }
     }
 
-    // --- 1. UBAH TOMBOL MENJADI LOADING & TAHAN MODAL ---
+    // --- 2. UBAH TOMBOL MENJADI LOADING & TAHAN MODAL ---
     const btnConfirm = document.getElementById('btnConfirmAction');
-    const originalText = btnConfirm.innerText; // Simpan teks asli tombol ("Kirim Sekarang" / "Tolak Surat")
+    const originalText = btnConfirm.innerText; 
     
-    btnConfirm.disabled = true; // Kunci tombol agar tidak diklik 2 kali
-    btnConfirm.innerHTML = '<span class="spinner"></span> Memproses...'; // Munculkan animasi putar
+    btnConfirm.disabled = true; // Kunci tombol
+    btnConfirm.innerHTML = '<span class="spinner"></span> Memproses...'; 
     document.body.style.cursor = 'wait';
     
     try {
@@ -490,10 +496,10 @@ async function prosesConfirmAction() {
         let requestBody = { rowNumber: rowNum };
         if (action === 'tolak') requestBody.alasanPenolakan = alasan;
 
-        // Kirim permintaan via secureFetch (otomatis membawa PIN)
+        // Kirim permintaan via secureFetch
         let result = await secureFetch(Object.assign({ action: actionCode }, requestBody));
 
-        // --- 2. TUTUP MODAL SETELAH SERVER SELESAI MEMPROSES ---
+        // --- 3. TUTUP MODAL SETELAH SERVER SELESAI MEMPROSES ---
         tutupConfirmModal();
 
         if (result.status === "success") {
@@ -508,11 +514,10 @@ async function prosesConfirmAction() {
         }
         
     } catch(e) { 
-        // Jika jaringan terputus/error, tutup modal dan tampilkan pesan
         tutupConfirmModal();
         showToast('Error koneksi: ' + e.message, true); 
     } finally { 
-        // --- 3. KEMBALIKAN KONDISI TOMBOL SEPERTI SEMULA ---
+        // --- 4. KEMBALIKAN KONDISI TOMBOL ---
         btnConfirm.disabled = false;
         btnConfirm.innerText = originalText;
         document.body.style.cursor = 'default'; 
