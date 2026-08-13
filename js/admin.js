@@ -552,3 +552,15 @@ function prosesLogout() {
     localStorage.removeItem('adminPin'); // Hapus PIN dari memori saat logout
     window.location.replace('index.html'); 
 }
+async function fetchWithRetry(url, retries = 3, delay = 1000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      let response = await fetch(url);
+      if (response.ok) return await response.json(); // atau .text()
+    } catch (err) {
+      if (i === retries - 1) throw err;
+    }
+    // Tunggu sebentar sebelum mencoba lagi
+    await new Promise(res => setTimeout(res, delay));
+  }
+}
