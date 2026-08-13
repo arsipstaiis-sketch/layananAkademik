@@ -255,7 +255,7 @@ function renderTable() {
             // Karena cuma 1 tombol, kita buat melebar dengan teks agar tidak terlihat bolong
             aksiHTML = `
                 <div class="action-group">
-                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-kirim btn-icon-full" title="Buka Dokumen PDF">
+                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-pdf btn-icon-full" title="Buka Dokumen PDF">
                         ${iconDoc} Lihat PDF
                     </a>
                 </div>`;
