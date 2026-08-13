@@ -15,26 +15,43 @@ let currentTab = 'baru';
 let sortAscending = false;
 
 // Fungsi pembantu terpusat untuk mengirim PIN & Data ke Google Apps Script secara aman
-async function secureFetch(payload) {
-    // Selalu sisipkan PIN ke dalam objek payload yang dikirim ke server
+async function secureFetch(payload, retries = 3, delay = 1000) {
+    // Selalu sisipkan PIN ke dalam objek payload
     payload.pin = adminPin;
 
-    const response = await fetch(WEB_APP_URL, {
+    const options = {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
-    });
-    
-    const result = await response.json();
+    };
 
-    // Jika server menolak karena PIN salah, bersihkan memori dan muat ulang
-    if (result.status === "error" && result.message && result.message.includes("Akses Ditolak")) {
-        localStorage.removeItem('adminPin');
-        alert("PIN Admin Salah! Akses ditolak oleh server.");
-        location.reload();
+    // --- MULAI LOGIKA RETRY ---
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(WEB_APP_URL, options);
+            const result = await response.json();
+
+            // Jika server menolak karena PIN salah
+            if (result.status === "error" && result.message && result.message.includes("Akses Ditolak")) {
+                localStorage.removeItem('adminPin');
+                alert("PIN Admin Salah! Akses ditolak oleh server.");
+                location.reload();
+            }
+
+            // Jika berhasil, langsung kembalikan hasilnya dan keluar dari loop
+            return result; 
+
+        } catch (err) {
+            // Jika ini adalah percobaan terakhir (ke-3) dan masih gagal, lemparkan error-nya
+            if (i === retries - 1) {
+                throw err;
+            }
+            console.warn(`Koneksi gagal. Mencoba ulang... (${i + 1}/${retries})`);
+        }
+        
+        // Tunggu sebentar (delay) sebelum mencoba lagi pada putaran berikutnya
+        await new Promise(res => setTimeout(res, delay));
     }
-
-    return result;
 }
 
 // Tampilkan/Sembunyikan Menu Filter
@@ -551,16 +568,4 @@ function prosesLogout() {
     sessionStorage.removeItem('userRole'); 
     localStorage.removeItem('adminPin'); // Hapus PIN dari memori saat logout
     window.location.replace('index.html'); 
-}
-async function fetchWithRetry(url, retries = 3, delay = 1000) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      let response = await fetch(url);
-      if (response.ok) return await response.json(); // atau .text()
-    } catch (err) {
-      if (i === retries - 1) throw err;
-    }
-    // Tunggu sebentar sebelum mencoba lagi
-    await new Promise(res => setTimeout(res, delay));
-  }
 }
