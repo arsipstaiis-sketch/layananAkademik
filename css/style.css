@@ -1,8 +1,6 @@
 /* ==========================================================
-   1. IMPORT FONT & VARIABEL DASAR (Gunakan di kedua file CSS)
+   1. VARIABEL & RESET DASAR
    ========================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;0,700;1,600&display=swap');
-
 :root {
     /* Warna Modern Baru */
     --primary-dark: #074c30; /* Hijau pekat Navbar */
