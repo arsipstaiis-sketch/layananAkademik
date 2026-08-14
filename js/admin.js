@@ -4,12 +4,12 @@ const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6V
 let globalData = []; 
 
 // 1. KEAMANAN SISI SERVER
-let adminPin = localStorage.getItem('adminPin') || prompt("Masukkan PIN Admin:");
+let adminPin = sessionStorage.getItem('adminPin') || prompt("Masukkan PIN Admin:");
 if (!adminPin) {
     document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#dc2626; font-family:sans-serif;'>Akses Dibatalkan.</h2>";
     throw new Error("Akses Dibatalkan");
 }
-localStorage.setItem('adminPin', adminPin);
+sessionStorage.setItem('adminPin', adminPin);
 
 let currentTab = 'baru'; 
 let sortAscending = false;
@@ -30,7 +30,7 @@ async function secureFetch(payload, retries = 3, delay = 1000) {
             const result = await response.json();
 
             if (result.status === "error" && result.message && result.message.includes("Akses Ditolak")) {
-                localStorage.removeItem('adminPin');
+                sessionStorage.removeItem('adminPin');
                 alert("PIN Admin Salah! Akses ditolak oleh server.");
                 location.reload();
             }
@@ -64,7 +64,7 @@ async function loadData() {
         let rawData = await response.json();
 
         if (rawData.status === "error") {
-            localStorage.removeItem('adminPin');
+            sessionStorage.removeItem('adminPin');
             alert("PIN Salah atau Sesi Berakhir.");
             location.reload();
             return;
@@ -504,7 +504,7 @@ function logoutSistem() { document.getElementById('logoutModal').classList.add('
 function tutupLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
 function prosesLogout() {
     sessionStorage.removeItem('userRole'); 
-    localStorage.removeItem('adminPin'); 
+    sessionStorage.removeItem('adminPin'); 
     window.location.replace('index.html'); 
 }
 
