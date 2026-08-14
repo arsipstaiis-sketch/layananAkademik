@@ -622,19 +622,18 @@ function toProperCase(str) {
 function aktifkanAutoFormat() {
     // Gabungan ID dari Form Mahasiswa dan Modal Admin
     // (Tambahkan atau sesuaikan jika ada ID yang berbeda di HTML Anda)
-    const properCaseIds = [
+     const properCaseIds = [
         // ID di Modal Admin
         'editNama', 'editTempatLahir', 'editNamaKegiatan', 'editLokasiKegiatan', 'editAlamatTujuan',
         // ID di Form Mahasiswa (sesuaikan dengan id pada form mahasiswa Anda)
-        'nama', 'tempatLahir', 'tempat_lahir', 'namaKegiatan', 'nama_kegiatan', 
-        'lokasiKegiatan', 'lokasi_kegiatan', 'alamatTujuan', 'alamat_tujuan'
+        'nama', 'tempatLahir', 'namaKegiatan', 'lokasiKegiatan', 'detailAlamat'
     ];
 
     const upperCaseIds = [
         // ID di Modal Admin
         'editKampusTujuan', 'editProdiTujuan',
         // ID di Form Mahasiswa
-        'kampusTujuan', 'kampus_tujuan', 'prodiTujuan', 'prodi_tujuan'
+        'kampusTujuan', 'prodiTujuan'
     ];
 
     // Pasang listener untuk PROPER CASE
