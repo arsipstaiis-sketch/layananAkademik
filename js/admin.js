@@ -3,10 +3,10 @@ const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6V
 
 let globalData = []; 
 
-// 1. KEAMANAN SISI SERVER: Ambil PIN dari localStorage atau minta sekali lewat prompt aman
+// 1. KEAMANAN SISI SERVER
 let adminPin = localStorage.getItem('adminPin') || prompt("Masukkan PIN Admin:");
 if (!adminPin) {
-    document.body.innerHTML = "<h2 class='text-center mt-20 text-red-600 font-bold'>Akses Dibatalkan.</h2>";
+    document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#dc2626; font-family:sans-serif;'>Akses Dibatalkan.</h2>";
     throw new Error("Akses Dibatalkan");
 }
 localStorage.setItem('adminPin', adminPin);
@@ -14,9 +14,8 @@ localStorage.setItem('adminPin', adminPin);
 let currentTab = 'baru'; 
 let sortAscending = false;
 
-// Fungsi pembantu terpusat untuk mengirim PIN & Data ke Google Apps Script secara aman
+// Fungsi pembantu terpusat untuk fetch aman dengan retry
 async function secureFetch(payload, retries = 3, delay = 1000) {
-    // Selalu sisipkan PIN ke dalam objek payload
     payload.pin = adminPin;
 
     const options = {
@@ -25,63 +24,45 @@ async function secureFetch(payload, retries = 3, delay = 1000) {
         body: JSON.stringify(payload)
     };
 
-    // --- MULAI LOGIKA RETRY ---
     for (let i = 0; i < retries; i++) {
         try {
             const response = await fetch(WEB_APP_URL, options);
             const result = await response.json();
 
-            // Jika server menolak karena PIN salah
             if (result.status === "error" && result.message && result.message.includes("Akses Ditolak")) {
                 localStorage.removeItem('adminPin');
                 alert("PIN Admin Salah! Akses ditolak oleh server.");
                 location.reload();
             }
-
-            // Jika berhasil, langsung kembalikan hasilnya dan keluar dari loop
             return result; 
-
         } catch (err) {
-            // Jika ini adalah percobaan terakhir (ke-3) dan masih gagal, lemparkan error-nya
-            if (i === retries - 1) {
-                throw err;
-            }
+            if (i === retries - 1) throw err;
             console.warn(`Koneksi gagal. Mencoba ulang... (${i + 1}/${retries})`);
         }
-        
-        // Tunggu sebentar (delay) sebelum mencoba lagi pada putaran berikutnya
         await new Promise(res => setTimeout(res, delay));
     }
 }
 
-// Tampilkan/Sembunyikan Menu Filter
-function toggleFilterMenu() {
-    document.getElementById('filterMenu').classList.toggle('show');
-}
-
+// Navigasi Filter & Sort
+function toggleFilterMenu() { document.getElementById('filterMenu').classList.toggle('show'); }
 function resetFilter() {
     document.getElementById('filterJenis').value = '';
     document.getElementById('filterTA').value = '';
     renderTable();
     document.getElementById('filterMenu').classList.remove('show');
 }
+function toggleSortOrder() { sortAscending = !sortAscending; renderTable(); }
 
-function toggleSortOrder() {
-    sortAscending = !sortAscending;
-    renderTable();
-}
-
+// Memuat Data Tabel
 async function loadData() {
     const tableBody = document.getElementById('adminTableBody');
     tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#6b7280;">Memuat data dari server...</td></tr>';
     
     try {
         const timestamp = new Date().getTime();
-        // Menggunakan secureFetch untuk GET data dengan menyertakan PIN di query parameter
         const response = await fetch(`${WEB_APP_URL}?action=getAllAdmin&pin=${encodeURIComponent(adminPin)}&nocache=${timestamp}`);
         let rawData = await response.json();
 
-        // Cek jika server menolak akses data
         if (rawData.status === "error") {
             localStorage.removeItem('adminPin');
             alert("PIN Salah atau Sesi Berakhir.");
@@ -129,7 +110,6 @@ function populateFilterOptions() {
 
 function switchTab(tabId) {
     currentTab = tabId;
-    
     if (tabId === 'baru') {
         document.getElementById('tabBaru').classList.add('active');
         document.getElementById('tabArsip').classList.remove('active');
@@ -143,32 +123,7 @@ function switchTab(tabId) {
 }
 
 function renderTable() {
-    const thead = document.getElementById('adminTableHeader');
     const tbody = document.getElementById('adminTableBody');
-
-    if (currentTab === 'baru') {
-        thead.innerHTML = `
-            <tr>
-                <th class="col-tanggal">Tanggal</th>
-                <th>Pemohon</th>
-                <th class="col-ta">Tahun Akademik</th>
-                <th class="col-jenis">Jenis Surat</th>
-                <th class="col-berkas">Berkas</th>
-                <th>Status</th>
-                <th class="col-aksi">Tindakan</th> 
-            </tr>`;
-    } else {
-        thead.innerHTML = `
-            <tr>
-                <th class="col-tanggal">Tanggal</th>
-                <th>Pemohon</th>
-                <th class="col-ta">Tahun Akademik</th>
-                <th class="col-jenis">Jenis Surat</th>
-                <th class="col-berkas">Berkas</th>
-                <th>Status</th>
-                <th class="col-aksi">Tindakan</th>
-            </tr>`;
-    }
 
     let dataTampil = globalData.filter(item => {
         if (currentTab === 'baru') return item.status === "Menunggu Verifikasi";
@@ -187,7 +142,6 @@ function renderTable() {
     if (currentTab === 'arsip') {
         let fJen = document.getElementById('filterJenis').value;
         let fTa = document.getElementById('filterTA').value;
-
         if (fJen) dataTampil = dataTampil.filter(i => i.jenisSurat === fJen);
         if (fTa) dataTampil = dataTampil.filter(i => i.tahunAkademik === fTa);
 
@@ -205,7 +159,7 @@ function renderTable() {
     }
 
     dataTampil.forEach(item => {
-        // --- 1. LOGIKA STATUS (LEBIH RAMPING) ---
+        // --- LOGIKA STATUS ---
         let badgeClass = "badge-verifikasi"; 
         let statusText = item.status.toLowerCase();
         let statusDisplay = "MENUNGGU<br>VERIFIKASI"; 
@@ -221,33 +175,26 @@ function renderTable() {
             statusDisplay = "DITOLAK";
         }
 
-        // PERUBAHAN: min-width diperkecil menjadi 85px dan padding disesuaikan agar lebih ramping
         let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 5px 8px; display: inline-block; min-width: 85px;">${statusDisplay}</span>`;
 
-        // --- 2. LOGIKA BERKAS LAMPIRAN (TEKS & IKON) ---
+        // --- LOGIKA BERKAS ---
         let linkStyle = "display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 11.5px; font-weight: 600; color: #2563eb; text-decoration: none; transition: all 0.2s ease;";
-        let hoverIn = "this.style.color='#1e40af'; this.style.textDecoration='underline';";
-        let hoverOut = "this.style.color='#2563eb'; this.style.textDecoration='none';";
-        
-        // Ikon attachment (penjepit kertas) kecil agar mudah dikenali sebagai lampiran
         let iconFile = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>`;
         
         let arrBerkas = [];
-        if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="${linkStyle}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${iconFile} KTM</a>`);
-        if(item.linkBebas) arrBerkas.push(`<a href="${item.linkBebas}" target="_blank" style="${linkStyle}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${iconFile} Bebas</a>`);
-        if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" style="${linkStyle}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${iconFile} Ijazah</a>`);
+        if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="${linkStyle}">${iconFile} KTM</a>`);
+        if(item.linkBebas) arrBerkas.push(`<a href="${item.linkBebas}" target="_blank" style="${linkStyle}">${iconFile} Bebas</a>`);
+        if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" style="${linkStyle}">${iconFile} Ijazah</a>`);
         
-        // Gap 8px memberikan jarak antar teks agar mudah diklik di layar sentuh
         let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:8px; align-items: center;">${arrBerkas.join("")}</div>` : "-";
         
-        // IKON SVG FUTURISTIK & MINIMALIS
+        // --- IKON AKSI ---
         let iconSearch = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
         let iconCross = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
         let iconEye = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
         let iconSend = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
         let iconDoc = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
 
-        // --- 3. LOGIKA TOMBOL TINDAKAN (IKON SAJA DENGAN TOOLTIP) ---
         let aksiHTML = "";
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
@@ -262,18 +209,17 @@ function renderTable() {
         } else if (item.status.includes("Disetujui")) {
             aksiHTML = `
                 <div class="action-group">
-                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-preview" title="Preview PDF (Tab Baru)">
+                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-preview" title="Preview PDF">
                         ${iconEye}
                     </a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim langsung ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="action-btn-icon btn-icon-kirim" title="Kirim Email ke Mahasiswa">
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="action-btn-icon btn-icon-kirim" title="Kirim ke Mahasiswa">
                         ${iconSend}
                     </button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
-            // Karena cuma 1 tombol, kita buat melebar dengan teks agar tidak terlihat bolong
             aksiHTML = `
                 <div class="action-group">
-                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-pdf btn-icon-full" title="Buka Dokumen PDF">
+                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-full" title="Buka Dokumen PDF">
                         ${iconDoc} Lihat PDF
                     </a>
                 </div>`;
@@ -324,23 +270,27 @@ function openModal(rowNum) {
     document.getElementById('editTanggalLahir').value = data.tanggalLahirRaw ? data.tanggalLahirRaw.split('T')[0] : ''; 
     document.getElementById('editProdi').value = data.prodi;
 
+    // Sembunyikan semua blok
     document.getElementById('blokBebas').style.display = 'none';
     document.getElementById('blokMutasi').style.display = 'none';
     document.getElementById('blokLulus').style.display = 'none';
     document.getElementById('blokRekomendasi').style.display = 'none';
 
-    if(data.jenisSurat === "Bebas Tanggungan") {
+    // PERBAIKAN: Menggunakan .includes() untuk mencocokkan string dengan aman
+    const js = data.jenisSurat.toLowerCase();
+    
+    if(js.includes("bebas tanggungan")) {
         document.getElementById('blokBebas').style.display = 'flex';
         document.getElementById('editTujuanBebas').value = data.tujuanBebas || '';
-    } else if(data.jenisSurat === "Mutasi") {
+    } else if(js.includes("mutasi")) {
         document.getElementById('blokMutasi').style.display = 'grid';
         document.getElementById('editKampusTujuan').value = data.kampusTujuan || '';
         document.getElementById('editProdiTujuan').value = data.prodiTujuan || '';
         document.getElementById('editAlamatTujuan').value = data.alamatTujuan || '';
-    } else if(data.jenisSurat === "Lulus") {
+    } else if(js.includes("lulus")) {
         document.getElementById('blokLulus').style.display = 'flex';
         document.getElementById('editTglMunaqosyah').value = data.tanggalMunaqosyahRaw ? data.tanggalMunaqosyahRaw.split('T')[0] : '';
-    } else if(data.jenisSurat === "Rekomendasi") {
+    } else if(js.includes("rekomendasi")) {
         document.getElementById('blokRekomendasi').style.display = 'grid';
         document.getElementById('editNamaKegiatan').value = data.namaKegiatan || '';
         document.getElementById('editLokasiKegiatan').value = data.lokasiKegiatan || '';
@@ -425,7 +375,6 @@ async function saveAndApprove() {
     };
 
     try {
-        // Menggunakan secureFetch agar membawa PIN ke server
         const res = await secureFetch({
             action: "updateAndApprove",
             rowNumber: rNum,
@@ -440,7 +389,7 @@ async function saveAndApprove() {
             showToast('Gagal: ' + res.message, true);
         }
     } catch(e) { alert('Error: ' + e); }
-    finally { btn.innerText = "Simpan"; btn.disabled = false; }
+    finally { btn.innerText = "Simpan Data & Buat Surat"; btn.disabled = false; }
 }
 
 let pendingAction = null;
@@ -481,12 +430,8 @@ function tutupConfirmModal() {
     pendingRowNum = null;
 }
 
-// Tambahkan kata 'event' di dalam kurung
 async function prosesConfirmAction(event) {
-    // 1. BLOKIR REFRESH HALAMAN SECARA PAKSA
-    if (event) {
-        event.preventDefault(); 
-    }
+    if (event) event.preventDefault(); 
 
     const action = pendingAction;
     const rowNum = pendingRowNum;
@@ -500,24 +445,19 @@ async function prosesConfirmAction(event) {
         }
     }
 
-    // --- 2. UBAH TOMBOL MENJADI LOADING & TAHAN MODAL ---
     const btnConfirm = document.getElementById('btnConfirmAction');
     const originalText = btnConfirm.innerText; 
     
-    btnConfirm.disabled = true; // Kunci tombol
+    btnConfirm.disabled = true;
     btnConfirm.innerHTML = '<span class="spinner"></span> Memproses...'; 
     document.body.style.cursor = 'wait';
     
     try {
         let actionCode = action === 'kirim' ? 'sendToStudent' : action;
-
         let requestBody = { rowNumber: rowNum };
         if (action === 'tolak') requestBody.alasanPenolakan = alasan;
 
-        // Kirim permintaan via secureFetch
         let result = await secureFetch(Object.assign({ action: actionCode }, requestBody));
-
-        // --- 3. TUTUP MODAL SETELAH SERVER SELESAI MEMPROSES ---
         tutupConfirmModal();
 
         if (result.status === "success") {
@@ -535,17 +475,11 @@ async function prosesConfirmAction(event) {
         tutupConfirmModal();
         showToast('Error koneksi: ' + e.message, true); 
     } finally { 
-        // --- 4. KEMBALIKAN KONDISI TOMBOL ---
         btnConfirm.disabled = false;
         btnConfirm.innerText = originalText;
         document.body.style.cursor = 'default'; 
     }
 }
-
-window.onload = function() {
-    loadData(); // Memuat tabel admin
-    aktifkanAutoFormat(); // Mengaktifkan auto-format saat edit data
-};
 
 function showToast(message, isError = false) {
     const toast = document.getElementById('toastNotification');
@@ -570,33 +504,24 @@ function logoutSistem() { document.getElementById('logoutModal').classList.add('
 function tutupLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
 function prosesLogout() {
     sessionStorage.removeItem('userRole'); 
-    localStorage.removeItem('adminPin'); // Hapus PIN dari memori saat logout
+    localStorage.removeItem('adminPin'); 
     window.location.replace('index.html'); 
 }
+
 function updateStatistik() {
-    // 1. Pastikan data tidak kosong
     if (!globalData || globalData.length === 0) return;
 
-    let pending = 0;
-    let done = 0;
-    let reject = 0;
+    let pending = 0, done = 0, reject = 0;
     
-    // 2. Hitung jumlah masing-masing status
     globalData.forEach(item => {
-        if (!item.status) return; // Lewati jika tidak ada status
-        
+        if (!item.status) return; 
         let status = item.status.toLowerCase();
         
-        if (status.includes("menunggu verifikasi")) {
-            pending++;
-        } else if (status.includes("selesai") || status.includes("disetujui") || status.includes("dikirim")) {
-            done++;
-        } else if (status.includes("tolak")) {
-            reject++;
-        }
+        if (status.includes("menunggu verifikasi")) pending++;
+        else if (status.includes("selesai") || status.includes("disetujui") || status.includes("dikirim")) done++;
+        else if (status.includes("tolak")) reject++;
     });
 
-    // 3. Tembak langsung angkanya ke HTML (Anti-Gagal)
     const elPending = document.getElementById("countPending");
     const elDone = document.getElementById("countDone");
     const elReject = document.getElementById("countReject");
@@ -607,62 +532,53 @@ function updateStatistik() {
     if (elReject) elReject.innerText = reject;
     if (elTotal) elTotal.innerText = globalData.length;
 }
+
 // ==========================================
 // AUTO-FORMAT TULISAN (PROPER CASE & UPPER CASE)
 // ==========================================
-
-// 1. Fungsi pengubah ke Proper Case (Contoh: "budi santoso" -> "Budi Santoso")
 function toProperCase(str) {
     return str.toLowerCase().replace(/\b\w/g, function(char) {
         return char.toUpperCase();
     });
 }
 
-// 2. Fungsi Utama Auto-Format
 function aktifkanAutoFormat() {
-    // Gabungan ID dari Form Mahasiswa dan Modal Admin
-    // (Tambahkan atau sesuaikan jika ada ID yang berbeda di HTML Anda)
-     const properCaseIds = [
-        // ID di Modal Admin
+    const properCaseIds = [
         'editNama', 'editTempatLahir', 'editNamaKegiatan', 'editLokasiKegiatan', 'editAlamatTujuan',
-        // ID di Form Mahasiswa (sesuaikan dengan id pada form mahasiswa Anda)
         'nama', 'tempatLahir', 'namaKegiatan', 'lokasiKegiatan', 'detailAlamat'
     ];
 
     const upperCaseIds = [
-        // ID di Modal Admin
         'editKampusTujuan', 'editProdiTujuan',
-        // ID di Form Mahasiswa
         'kampusTujuan', 'prodiTujuan'
     ];
 
-    // Pasang listener untuk PROPER CASE
     properCaseIds.forEach(id => {
         const inputEl = document.getElementById(id);
-        if (inputEl) { // Hanya pasang jika elemen tersebut ada di halaman
+        if (inputEl) { 
             inputEl.addEventListener('input', function() {
                 let kursorStart = this.selectionStart;
                 let kursorEnd = this.selectionEnd;
-                
                 this.value = toProperCase(this.value);
-                
                 this.setSelectionRange(kursorStart, kursorEnd);
             });
         }
     });
 
-    // Pasang listener untuk UPPER CASE
     upperCaseIds.forEach(id => {
         const inputEl = document.getElementById(id);
         if (inputEl) {
             inputEl.addEventListener('input', function() {
                 let kursorStart = this.selectionStart;
                 let kursorEnd = this.selectionEnd;
-                
                 this.value = this.value.toUpperCase();
-                
                 this.setSelectionRange(kursorStart, kursorEnd);
             });
         }
     });
 }
+
+window.onload = function() {
+    loadData(); // Memuat tabel admin
+    aktifkanAutoFormat(); // Mengaktifkan auto-format saat edit data
+};
