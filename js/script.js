@@ -1,12 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // --- FUNGSI BANTUAN ---
-    function toProperCase(str) {
-        return str.replace(/\w\S*/g, function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        });
-    }
-
     function getBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -19,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- DEKLARASI ELEMEN FORM ---
     const form = document.getElementById('suratForm');
     
-    // Elemen Dinamis Baru
     const inputProdi = document.getElementById('prodi');
     const inputSanah = document.getElementById('sanah');
     const wrapperSanah = document.getElementById('wrapper_sanah');
@@ -46,13 +39,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileIjazah = document.getElementById('fileIjazah'); 
     const tanggalMunaqosyah = document.getElementById('tanggalMunaqosyah'); 
 
+    // Mencegah error jika atribut onchange ada di HTML
+    window.tampilkanFieldKhusus = function() {
+        jenisSurat.dispatchEvent(new Event('change'));
+    };
 
     // =======================================================
     // FITUR DINAMIS: PRODI -> SANAH -> JENIS SURAT & SEMESTER
     // =======================================================
 
     const semuaJenisSurat = [
-        "Keterangan Aktif",
+        "Keterangan Aktif Kuliah",
         "Keterangan Lulus",
         "Bebas Tanggungan",
         "Rekomendasi",
@@ -60,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
 
     const suratTamhidi = [
-        "Keterangan Aktif",
+        "Keterangan Aktif Kuliah",
         "Bebas Tanggungan",
         "Rekomendasi"
     ];
@@ -90,22 +87,20 @@ document.addEventListener('DOMContentLoaded', function() {
             jenisSurat.value = pilihanSuratSaatIni;
         }
         
-        // Pemicu event otomatis agar kolom dinamis menyesuaikan
         jenisSurat.dispatchEvent(new Event('change'));
 
-        // --- B. Atur Visibilitas Kolom Sanah ---
+        // --- B. Atur Visibilitas Kolom Sanah (Menggunakan style.display) ---
         if (prodiTerpilih === "Program Tamhidi") {
-            if (wrapperSanah) wrapperSanah.classList.add('hidden');
+            if (wrapperSanah) wrapperSanah.style.display = 'none';
             if (inputSanah) {
                 inputSanah.required = false;
                 inputSanah.value = ""; 
             }
         } else {
-            if (wrapperSanah) wrapperSanah.classList.remove('hidden');
+            if (wrapperSanah) wrapperSanah.style.display = 'flex';
             if (inputSanah) inputSanah.required = true;
         }
 
-        // --- C. Hitung Ulang Semester ---
         hitungSemesterAkhir();
     }
 
@@ -149,10 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Pasang Event Listener ke elemen Prodi dan Sanah
     if (inputProdi) inputProdi.addEventListener('change', tanganiPerubahanProdi);
     if (inputSanah) inputSanah.addEventListener('change', hitungSemesterAkhir);
-
 
     // --- LOGIKA TAB (FORM VS STATUS) ---
     const tabFormBtn = document.getElementById('tabFormBtn');
@@ -162,21 +155,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (tabFormBtn && tabStatusBtn) {
         tabFormBtn.addEventListener('click', function() {
-            sectionForm.classList.remove('hidden');
-            sectionStatus.classList.add('hidden');
+            sectionForm.style.display = 'block';
+            sectionStatus.style.display = 'none';
             tabFormBtn.classList.add('active');
             tabStatusBtn.classList.remove('active');
         });
 
         tabStatusBtn.addEventListener('click', function() {
-            sectionStatus.classList.remove('hidden');
-            sectionForm.classList.add('hidden');
+            sectionStatus.style.display = 'block';
+            sectionForm.style.display = 'none';
             tabStatusBtn.classList.add('active');
             tabFormBtn.classList.remove('active');
         });
     }
 
-    // --- LOGIKA API WILAYAH ---
+    // --- LOGIKA API WILAYAH (EMSIFA) ---
     if (selectProvinsi) {
         fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
             .then(response => response.json())
@@ -214,8 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         selectKabupaten.appendChild(option);
                     });
                     selectKabupaten.disabled = false;
-                })
-                .catch(error => console.error('Gagal memuat kabupaten:', error));
+                });
         });
     }
 
@@ -235,32 +227,35 @@ document.addEventListener('DOMContentLoaded', function() {
                         selectKecamatan.appendChild(option);
                     });
                     selectKecamatan.disabled = false;
-                })
-                .catch(error => console.error('Gagal memuat kecamatan:', error));
+                });
         });
     }
 
     // --- LOGIKA MENAMPILKAN FORM DINAMIS ---
     if (jenisSurat) {
         jenisSurat.addEventListener('change', function() {
-            if (fieldBebasTanggungan) fieldBebasTanggungan.classList.add('hidden');
-            if (fieldMutasi) fieldMutasi.classList.add('hidden');
-            if (fieldLulus) fieldLulus.classList.add('hidden');
-            if (fieldRekomendasi) fieldRekomendasi.classList.add('hidden'); 
+            // Sembunyikan semua field khusus terlebih dahulu
+            if (fieldBebasTanggungan) fieldBebasTanggungan.style.display = 'none';
+            if (fieldMutasi) fieldMutasi.style.display = 'none';
+            if (fieldLulus) fieldLulus.style.display = 'none';
+            if (fieldRekomendasi) fieldRekomendasi.style.display = 'none'; 
             
             if (fileBebas) fileBebas.required = false;
             if (fileIjazah) fileIjazah.required = false;
 
-            if (this.value === 'Surat Bebas Tanggungan' || this.value === 'Bebas Tanggungan') {
-                if (fieldBebasTanggungan) fieldBebasTanggungan.classList.remove('hidden');
-            } else if (this.value === 'Surat Keterangan Mutasi' || this.value === 'Keterangan Mutasi') {
-                if (fieldMutasi) fieldMutasi.classList.remove('hidden');
+            const val = this.value;
+
+            // Tampilkan field khusus berdasarkan pilihan surat
+            if (val.includes('Bebas Tanggungan')) {
+                if (fieldBebasTanggungan) fieldBebasTanggungan.style.display = 'grid';
+            } else if (val.includes('Mutasi')) {
+                if (fieldMutasi) fieldMutasi.style.display = 'grid';
                 if (fileBebas) fileBebas.required = true; 
-            } else if (this.value === 'Surat Keterangan Lulus' || this.value === 'Keterangan Lulus') {
-                if (fieldLulus) fieldLulus.classList.remove('hidden');
+            } else if (val.includes('Lulus')) {
+                if (fieldLulus) fieldLulus.style.display = 'grid';
                 if (fileIjazah) fileIjazah.required = true; 
-            } else if (this.value === 'Surat Rekomendasi' || this.value === 'Rekomendasi') {
-                if (fieldRekomendasi) fieldRekomendasi.classList.remove('hidden');
+            } else if (val.includes('Rekomendasi')) {
+                if (fieldRekomendasi) fieldRekomendasi.style.display = 'grid';
             }
         });
     }
@@ -272,11 +267,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             btnSubmit.disabled = true;
             btnText.innerText = 'Mengirim... (Proses Upload)';
-            if (btnSpinner) btnSpinner.classList.remove('hidden');
+            if (btnSpinner) btnSpinner.style.display = 'inline-block';
 
             try {
                 let alamatLengkap = "";
-                if (jenisSurat.value === 'Surat Keterangan Mutasi' || jenisSurat.value === 'Keterangan Mutasi') {
+                if (jenisSurat.value.includes('Mutasi')) {
                     const namaProvinsi = selectProvinsi.options[selectProvinsi.selectedIndex]?.dataset?.name || "";
                     const namaKabupaten = selectKabupaten.options[selectKabupaten.selectedIndex]?.dataset?.name || "";
                     const namaKecamatan = selectKecamatan ? selectKecamatan.value : "";
@@ -295,13 +290,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     ktmObj.mime = fileKTM.files[0].type;
                 }
 
-                if (fileBebas && fileBebas.files[0] && (jenisSurat.value === 'Surat Keterangan Mutasi' || jenisSurat.value === 'Keterangan Mutasi')) {
+                if (fileBebas && fileBebas.files[0] && jenisSurat.value.includes('Mutasi')) {
                     bebasObj.base64 = await getBase64(fileBebas.files[0]);
                     bebasObj.name = fileBebas.files[0].name;
                     bebasObj.mime = fileBebas.files[0].type;
                 }
 
-                if (fileIjazah && fileIjazah.files[0] && (jenisSurat.value === 'Surat Keterangan Lulus' || jenisSurat.value === 'Keterangan Lulus')) {
+                if (fileIjazah && fileIjazah.files[0] && jenisSurat.value.includes('Lulus')) {
                     ijazahObj.base64 = await getBase64(fileIjazah.files[0]);
                     ijazahObj.name = fileIjazah.files[0].name;
                     ijazahObj.mime = fileIjazah.files[0].type;
@@ -349,8 +344,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    if (form) form.classList.add('hidden'); 
-                    if (successMessage) successMessage.classList.remove('hidden'); 
+                    if (form) form.style.display = 'none'; 
+                    if (successMessage) successMessage.style.display = 'block'; 
                 } else {
                     alert('Terjadi kesalahan sistem di server: ' + data.message);
                 }
@@ -360,8 +355,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Pesan Error:', error);
             } finally {
                 btnSubmit.disabled = false;
-                btnText.innerText = 'Kirim Permohonan Surat';
-                if (btnSpinner) btnSpinner.classList.add('hidden');
+                btnText.innerText = 'Kirim Permohonan';
+                if (btnSpinner) btnSpinner.style.display = 'none';
             }
         });
     }
@@ -375,13 +370,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if(inputProdi) tanganiPerubahanProdi();
             }, 10);
 
-            if (fieldBebasTanggungan) fieldBebasTanggungan.classList.add('hidden'); 
-            if (fieldMutasi) fieldMutasi.classList.add('hidden');
-            if (fieldLulus) fieldLulus.classList.add('hidden');
-            if (fieldRekomendasi) fieldRekomendasi.classList.add('hidden'); 
+            if (fieldBebasTanggungan) fieldBebasTanggungan.style.display = 'none'; 
+            if (fieldMutasi) fieldMutasi.style.display = 'none';
+            if (fieldLulus) fieldLulus.style.display = 'none';
+            if (fieldRekomendasi) fieldRekomendasi.style.display = 'none'; 
             
-            if (successMessage) successMessage.classList.add('hidden'); 
-            if (form) form.classList.remove('hidden'); 
+            if (successMessage) successMessage.style.display = 'none'; 
+            if (form) form.style.display = 'block'; 
             
             if (selectKabupaten) {
                 selectKabupaten.innerHTML = '<option value="" disabled selected>-- Kab/Kota --</option>';
@@ -418,17 +413,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 tabelBody.innerHTML = '';
-                if (hasilContainer) hasilContainer.classList.add('hidden');
-                if (pesanKosong) pesanKosong.classList.add('hidden');
+                if (hasilContainer) hasilContainer.style.display = 'none';
+                if (pesanKosong) pesanKosong.style.display = 'none';
 
                 if (data.length > 0) {
-                    if (hasilContainer) hasilContainer.classList.remove('hidden');
+                    if (hasilContainer) hasilContainer.style.display = 'block';
                     data.forEach(item => {
                         
-                        // 1. LOGIKA WARNA & FORMAT TEKS STATUS (2 BARIS)
+                        // 1. LOGIKA WARNA & FORMAT TEKS STATUS
                         let badgeClass = "badge-verifikasi"; 
                         let statusText = item.status.toLowerCase();
-                        let statusDisplay = "MENUNGGU<br>VERIFIKASI"; // Default
+                        let statusDisplay = "MENUNGGU<br>VERIFIKASI";
 
                         if (statusText.includes("sudah dikirim") || statusText.includes("selesai")) {
                             badgeClass = "badge-selesai"; 
@@ -438,10 +433,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             statusDisplay = "DISETUJUI<br><span style='font-size: 9px; font-weight: 500; text-transform: none; letter-spacing: 0;'>(Menunggu Dikirim)</span>";
                         } else if (statusText.includes("tolak")) {
                             badgeClass = "badge-tolak";   
-                            statusDisplay = "DITOLAK"; // Ditolak tetap 1 baris
+                            statusDisplay = "DITOLAK"; 
                         }
 
-                        // Memasukkan hasil format 2 baris ke dalam badge
                         let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 6px 14px;">${statusDisplay}</span>`;
 
                         if (statusText.includes("tolak")) {
@@ -454,14 +448,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             `;
                         }
 
-                        // 2. LOGIKA MEMISAHKAN TANGGAL & JAM MENJADI 2 BARIS
+                        // 2. LOGIKA MEMISAHKAN TANGGAL & JAM
                         let tanggalString = item.tanggal ? item.tanggal.trim() : "";
                         let tglArr = tanggalString.split(' '); 
                         
                         let teksTanggal = tglArr[0] || "-";
                         let teksJam = tglArr.length > 1 ? tglArr.slice(1).join(' ') : ""; 
                         
-                        // Merakit HTML Waktu (Tanggal di atas, Jam di bawah dengan ikon)
                         let htmlWaktu = `
                             <div style="font-weight: 600; color: var(--text-main); font-size: 13px;">${teksTanggal}</div>
                             <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
@@ -470,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         `;
 
-                        // 3. MERAKIT BARIS TABEL (Menerapkan perataan tengah di CSS dan di sel tabel)
+                        // 3. MERAKIT BARIS TABEL
                         const row = `
                             <tr>
                                 <td style="width: 25%; text-align: center;">${htmlWaktu}</td>
@@ -484,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         tabelBody.innerHTML += row;
                     });
                 } else {
-                    if (pesanKosong) pesanKosong.classList.remove('hidden');
+                    if (pesanKosong) pesanKosong.style.display = 'block';
                 }
             } catch (error) {
                 alert('Gagal mengambil data dari server. Periksa koneksi internet Anda.');
@@ -496,65 +489,53 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
 // ==========================================
 // AUTO-FORMAT TULISAN (PROPER CASE & UPPER CASE)
 // ==========================================
 
-// 1. Fungsi pengubah ke Proper Case (Contoh: "budi santoso" -> "Budi Santoso")
 function toProperCase(str) {
     return str.toLowerCase().replace(/\b\w/g, function(char) {
         return char.toUpperCase();
     });
 }
 
-// 2. Fungsi Utama Auto-Format
 function aktifkanAutoFormat() {
-    // Gabungan ID dari Form Mahasiswa dan Modal Admin
-    // (Tambahkan atau sesuaikan jika ada ID yang berbeda di HTML Anda)
     const properCaseIds = [
-        // ID di Modal Admin
         'editNama', 'editTempatLahir', 'editNamaKegiatan', 'editLokasiKegiatan', 'editAlamatTujuan',
-        // ID di Form Mahasiswa (sesuaikan dengan id pada form mahasiswa Anda)
         'nama', 'tempatLahir', 'namaKegiatan', 'lokasiKegiatan', 'detailAlamat'
     ];
 
     const upperCaseIds = [
-        // ID di Modal Admin
         'editKampusTujuan', 'editProdiTujuan',
-        // ID di Form Mahasiswa
         'kampusTujuan', 'prodiTujuan'
     ];
 
-    // Pasang listener untuk PROPER CASE
     properCaseIds.forEach(id => {
         const inputEl = document.getElementById(id);
-        if (inputEl) { // Hanya pasang jika elemen tersebut ada di halaman
+        if (inputEl) {
             inputEl.addEventListener('input', function() {
                 let kursorStart = this.selectionStart;
                 let kursorEnd = this.selectionEnd;
-                
                 this.value = toProperCase(this.value);
-                
                 this.setSelectionRange(kursorStart, kursorEnd);
             });
         }
     });
 
-    // Pasang listener untuk UPPER CASE
     upperCaseIds.forEach(id => {
         const inputEl = document.getElementById(id);
         if (inputEl) {
             inputEl.addEventListener('input', function() {
                 let kursorStart = this.selectionStart;
                 let kursorEnd = this.selectionEnd;
-                
                 this.value = this.value.toUpperCase();
-                
                 this.setSelectionRange(kursorStart, kursorEnd);
             });
         }
     });
 }
+
 window.onload = function() {
-    aktifkanAutoFormat(); // Mengaktifkan auto-format saat mahasiswa mengetik
+    aktifkanAutoFormat(); 
 };
