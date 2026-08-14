@@ -16,250 +16,212 @@
     <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
+<!-- ================= NAVBAR STICKY ================= -->
+<nav class="top-navbar">
+    <div class="nav-brand">
+        <!-- Logo STAIIS Anda -->
+        <img src="assets/logo.png" alt="Logo STAIIS" class="logo-img">
+        <div class="brand-text">
+            <h1>STAI Imam Syafi'i Cianjur</h1>
+            <p>Layanan Administrasi Persuratan</p>
+        </div>
+    </div>
+    <div class="nav-links">
+        <!-- Sesuaikan href di bawah ini dengan link halaman form mahasiswa Anda -->
+        <a href="index.html">
+            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Formulir Mahasiswa
+        </a>
+        <a href="#" class="active">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Panel Admin
+        </a>
+    </div>
+</nav>
 
-    <!-- HEADER MODERN -->
-    <header class="header-section">
-        <div class="header-container">
-            
-            <div class="header-top-wrapper">
-                <!-- KIRI: Logo dan Judul -->
-                <div class="logo-title-group">
-                    <img src="assets/logo.png" alt="Logo STAIIS" class="header-logo">
-                    <div class="header-title-wrapper">
-                        <span class="overline">Layanan Administrasi Persuratan</span>
-                        <h1 class="header-title">Dashboard Admin STAIIS</h1>
-                    </div>
-                </div>
+<!-- ================= KONTEN UTAMA ================= -->
+<main class="main-container">
+    
+    <!-- HEADER DASHBOARD & LOGOUT -->
+    <div class="ui-card flex-between align-center mb-20" style="padding: 15px 20px;">
+        <h2 class="dashboard-title">Dashboard Admin STAIIS</h2>
+        <button class="btn-outline-danger" onclick="logoutSistem()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> 
+            Keluar Admin
+        </button>
+    </div>
 
-                <!-- KANAN: Tombol Logout -->
-                <button class="btn-logout" title="Keluar Sistem" onclick="logoutSistem()">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                    <span class="logout-text">Logout</span>
+    <!-- TAB SWITCHER (KAPSUL) -->
+    <div class="tab-switcher mb-20">
+        <button id="tabBaru" class="tab-pill active" onclick="switchTab('baru')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+            Permohonan Baru
+        </button>
+        <button id="tabArsip" class="tab-pill" onclick="switchTab('arsip')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Arsip Terkirim
+        </button>
+    </div>
+
+    <!-- KARTU STATISTIK MINIMALIS -->
+    <div class="stats-grid mb-20">
+        <div class="ui-card stat-box">
+            <span class="stat-label text-gray">TOTAL PERMOHONAN</span>
+            <span class="stat-value" id="countTotal">0</span>
+        </div>
+        <div class="ui-card stat-box">
+            <span class="stat-label text-warning">PERLU TINDAKAN</span>
+            <span class="stat-value text-warning" id="countPending">0</span>
+        </div>
+        <div class="ui-card stat-box">
+            <span class="stat-label text-success">DISETUJUI / SELESAI</span>
+            <span class="stat-value text-success" id="countDone">0</span>
+        </div>
+        <div class="ui-card stat-box">
+            <span class="stat-label text-danger">DITOLAK</span>
+            <span class="stat-value text-danger" id="countReject">0</span>
+        </div>
+    </div>
+
+    <!-- AREA TABEL & KONTROL PENCARIAN -->
+    <div class="ui-card table-card">
+        <div class="table-controls">
+            <!-- Pencarian & Refresh -->
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="searchInput" class="search-input" placeholder="Cari nama / NIM / nomor..." onkeyup="renderTable()" autocomplete="off">
+                <button onclick="loadData()" title="Segarkan Data" style="background: transparent; border: 1px solid var(--border-light); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6b7280" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
                 </button>
             </div>
-
-            <p class="header-subtitle">Pantau antrean dari semua jenis layanan administrasi akademik dalam satu tempat.</p>
-            <!-- ================= STATISTIK DASHBOARD ================= -->
-            <div class="stats-grid" id="dashboardStats">
-                <!-- Kartu 1: Menunggu Verifikasi (Warna Peringatan / Kuning) -->
-                <div class="stat-card stat-warning">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    </div>
-                    <div class="stat-details">
-                        <p class="stat-title">Perlu Tindakan</p>
-                        <h3 class="stat-number" id="countPending">0</h3>
-                    </div>
-                </div>
             
-                <!-- Kartu 2: Disetujui / Selesai (Warna Sukses / Hijau) -->
-                <div class="stat-card stat-success">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    </div>
-                    <div class="stat-details">
-                        <p class="stat-title">Selesai / Terkirim</p>
-                        <h3 class="stat-number" id="countDone">0</h3>
-                    </div>
-                </div>
-            
-                <!-- Kartu 3: Ditolak (Warna Bahaya / Merah) -->
-                <div class="stat-card stat-danger">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                    </div>
-                    <div class="stat-details">
-                        <p class="stat-title">Ditolak</p>
-                        <h3 class="stat-number" id="countReject">0</h3>
-                    </div>
-                </div>
-            
-                <!-- Kartu 4: Total Permohonan (Warna Netral / Biru) -->
-                <div class="stat-card stat-primary">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-                    </div>
-                    <div class="stat-details">
-                        <p class="stat-title">Total Permohonan</p>
-                        <h3 class="stat-number" id="countTotal">0</h3>
-                    </div>
-                </div>
+            <!-- Filter & Sort (Hanya muncul di tab arsip) -->
+            <div class="flex-gap" id="toolbarArsip" style="display: none; align-items: center; flex-wrap: wrap;">
+                <select id="filterJenis" class="filter-select" onchange="renderTable()">
+                    <option value="">Semua Jenis</option>
+                </select>
+                <select id="filterTA" class="filter-select" onchange="renderTable()">
+                    <option value="">Semua Tahun</option>
+                </select>
+                <button onclick="toggleSortOrder()" title="Urutkan Tanggal" style="background: transparent; border: 1px solid var(--border-light); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6b7280" stroke-width="2"><path d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                </button>
             </div>
-            <!-- NAVIGASI TAB -->
-            <div class="nav-tabs">
-                <button id="tabBaru" class="nav-tab active" onclick="switchTab('baru')">Permohonan Baru</button>
-                <button id="tabArsip" class="nav-tab" onclick="switchTab('arsip')">Arsip Terkirim</button>
-            </div>
-            
         </div>
-    </header>
 
-    <!-- KONTEN UTAMA -->
-    <main class="main-content">
-        <!-- Menggunakan class form-section dari CSS Anda untuk background kartu putih -->
-        <div class="form-section" style="min-height: 400px; padding: 20px;">
-            
-            <!-- TOOLBAR -->
-            <div class="archive-header-wrapper" style="border: none;">
-                <div class="archive-controls">
-                    <!-- Pencarian -->
-                    <div class="search-box">
-                        <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nomor / keterangan / nama..." class="form-control" autocomplete="off">
-                    </div>
-                    
-                    <!-- Aksi Kanan -->
-                    <div class="archive-actions">
-                        <!-- Toolbar Arsip (Filter & Sort) -->
-                        <div id="toolbarArsip" style="display: none; gap: 10px; align-items: center;">
-                            <div class="filter-dropdown-wrapper">
-                                <button class="icon-btn" onclick="toggleFilterMenu()" title="Filter Data">
-                                    <svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
-                                </button>
-                                <div id="filterMenu" class="filter-menu">
-                                    <label>Jenis Surat</label>
-                                    <select id="filterJenis" onchange="renderTable()" class="form-control" style="padding: 6px 10px;"><option value="">Semua Jenis</option></select>
-                                    
-                                    <label>Tahun Akademik</label>
-                                    <select id="filterTA" onchange="renderTable()" class="form-control" style="padding: 6px 10px;"><option value="">Semua Tahun</option></select>
-                                    
-                                    <button onclick="resetFilter()" class="reset-filter-btn">Reset Filter</button>
-                                </div>
-                            </div>
-                            <button class="icon-btn" onclick="toggleSortOrder()" title="Urutkan Tanggal">
-                                <svg viewBox="0 0 24 24"><path d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
-                            </button>
-                        </div>
-                        
-                        <!-- Refresh -->
-                        <button class="icon-btn" onclick="loadData()" title="Segarkan Data">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
-                                <path d="M21 3v5h-5"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TABEL DATA -->
-            <div class="table-scroll-wrapper">
-                <table id="mainTable">
-                    <thead id="adminTableHeader">
-                        <!-- Header disuntikkan dari  -->
-                    </thead>
-                    <tbody id="adminTableBody">
-                        <tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-gray);">Memuat data dari server...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-    </main>
-
-    <!-- MODAL TINJAU (Menggunakan class modal-overlay bawaan CSS Anda) -->
-    <div id="modalTinjau" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3 style="font-size: 18px; color: var(--text-dark);">Tinjau & Validasi Data</h3>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            
-            <form id="formTinjau" onsubmit="event.preventDefault(); saveAndApprove();" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <input type="hidden" id="editRowNumber">
-                
-                <div class="form-group"><label class="form-label">Nama Mahasiswa</label><input type="text" id="editNama" class="form-control"></div>
-                <div class="form-group"><label class="form-label">NIM</label><input type="text" id="editNim" class="form-control"></div>
-                <div class="form-group"><label class="form-label">Email</label><input type="text" id="editEmail" class="form-control"></div>
-                <div class="form-group">
-                    <label class="form-label">Program Studi</label>
-                    <select id="editProdi" class="form-control">
-                        <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
-                        <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
-                        <option value="Program Tamhidi">Program Tamhidi</option>
-                    </select>
-                </div>
-                <div class="form-group"><label class="form-label">Tempat Lahir</label><input type="text" id="editTempatLahir" class="form-control"></div>
-                <div class="form-group"><label class="form-label">Tanggal Lahir</label><input type="date" id="editTanggalLahir" class="form-control"></div>
-                
-                <div class="full-width" style="margin-top: 10px; border-bottom: 1px solid var(--border-color);"></div>
-                <div class="full-width">
-                    <h4 style="font-size: 14px; color: var(--primary-dark);">Data Khusus: <span id="labelJenisSurat" style="color: var(--text-dark);"></span></h4>
-                </div>
-                <input type="hidden" id="editJenisSurat">
-
-                <!-- Blok Field Dinamis -->
-                <div id="blokBebas" class="form-group full-width" style="display: none;"><label class="form-label">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="form-control"></div>
-                <div id="blokMutasi" class="full-width" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group"><label class="form-label">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">Prodi Tujuan</label><input type="text" id="editProdiTujuan" class="form-control"></div>
-                    <div class="form-group full-width"><label class="form-label">Alamat Tujuan Lengkap</label><input type="text" id="editAlamatTujuan" class="form-control"></div>
-                </div>
-                <div id="blokLulus" class="form-group full-width" style="display: none;"><label class="form-label">Tanggal Munaqosyah</label><input type="date" id="editTglMunaqosyah" class="form-control"></div>
-                <div id="blokRekomendasi" class="full-width" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group full-width"><label class="form-label">Nama Kegiatan</label><input type="text" id="editNamaKegiatan" class="form-control"></div>
-                    <div class="form-group full-width"><label class="form-label">Lokasi Kegiatan</label><input type="text" id="editLokasiKegiatan" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">Tgl Mulai</label><input type="date" id="editTglMulai" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">Tgl Selesai</label><input type="date" id="editTglSelesai" class="form-control"></div>
-                </div>
-
-                <div class="full-width" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-                    <button type="button" class="btn-cancel" onclick="closeModal()" style="padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer;">Batal</button>
-                    <button type="submit" id="btnSetujui" class="btn-primary" style="margin-top: 0; padding: 10px 20px;">Setujui</button>
-                </div>
-            </form>
+        <div class="table-scroll-wrapper">
+            <table id="mainTable">
+                <thead id="adminTableHeader">
+                    <!-- JS akan mengisi thead -->
+                </thead>
+                <tbody id="adminTableBody">
+                    <tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-gray);">Memuat data dari server...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
-    <!-- MODAL KONFIRMASI (Tolak/Kirim Surat) -->
-    <div id="confirmActionModal" class="custom-modal-overlay">
-        <div class="custom-modal-box">
-            <div class="custom-modal-icon" id="confirmIcon" style="background: #fef3c7; color: #d97706;">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-            </div>
-            <h3 class="custom-modal-title" id="confirmTitle">Konfirmasi</h3>
-            <p class="custom-modal-desc" id="confirmDesc">Apakah Anda yakin?</p>
+</main>
+
+<!-- ================= AREA MODAL & TOAST (TIDAK BERUBAH) ================= -->
+
+<!-- MODAL TINJAU -->
+<div id="modalTinjau" class="modal-overlay">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3 style="font-size: 18px; color: var(--text-dark);">Tinjau & Validasi Data</h3>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        
+        <form id="formTinjau" onsubmit="event.preventDefault(); saveAndApprove();" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <input type="hidden" id="editRowNumber">
             
-            <!-- INPUT KETERANGAN TOLAK (Otomatis muncul/hilang) -->
-            <div id="rejectInputContainer" style="display: none; margin-bottom: 20px; text-align: left;">
-                <label style="font-size: 11px; font-weight: bold; color: var(--text-gray); margin-bottom: 6px; display: block;">Alasan Penolakan (Wajib diisi)</label>
-                <textarea id="rejectReason" class="form-control" rows="2" placeholder="Tuliskan alasan penolakan..." style="font-size: 13px; resize: none;"></textarea>
+            <div class="form-group"><label class="form-label">Nama Mahasiswa</label><input type="text" id="editNama" class="form-control"></div>
+            <div class="form-group"><label class="form-label">NIM</label><input type="text" id="editNim" class="form-control"></div>
+            <div class="form-group"><label class="form-label">Email</label><input type="text" id="editEmail" class="form-control"></div>
+            <div class="form-group">
+                <label class="form-label">Program Studi</label>
+                <select id="editProdi" class="form-control">
+                    <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
+                    <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
+                    <option value="Program Tamhidi">Program Tamhidi</option>
+                </select>
+            </div>
+            <div class="form-group"><label class="form-label">Tempat Lahir</label><input type="text" id="editTempatLahir" class="form-control"></div>
+            <div class="form-group"><label class="form-label">Tanggal Lahir</label><input type="date" id="editTanggalLahir" class="form-control"></div>
+            
+            <div class="full-width" style="margin-top: 10px; border-bottom: 1px solid var(--border-color);"></div>
+            <div class="full-width">
+                <h4 style="font-size: 14px; color: var(--primary-dark);">Data Khusus: <span id="labelJenisSurat" style="color: var(--text-dark);"></span></h4>
+            </div>
+            <input type="hidden" id="editJenisSurat">
+
+            <!-- Blok Field Dinamis -->
+            <div id="blokBebas" class="form-group full-width" style="display: none;"><label class="form-label">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="form-control"></div>
+            <div id="blokMutasi" class="full-width" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group"><label class="form-label">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Prodi Tujuan</label><input type="text" id="editProdiTujuan" class="form-control"></div>
+                <div class="form-group full-width"><label class="form-label">Alamat Tujuan Lengkap</label><input type="text" id="editAlamatTujuan" class="form-control"></div>
+            </div>
+            <div id="blokLulus" class="form-group full-width" style="display: none;"><label class="form-label">Tanggal Munaqosyah</label><input type="date" id="editTglMunaqosyah" class="form-control"></div>
+            <div id="blokRekomendasi" class="full-width" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group full-width"><label class="form-label">Nama Kegiatan</label><input type="text" id="editNamaKegiatan" class="form-control"></div>
+                <div class="form-group full-width"><label class="form-label">Lokasi Kegiatan</label><input type="text" id="editLokasiKegiatan" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Tgl Mulai</label><input type="date" id="editTglMulai" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Tgl Selesai</label><input type="date" id="editTglSelesai" class="form-control"></div>
             </div>
 
-            <div class="custom-modal-actions">
-                <button class="btn-cancel" onclick="tutupConfirmModal()">Batal</button>
-                <button id="btnConfirmAction" type="button" onclick="prosesConfirmAction(event)" class="btn-confirm-logout">Ya, Lanjutkan</button>
+            <div class="full-width" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                <button type="button" class="btn-cancel" onclick="closeModal()" style="padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; background: #f1f5f9; color: #475569;">Batal</button>
+                <button type="submit" id="btnSetujui" class="btn-primary" style="margin-top: 0; padding: 10px 20px; border: none; border-radius: 8px; background: var(--primary-dark); color: white; cursor: pointer; font-weight: 600;">Setujui</button>
             </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL KONFIRMASI (Tolak/Kirim Surat) -->
+<div id="confirmActionModal" class="custom-modal-overlay">
+    <div class="custom-modal-box">
+        <div class="custom-modal-icon" id="confirmIcon" style="background: #fef3c7; color: #d97706;">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+        </div>
+        <h3 class="custom-modal-title" id="confirmTitle">Konfirmasi</h3>
+        <p class="custom-modal-desc" id="confirmDesc">Apakah Anda yakin?</p>
+        
+        <!-- INPUT KETERANGAN TOLAK (Otomatis muncul/hilang) -->
+        <div id="rejectInputContainer" style="display: none; margin-bottom: 20px; text-align: left;">
+            <label style="font-size: 11px; font-weight: bold; color: var(--text-gray); margin-bottom: 6px; display: block;">Alasan Penolakan (Wajib diisi)</label>
+            <textarea id="rejectReason" class="form-control" rows="2" placeholder="Tuliskan alasan penolakan..." style="font-size: 13px; resize: none; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e5e7eb;"></textarea>
+        </div>
+
+        <div class="custom-modal-actions">
+            <button class="btn-cancel" onclick="tutupConfirmModal()">Batal</button>
+            <button id="btnConfirmAction" type="button" onclick="prosesConfirmAction(event)" class="btn-confirm-logout">Ya, Lanjutkan</button>
         </div>
     </div>
+</div>
 
-    <!-- MODAL LOGOUT -->
-    <div id="logoutModal" class="custom-modal-overlay">
-        <div class="custom-modal-box">
-            <div class="custom-modal-icon">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-            </div>
-            <h3 class="custom-modal-title">Keluar dari sistem?</h3>
-            <p class="custom-modal-desc">Sesi Anda akan diakhiri dan Anda harus login kembali.</p>
-            <div class="custom-modal-actions">
-                <button class="btn-cancel" onclick="tutupLogoutModal()">Batal</button>
-                <button class="btn-confirm-logout" onclick="prosesLogout()">Keluar</button>
-            </div>
+<!-- MODAL LOGOUT -->
+<div id="logoutModal" class="custom-modal-overlay">
+    <div class="custom-modal-box">
+        <div class="custom-modal-icon">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+        </div>
+        <h3 class="custom-modal-title">Keluar dari sistem?</h3>
+        <p class="custom-modal-desc">Sesi Anda akan diakhiri dan Anda harus login kembali.</p>
+        <div class="custom-modal-actions">
+            <button class="btn-cancel" onclick="tutupLogoutModal()">Batal</button>
+            <button class="btn-confirm-logout" onclick="prosesLogout()">Keluar</button>
         </div>
     </div>
+</div>
 
-    <!-- TOAST NOTIFICATION MODERN -->
-    <div id="toastNotification" class="toast-notification">
-        <svg id="toastIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></svg>
-        <span id="toastMessage">Pesan Notifikasi</span>
-    </div>
+<!-- TOAST NOTIFICATION MODERN -->
+<div id="toastNotification" class="toast-notification">
+    <svg id="toastIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></svg>
+    <span id="toastMessage">Pesan Notifikasi</span>
+</div>
     <script src="js/admin.js"></script>
 </body>
 </html>
