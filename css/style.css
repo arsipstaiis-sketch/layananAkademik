@@ -24,17 +24,13 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body { 
-    background-color: var(--bg-color); 
-    color: var(--text-dark); 
-    padding-bottom: 50px; 
-}
+body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-dark); padding-bottom: 50px; }
 
 /* Class Bantuan (Utilities) */
-.mb-10 { margin-bottom: 10px; }
 .mb-20 { margin-bottom: 20px; }
 .flex-between { display: flex; justify-content: space-between; }
 .align-center { display: flex; align-items: center; }
+.flex-gap { display: flex; gap: 15px; }
 .full-width { grid-column: 1 / -1; }
 .hidden { display: none !important; }
 
