@@ -1,6 +1,8 @@
 /* ==========================================================
-   1. VARIABEL & RESET DASAR
+   1. IMPORT FONT & VARIABEL DASAR (Gunakan di kedua file CSS)
    ========================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;0,700;1,600&display=swap');
+
 :root {
     /* Warna Modern Baru */
     --primary-dark: #074c30; /* Hijau pekat Navbar */
@@ -23,6 +25,11 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Pastikan font Lora (font berkait/serif) diterapkan pada semua judul utama */
+h1, h2, h3, .brand-text h1, .hero-text h2 {
+    font-family: 'Lora', serif;
+}
 body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-dark); padding-bottom: 50px; }
 
 /* Class Bantuan (Utilities) */
