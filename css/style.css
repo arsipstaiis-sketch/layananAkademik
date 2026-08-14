@@ -26,10 +26,6 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Pastikan font Lora (font berkait/serif) diterapkan pada semua judul utama */
-h1, h2, h3, .brand-text h1, .hero-text h2 {
-    font-family: 'Lora', serif;
-}
 body { 
     background-color: var(--bg-color); 
     color: var(--text-dark); 
