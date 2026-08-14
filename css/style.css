@@ -1,14 +1,16 @@
 /* ==========================================================
-   1. VARIABEL GLOBAL & RESET DASAR
+   1. IMPORT FONT & VARIABEL DASAR (Gunakan di kedua file CSS)
    ========================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;0,700;1,600&display=swap');
+
 :root {
-    /* 🎨 Warna Identitas STAIIS */
-    --primary-dark: #0f6c3e;      /* Hijau Tua Utama */
-    --primary-light: #169355;     /* Hijau Terang untuk Hover */
-    --accent: #facc15;            /* Emas */
+    /* Warna Hijau STAIIS yang Seragam */
+    --primary-dark: #0f6c3e; 
+    --primary-light: #169355;
+    --accent: #facc15;
     
     /* Warna Latar & Teks */
-    --bg-color: #f4f7f6;          /* Abu-abu sangat terang untuk background */
+    --bg-color: #f4f7f6;
     --card-bg: #ffffff;
     --text-dark: #1f2937;
     --text-gray: #6b7280;
@@ -18,10 +20,23 @@
     --warning: #d97706;
     --success: #059669;
     --danger: #dc2626;
+    
+    /* Variabel Tambahan Admin */
+    --radius-lg: 16px;
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Inter', system-ui, sans-serif; 
+}
 
+/* Pastikan font Lora (font berkait/serif) diterapkan pada semua judul utama */
+h1, h2, h3, .brand-text h1, .hero-text h2 {
+    font-family: 'Lora', serif;
+}
 body { 
     background-color: var(--bg-color); 
     color: var(--text-dark); 
