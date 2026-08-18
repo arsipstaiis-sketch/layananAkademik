@@ -40,21 +40,42 @@
 <!-- ================= KONTEN UTAMA ================= -->
 <main class="main-container">
     
-    <!-- HEADER DASHBOARD, LOGOUT & MINI STATS (PENGGANTI KARTU) -->
-    <div class="ui-card flex-between align-center mb-20" style="padding: 15px 20px; flex-wrap: wrap; gap: 15px;">
-        <h2 class="dashboard-title">Dashboard Admin</h2>
-        
-        <!-- Mini Status Bar (Ringkas & Menghemat Tempat) -->
-        <div class="mini-stats">
-            <div class="stat-item" title="Menunggu Verifikasi"><span class="stat-dot dot-warning"></span> Pending: <b id="countPending">0</b></div>
-            <div class="stat-item" title="Sudah Disetujui/Dikirim"><span class="stat-dot dot-success"></span> Selesai: <b id="countDone">0</b></div>
-            <div class="stat-item" title="Surat Ditolak"><span class="stat-dot dot-danger"></span> Ditolak: <b id="countReject">0</b></div>
+    <!-- HEADER DASHBOARD ADMIN (GAYA BANNER HIJAU ELEGAN) -->
+    <div class="hero-banner mb-20">
+        <div class="hero-text">
+            <span class="hero-tag">PANEL KENDALI UTAMA</span>
+            <h2>Dashboard Admin STAIIS</h2>
+            <p>Kelola formulir pengajuan, verifikasi dokumen, dan pantau status administrasi mahasiswa secara langsung.</p>
+            
+            <!-- Tombol Logout Khusus Banner -->
+            <button class="btn-logout-hero" onclick="logoutSistem()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> 
+                Keluar Sistem
+            </button>
         </div>
-
-        <button class="btn-outline-danger" onclick="logoutSistem()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> 
-            Keluar
-        </button>
+        
+        <!-- Kotak Info (Menampilkan Statistik Live) -->
+        <div class="hero-info-box" style="min-width: 250px;">
+            <div class="flex-between align-center mb-10">
+                <span class="info-label">STATISTIK HARI INI</span>
+                <span class="info-badge">LIVE</span>
+            </div>
+            
+            <div class="hero-stat-list">
+                <div class="hero-stat-item">
+                    <span class="stat-label"><span class="stat-dot dot-warning"></span> Pending</span>
+                    <span class="stat-angka" id="countPending">0</span>
+                </div>
+                <div class="hero-stat-item">
+                    <span class="stat-label"><span class="stat-dot dot-success"></span> Selesai / Dikirim</span>
+                    <span class="stat-angka" id="countDone">0</span>
+                </div>
+                <div class="hero-stat-item">
+                    <span class="stat-label"><span class="stat-dot dot-danger"></span> Ditolak</span>
+                    <span class="stat-angka" id="countReject">0</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- TAB SWITCHER DENGAN BADGE ANGKA -->
@@ -213,6 +234,13 @@
     <svg id="toastIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></svg>
     <span id="toastMessage">Pesan Notifikasi</span>
 </div>
+<!-- ================= FOOTER ================= -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 STAI Imam Syafi'i Cianjur. Hak Cipta Dilindungi.</p>
+            <p class="footer-sub">Sistem Layanan Administrasi Persuratan Mahasiswa</p>
+        </div>
+    </footer>
     <script src="js/admin.js"></script>
 </body>
 </html>
