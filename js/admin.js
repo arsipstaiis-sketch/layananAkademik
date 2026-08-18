@@ -64,22 +64,37 @@ async function loadData() {
         let rawData = await response.json();
 
         if (rawData.status === "error") {
-            sessionStorage.removeItem('adminPin');
+            localStorage.removeItem('adminPin');
             alert("PIN Salah atau Sesi Berakhir.");
             location.reload();
             return;
         }
         
         globalData = rawData.map(item => {
+            // 1. SISTEM KEAMANAN: Cegah "NaN/NaN" jika tanggal di Spreadsheet kosong
             let d = new Date(item.tanggalPengajuanRaw);
-            let m = d.getMonth() + 1;
-            let y = d.getFullYear();
-            let startYear = (m >= 9) ? y : y - 1;
-            item.tahunAkademik = `${startYear}/${startYear + 1}`;
+            if (item.tanggalPengajuanRaw && !isNaN(d.getTime())) {
+                let m = d.getMonth() + 1;
+                let y = d.getFullYear();
+                let startYear = (m >= 9) ? y : y - 1;
+                item.tahunAkademik = `${startYear}/${startYear + 1}`;
+            } else {
+                item.tahunAkademik = "-"; // Menampilkan garis strip jika error
+            }
             
-            let dateParts = item.tanggal.split(" ");
-            item.dateStr = dateParts[0] || "-";
-            item.timeStr = dateParts[1] || "-";
+            // 2. SISTEM KEAMANAN: Cegah tahun "1970" muncul
+            if (!item.tanggalPengajuanRaw || item.tanggal.includes("1970")) {
+                item.dateStr = "-";
+                item.timeStr = "-";
+            } else {
+                let dateParts = item.tanggal.split(" ");
+                item.dateStr = dateParts[0] || "-";
+                item.timeStr = dateParts[1] || "-";
+            }
+
+            // 3. SISTEM KEAMANAN: Jika kolom jenis surat kosong
+            if (!item.jenisSurat) item.jenisSurat = "Tidak Diketahui";
+            
             return item;
         });
         
