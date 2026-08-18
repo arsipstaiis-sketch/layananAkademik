@@ -221,3 +221,47 @@ tr:hover td { background-color: #f9fafb; }
 @media (max-width: 500px) {
     .stats-grid { grid-template-columns: 1fr; }
 }
+/* ==========================================================
+   MINI STATUS BAR & TAB BADGE (EFEKTIF UNTUK HP)
+   ========================================================== */
+.mini-stats {
+    display: flex;
+    gap: 15px;
+    background: #f8fafc;
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--border-light);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stat-item { display: flex; align-items: center; gap: 6px; color: var(--text-gray); }
+.stat-item b { color: var(--text-dark); font-size: 13px; }
+.stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot-warning { background: var(--warning); box-shadow: 0 0 4px var(--warning); }
+.dot-success { background: var(--success); box-shadow: 0 0 4px var(--success); }
+.dot-danger { background: var(--danger); box-shadow: 0 0 4px var(--danger); }
+
+/* Badge Angka Merah di Tab */
+.tab-badge {
+    background: #ef4444;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    margin-left: 6px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+}
+
+/* Responsivitas Khusus HP */
+@media (max-width: 768px) {
+    /* Mendorong Mini Stats ke baris bawah saat di HP agar rapi */
+    .mini-stats { width: 100%; justify-content: center; order: 3; }
+    .dashboard-title { flex: 1; font-size: 16px; }
+    .btn-outline-danger { padding: 6px 12px; font-size: 11px; }
+    .btn-outline-danger svg { width: 14px; height: 14px; }
+}
