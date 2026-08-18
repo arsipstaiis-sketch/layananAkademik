@@ -84,19 +84,41 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 .btn-outline-danger:hover { background: var(--danger); color: white; border-color: var(--danger); }
 
 /* ==========================================================
-   4. TAB SWITCHER (KAPSUL ABU-ABU)
+   4. TAB SWITCHER (FULL WIDTH)
    ========================================================== */
 .tab-switcher {
-    display: flex; background: #e5e7eb; padding: 6px;
-    border-radius: 50px; width: fit-content; margin: 0 auto 25px auto;
+    display: flex; 
+    background: #e5e7eb; 
+    padding: 6px;
+    border-radius: 12px; /* Dibuat sedikit kurang bulat (12px) agar serasi dengan tabel */
+    width: 100%; /* Mengambil lebar penuh container */
+    margin: 0 auto 25px auto;
+    gap: 6px; /* Memberi sedikit jarak antar tombol */
 }
+
 .tab-pill {
-    background: transparent; border: none; padding: 10px 24px;
-    border-radius: 50px; font-size: 14px; font-weight: 600;
-    color: var(--text-gray); cursor: pointer; display: flex;
-    align-items: center; gap: 8px; transition: all 0.3s ease;
+    flex: 1; /* Membuat setiap tombol mengambil ruang sama rata (50%) */
+    background: transparent; 
+    border: none; 
+    padding: 12px 24px;
+    border-radius: 10px; 
+    font-size: 14px; 
+    font-weight: 600;
+    color: var(--text-gray); 
+    cursor: pointer; 
+    display: flex;
+    justify-content: center; /* Memastikan teks & ikon berada di tengah */
+    align-items: center; 
+    gap: 8px; 
+    transition: all 0.3s ease;
 }
-.tab-pill.active { background: white; color: var(--primary-dark); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+.tab-pill svg { width: 18px; height: 18px; }
+.tab-pill.active { 
+    background: white; 
+    color: var(--primary-dark); 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}
 
 /* ==========================================================
    5. KARTU STATISTIK MINIMALIS
