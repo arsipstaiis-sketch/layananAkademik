@@ -522,15 +522,23 @@ function updateStatistik() {
         else if (status.includes("tolak")) reject++;
     });
 
-    const elPending = document.getElementById("countPending");
-    const elDone = document.getElementById("countDone");
-    const elReject = document.getElementById("countReject");
-    const elTotal = document.getElementById("countTotal");
+    // 1. Update Angka di Mini Bar Atas
+    if (document.getElementById("countPending")) document.getElementById("countPending").innerText = pending;
+    if (document.getElementById("countDone")) document.getElementById("countDone").innerText = done;
+    if (document.getElementById("countReject")) document.getElementById("countReject").innerText = reject;
 
-    if (elPending) elPending.innerText = pending;
-    if (elDone) elDone.innerText = done;
-    if (elReject) elReject.innerText = reject;
-    if (elTotal) elTotal.innerText = globalData.length;
+    // 2. Update Badge Merah di dalam Tab "Permohonan Baru"
+    const badgePending = document.getElementById("badgeTabPending");
+    if (badgePending) {
+        badgePending.innerText = pending;
+        
+        // Hanya tampilkan warna merah jika ada antrean (Lebih dari 0)
+        if (pending > 0) {
+            badgePending.style.display = 'inline-flex';
+        } else {
+            badgePending.style.display = 'none'; // Sembunyikan jika kosong
+        }
+    }
 }
 
 // ==========================================
