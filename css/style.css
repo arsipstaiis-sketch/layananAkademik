@@ -24,8 +24,15 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-dark); padding-bottom: 50px; }
-
+body { 
+    background-color: var(--bg-color); 
+    color: var(--text-dark); 
+    
+    /* Trik Sticky Footer */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Memaksa tinggi minimal sebesar layar */
+}
 /* Class Bantuan (Utilities) */
 .mb-20 { margin-bottom: 20px; }
 .flex-between { display: flex; justify-content: space-between; }
@@ -98,20 +105,41 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 .info-highlight { font-size: 24px; font-weight: 800; margin: 0; letter-spacing: 1px; }
 
 /* ==========================================================
-   4. TAB SWITCHER (KAPSUL)
+   TAB SWITCHER (FULL WIDTH UNTUK FORM MAHASISWA)
    ========================================================== */
 .tab-switcher {
-    display: flex; background: #e5e7eb; padding: 6px;
-    border-radius: 50px; width: fit-content; margin: 0 auto 25px auto;
+    display: flex; 
+    background: #e5e7eb; 
+    padding: 6px;
+    border-radius: 12px; 
+    width: 100%; 
+    margin: 0 auto 25px auto;
+    gap: 6px; 
 }
+
 .tab-pill {
-    background: transparent; border: none; padding: 12px 24px;
-    border-radius: 50px; font-size: 14px; font-weight: 600;
-    color: var(--text-gray); cursor: pointer; display: flex;
-    align-items: center; gap: 8px; transition: all 0.3s ease;
+    flex: 1; 
+    background: transparent; 
+    border: none; 
+    padding: 12px 24px;
+    border-radius: 10px; 
+    font-size: 14px; 
+    font-weight: 600;
+    color: var(--text-gray); 
+    cursor: pointer; 
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    gap: 8px; 
+    transition: all 0.3s ease;
 }
+
 .tab-pill svg { width: 18px; height: 18px; }
-.tab-pill.active { background: white; color: var(--primary-dark); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.tab-pill.active { 
+    background: white; 
+    color: var(--primary-dark); 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}
 
 /* ==========================================================
    5. KARTU FORMULIR & GRID INPUT
@@ -198,4 +226,35 @@ tr:hover td { background-color: #f9fafb; }
     .ui-card { padding: 25px; }
     .form-grid { grid-template-columns: 1fr; }
     .tab-pill { padding: 10px 15px; font-size: 13px; }
+}
+/* ==========================================================
+   FOOTER (CATATAN KAKI)
+   ========================================================== */
+.site-footer {
+    margin-top: auto; /* Mendorong footer ke ujung bawah layar */
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid var(--border-light);
+    background-color: transparent;
+}
+
+.site-footer p {
+    margin: 0 0 6px 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.site-footer .footer-sub {
+    font-weight: 500;
+    font-size: 11.5px;
+    color: var(--text-gray);
+    letter-spacing: 0.3px;
+}
+
+/* Penyesuaian jarak responsif untuk HP */
+@media (max-width: 768px) {
+    .site-footer {
+        padding: 25px 15px;
+    }
 }
