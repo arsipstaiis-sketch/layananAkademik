@@ -1,11 +1,15 @@
 /* ==========================================================
-   1. VARIABEL & RESET DASAR
+   1. IMPORT FONT & VARIABEL DASAR
    ========================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;0,700;1,600&display=swap');
+
 :root {
-    /* Warna Modern Baru */
-    --primary-dark: #074c30; /* Hijau pekat Navbar */
-    --primary-light: #167a53;
-    --bg-color: #f4f7f6; /* Latar belakang abu-abu terang */
+    /* Warna Hijau STAIIS yang Seragam */
+    --primary-dark: #0f6c3e; 
+    --primary-light: #169355;
+    --accent: #facc15;
+    
+    --bg-color: #f4f7f6;
     --card-bg: #ffffff;
     --border-light: #e5e7eb;
     --border-color: #e5e7eb;
@@ -24,7 +28,17 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-dark); padding-bottom: 50px; }
+body { 
+    font-family: 'Inter', system-ui, sans-serif; 
+    background-color: var(--bg-color); 
+    color: var(--text-dark); 
+    /* Trik Sticky Footer */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+h1, h2, h3, .brand-text h1, .hero-text h2 { font-family: 'Lora', serif; }
 
 /* Class Bantuan (Utilities) */
 .mb-20 { margin-bottom: 20px; }
@@ -58,7 +72,7 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 }
 .nav-brand { display: flex; align-items: center; gap: 15px; }
 .logo-img { width: 45px; height: 45px; border-radius: 50%; background: white; padding: 2px; }
-.brand-text h1 { font-size: 18px; font-weight: 700; margin: 0 0 4px 0; font-family: 'Lora', serif; }
+.brand-text h1 { font-size: 18px; font-weight: 700; margin: 0 0 4px 0; }
 .brand-text p { font-size: 12px; color: #a7f3d0; margin: 0; opacity: 0.9; }
 
 .nav-links { display: flex; gap: 20px; }
@@ -71,17 +85,55 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 .nav-links svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
 
 /* ==========================================================
-   3. KONTEN UTAMA & HEADER DASHBOARD
+   3. KONTEN UTAMA & HERO BANNER DASHBOARD (BARU)
    ========================================================== */
-.main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-.dashboard-title { font-size: 20px; font-weight: 700; color: #111827; margin: 0; }
+.main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; flex: 1; }
 
-.btn-outline-danger {
-    background: #fff5f5; color: var(--danger); border: 1px solid #fecaca;
-    padding: 8px 16px; border-radius: 50px; font-size: 13px; font-weight: 600;
-    cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s;
+.hero-banner {
+    background: var(--primary-dark);
+    border-radius: 16px;
+    padding: 30px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    box-shadow: 0 10px 25px -5px rgba(15, 108, 62, 0.4);
+    gap: 30px;
 }
-.btn-outline-danger:hover { background: var(--danger); color: white; border-color: var(--danger); }
+.hero-text { flex: 1; }
+.hero-tag {
+    display: inline-block; background: rgba(255, 255, 255, 0.15);
+    padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 800;
+    letter-spacing: 1px; margin-bottom: 15px;
+}
+.hero-text p { font-size: 14px; opacity: 0.9; margin: 0; line-height: 1.5; max-width: 500px; }
+
+.hero-info-box {
+    background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px; padding: 20px; backdrop-filter: blur(5px); min-width: 250px;
+}
+.info-label { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.9; }
+.info-badge { background: white; color: var(--primary-dark); font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 4px; }
+
+.btn-logout-hero {
+    margin-top: 20px; background: rgba(255, 255, 255, 0.1); color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 16px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex;
+    align-items: center; gap: 8px; transition: all 0.3s ease;
+}
+.btn-logout-hero:hover { background: #dc2626; border-color: #dc2626; }
+.btn-logout-hero svg { width: 16px; height: 16px; }
+
+.hero-stat-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+.hero-stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+.hero-stat-item:last-child { border-bottom: none; padding-bottom: 0; }
+.hero-stat-item .stat-label { font-size: 13px; opacity: 0.9; display: flex; align-items: center; gap: 8px; }
+.hero-stat-item .stat-angka { font-size: 18px; font-weight: 800; color: white; }
+
+.stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+.hero-stat-item .dot-warning { background: #facc15; box-shadow: 0 0 5px rgba(250, 204, 21, 0.5); }
+.hero-stat-item .dot-success { background: #4ade80; box-shadow: 0 0 5px rgba(74, 222, 128, 0.5); }
+.hero-stat-item .dot-danger { background: #f87171; box-shadow: 0 0 5px rgba(248, 113, 113, 0.5); }
 
 /* ==========================================================
    4. TAB SWITCHER (FULL WIDTH)
@@ -90,77 +142,69 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
     display: flex; 
     background: #e5e7eb; 
     padding: 6px;
-    border-radius: 12px; /* Dibuat sedikit kurang bulat (12px) agar serasi dengan tabel */
-    width: 100%; /* Mengambil lebar penuh container */
+    border-radius: 12px; 
+    width: 100%; 
     margin: 0 auto 25px auto;
-    gap: 6px; /* Memberi sedikit jarak antar tombol */
+    gap: 6px; 
 }
-
 .tab-pill {
-    flex: 1; /* Membuat setiap tombol mengambil ruang sama rata (50%) */
-    background: transparent; 
-    border: none; 
-    padding: 12px 24px;
-    border-radius: 10px; 
-    font-size: 14px; 
-    font-weight: 600;
-    color: var(--text-gray); 
-    cursor: pointer; 
-    display: flex;
-    justify-content: center; /* Memastikan teks & ikon berada di tengah */
-    align-items: center; 
-    gap: 8px; 
-    transition: all 0.3s ease;
+    flex: 1; background: transparent; border: none; padding: 12px 24px;
+    border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--text-gray); 
+    cursor: pointer; display: flex; justify-content: center; align-items: center; 
+    gap: 8px; transition: all 0.3s ease;
 }
-
 .tab-pill svg { width: 18px; height: 18px; }
-.tab-pill.active { 
-    background: white; 
-    color: var(--primary-dark); 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+.tab-pill.active { background: white; color: var(--primary-dark); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+/* Badge Angka Merah di Tab */
+.tab-badge {
+    background: #ef4444; color: white; padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; margin-left: 6px; font-weight: 800; display: inline-flex;
+    align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
 }
 
 /* ==========================================================
-   5. KARTU STATISTIK MINIMALIS
+   5. KONTROL PENCARIAN & AREA TABEL
    ========================================================== */
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.stat-box { display: flex; flex-direction: column; justify-content: center; padding: 20px 25px; }
-.stat-label { font-size: 11px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 8px; }
-.stat-value { font-size: 28px; font-weight: 800; }
-.text-warning { color: var(--warning); }
-.text-success { color: var(--success); }
-.text-danger { color: var(--danger); }
-.text-gray { color: var(--text-gray); }
-
-/* ==========================================================
-   6. AREA TABEL & KONTROL PENCARIAN
-   ========================================================== */
-.table-card { padding: 0; overflow: hidden; } /* Tabel menempel ke pinggir kartu */
+.table-card { padding: 0; overflow: hidden; } 
 .table-controls { display: flex; justify-content: space-between; padding: 20px; border-bottom: 1px solid var(--border-light); background: white; flex-wrap: wrap; gap: 15px;}
 .search-input, .filter-select { padding: 10px 15px; border: 1px solid #d1d5db; border-radius: 20px; font-size: 13px; min-width: 250px; outline: none; }
 .search-input:focus, .filter-select:focus { border-color: var(--primary-light); }
 
-.table-scroll-wrapper { overflow-x: auto; overflow-y: auto; height: calc(85vh - 280px); min-height: 300px; scrollbar-width: thin; }
+/* TABEL STATUS & SCROLL WRAPPER (STICKY HEADER) */
+.table-scroll-wrapper { 
+    overflow-x: auto; 
+    overflow-y: auto; 
+    height: calc(85vh - 280px); 
+    min-height: 350px; 
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    background: var(--card-bg);
+    scrollbar-width: thin; 
+}
 .table-scroll-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
 .table-scroll-wrapper::-webkit-scrollbar-thumb { background-color: #cbd5e0; border-radius: 8px; }
+.table-scroll-wrapper::-webkit-scrollbar-track { background-color: #f8fafc; border-radius: 8px; }
 
-table { width: 100%; border-collapse: collapse; text-align: left; }
+table { width: 100%; min-width: 950px; border-collapse: collapse; text-align: left; table-layout: fixed; }
 th { 
     background: white !important; padding: 15px 20px; font-size: 11px; font-weight: 800; 
     color: var(--text-gray); border-bottom: 2px solid var(--border-light); 
     position: sticky; top: 0; z-index: 10; text-transform: uppercase; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
 }
-td { padding: 15px 20px; font-size: 13px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+td { padding: 15px 20px; font-size: 13px; border-bottom: 1px solid var(--border-light); vertical-align: middle; word-wrap: break-word; }
 tr:hover td { background-color: #f9fafb; }
 
-.col-tanggal { white-space: nowrap; width: 85px; text-align: center; }
-.col-ta { text-align: center; white-space: nowrap; width: 70px; }
-.col-jenis { width: 80px; text-align: center; }
-.col-berkas { text-align: center; width: 65px; }
-.col-aksi { text-align: center; width: 40px; }
+/* KONTROL LEBAR KOLOM SPESIFIK */
+.col-tanggal { width: 13%; text-align: center; }
+.col-ta      { width: 14%; text-align: center; }
+.col-jenis   { width: 15%; text-align: center; font-weight: 600; color: var(--text-gray); }
+.col-berkas  { width: 10%; text-align: center; }
+.col-aksi    { width: 10%; text-align: center; }
 
 /* ==========================================================
-   7. BADGE STATUS (DIKIRIM, VERIFIKASI, DLL)
+   6. BADGE STATUS (DIKIRIM, VERIFIKASI, DLL)
    ========================================================== */
 .badge { display: inline-block; border-radius: 6px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; text-align: center; }
 .badge-verifikasi { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; } 
@@ -170,7 +214,7 @@ tr:hover td { background-color: #f9fafb; }
 .alasan-tolak { margin-top: 10px; padding: 10px 12px; background: #fff5f5; border-left: 3px solid var(--danger); font-size: 11.5px; color: #7f1d1d; border-radius: 0 6px 6px 0; line-height: 1.5; text-align: left; }
 
 /* ==========================================================
-   8. TOMBOL AKSI DI TABEL (TINJAU, TOLAK, KIRIM)
+   7. TOMBOL AKSI DI TABEL (TINJAU, TOLAK, KIRIM)
    ========================================================== */
 .action-group { display: flex; gap: 8px; justify-content: center; align-items: center; width: 100%; }
 .action-btn-icon {
@@ -194,7 +238,7 @@ tr:hover td { background-color: #f9fafb; }
 .btn-icon-full:hover { background: #157347; box-shadow: 0 6px 12px rgba(25, 135, 84, 0.4); }
 
 /* ==========================================================
-   9. FORM TINJAU & MODAL OVERLAY
+   8. FORM TINJAU & MODAL OVERLAY
    ========================================================== */
 .form-group { display: flex; flex-direction: column; }
 .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-dark); margin-bottom: 6px; text-transform: uppercase; }
@@ -230,60 +274,28 @@ tr:hover td { background-color: #f9fafb; }
 .toast-notification.show { visibility: visible; opacity: 1; bottom: 50px; }
 
 /* ==========================================================
+   9. FOOTER (CATATAN KAKI)
+   ========================================================== */
+.site-footer {
+    margin-top: auto; /* Mendorong footer ke dasar layar */
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid var(--border-light);
+    background-color: transparent;
+}
+.site-footer p { margin: 0 0 6px 0; font-size: 13.5px; font-weight: 600; color: var(--text-dark); }
+.site-footer .footer-sub { font-weight: 500; font-size: 11.5px; color: var(--text-gray); letter-spacing: 0.3px; }
+
+/* ==========================================================
    10. MEDIA QUERIES (LAYAR HP)
    ========================================================== */
 @media (max-width: 768px) {
     .top-navbar { flex-direction: column; padding: 15px; gap: 15px; }
     .nav-links { flex-wrap: wrap; justify-content: center; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-banner { flex-direction: column; padding: 25px; gap: 20px; text-align: center; }
+    .hero-info-box { width: 100%; text-align: left; }
     .table-controls { flex-direction: column; gap: 15px; align-items: stretch; }
     .search-input, .filter-select { width: 100%; min-width: 100%; }
     #formTinjau { grid-template-columns: 1fr !important; }
-}
-@media (max-width: 500px) {
-    .stats-grid { grid-template-columns: 1fr; }
-}
-/* ==========================================================
-   MINI STATUS BAR & TAB BADGE (EFEKTIF UNTUK HP)
-   ========================================================== */
-.mini-stats {
-    display: flex;
-    gap: 15px;
-    background: #f8fafc;
-    padding: 8px 15px;
-    border-radius: 20px;
-    border: 1px solid var(--border-light);
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.stat-item { display: flex; align-items: center; gap: 6px; color: var(--text-gray); }
-.stat-item b { color: var(--text-dark); font-size: 13px; }
-.stat-dot { width: 8px; height: 8px; border-radius: 50%; }
-.dot-warning { background: var(--warning); box-shadow: 0 0 4px var(--warning); }
-.dot-success { background: var(--success); box-shadow: 0 0 4px var(--success); }
-.dot-danger { background: var(--danger); box-shadow: 0 0 4px var(--danger); }
-
-/* Badge Angka Merah di Tab */
-.tab-badge {
-    background: #ef4444;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    margin-left: 6px;
-    font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
-}
-
-/* Responsivitas Khusus HP */
-@media (max-width: 768px) {
-    /* Mendorong Mini Stats ke baris bawah saat di HP agar rapi */
-    .mini-stats { width: 100%; justify-content: center; order: 3; }
-    .dashboard-title { flex: 1; font-size: 16px; }
-    .btn-outline-danger { padding: 6px 12px; font-size: 11px; }
-    .btn-outline-danger svg { width: 14px; height: 14px; }
+    .site-footer { padding: 25px 15px; }
 }
