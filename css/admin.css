@@ -317,62 +317,71 @@ th:nth-child(6), td:nth-child(6) { min-width: 130px; text-align: center; }
 .site-footer .footer-sub { font-weight: 500; font-size: 11.5px; color: var(--text-gray); letter-spacing: 0.3px; }
 
 /* ==========================================================
-   10. MEDIA QUERIES (LAYAR HP) - ANTI BOCOR KE SAMPING
+   10. MEDIA QUERIES (LAYAR HP) - KUNCI ABSOLUT ANTI BOCOR
    ========================================================== */
 @media (max-width: 768px) {
-    /* 1. KUNCI UTAMA: Matikan fitur geser kanan-kiri pada layar */
+    /* 1. Kunci paksa layar agar tidak ada yang bisa melebihi 100% */
     html, body { 
         overflow-x: hidden !important; 
-        width: 100%; 
-        position: relative; 
+        max-width: 100vw !important; 
+        width: 100% !important;
+        margin: 0; padding: 0;
     }
     
+    /* 2. Kunci container utama agar patuh pada lebar HP */
     .main-container { 
-        padding: 0 10px; 
-        width: 100%; 
-        overflow-x: hidden; 
-        box-sizing: border-box; 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        padding: 0 15px !important; 
+        margin: 15px auto !important;
+        box-sizing: border-box !important; 
     }
 
-    /* 2. Navbar & Header */
-    .top-navbar { flex-direction: column; padding: 15px; gap: 12px; width: 100%; box-sizing: border-box; }
-    .nav-links { width: 100%; justify-content: space-between; gap: 10px; }
-    .nav-links a { flex: 1; justify-content: center; font-size: 12px; padding: 10px 5px; flex-direction: column; gap: 4px; text-align: center; }
-
-    /* 3. Banner Hijau & Statistik (Agar tidak meluber ke kanan) */
-    .hero-banner { 
-        flex-direction: column; 
-        padding: 20px 15px; 
-        gap: 15px; 
-        text-align: center; 
-        width: 100%; 
-        box-sizing: border-box; 
+    /* 3. Kunci Banner, Kartu, dan Tab agar tidak direntangkan oleh tabel */
+    .hero-banner, .ui-card, .tab-switcher, .hero-info-box {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        min-width: 0 !important; /* Mematikan paksaan min-width lama */
     }
+
+    /* Penyesuaian isi Banner */
+    .hero-banner { flex-direction: column; padding: 20px 15px !important; gap: 15px; text-align: center; }
     .hero-text h2 { font-size: 22px; }
-    
-    /* Menghapus paksaan lebar 280px pada kotak statistik */
-    .hero-info-box { 
-        width: 100%; 
+    .hero-info-box { text-align: left; }
+    .btn-logout-hero { width: 100%; justify-content: center; }
+
+    /* 4. Navbar menjadi ringkas */
+    .top-navbar { flex-direction: column; padding: 15px !important; gap: 12px; width: 100% !important; box-sizing: border-box; }
+    .nav-links { width: 100%; justify-content: space-between; gap: 5px; }
+    .nav-links a { flex: 1; justify-content: center; font-size: 11px; padding: 8px 5px; flex-direction: column; gap: 4px; text-align: center; }
+
+    /* 5. Tab Switcher agar tidak terpotong */
+    .tab-switcher { padding: 4px; gap: 4px; margin-bottom: 15px; }
+    .tab-pill { padding: 10px 5px !important; font-size: 11px !important; flex-direction: column; gap: 6px; }
+    .tab-pill svg { width: 20px; height: 20px; }
+
+    /* 6. Kotak Pencarian & Filter yang pas di layar */
+    .table-controls { flex-direction: column; gap: 10px; padding: 15px 10px !important; }
+    .search-input, .filter-select { 
+        width: 100% !important; 
         min-width: 0 !important; 
-        text-align: left; 
+        font-size: 13px; 
+        padding: 12px; 
         box-sizing: border-box; 
     }
     
-    /* 4. Tab Switcher */
-    .tab-switcher { padding: 4px; gap: 4px; margin-bottom: 15px; width: 100%; box-sizing: border-box; }
-    .tab-pill { padding: 10px 5px; font-size: 11.5px; flex-direction: column; gap: 6px; }
-    .tab-pill svg { width: 22px; height: 22px; }
+    /* 7. PEMBUNGKUS TABEL (Ini adalah kunci masalah Anda!) */
+    .table-scroll-wrapper { 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        display: block !important; /* Memaksa scrollbar berfungsi di dalam kartunya saja */
+        overflow-x: auto !important; 
+        -webkit-overflow-scrolling: touch; 
+    }
 
-    /* 5. Area Tabel & Kontrol (Agar kartu putih menempel pas di layar) */
-    .ui-card { padding: 15px; width: 100%; box-sizing: border-box; overflow: hidden; }
-    .table-controls { flex-direction: column; gap: 12px; padding: 15px 10px; }
-    .search-input, .filter-select { width: 100%; min-width: 100%; font-size: 14px; padding: 12px 15px; box-sizing: border-box; }
-    
-    .table-scroll-wrapper { width: 100%; max-width: 100%; -webkit-overflow-scrolling: touch; }
-
-    /* 6. Footer & Modal Popup */
-    .modal-content { width: 95%; padding: 20px 15px; margin: 10px; box-sizing: border-box; }
-    .form-grid { grid-template-columns: 1fr; gap: 15px; }
+    /* 8. Modal & Footer */
+    .modal-content { width: 100% !important; padding: 20px 15px; box-sizing: border-box; }
     .custom-modal-box { padding: 20px 15px; width: 90%; box-sizing: border-box; }
     .site-footer { padding: 20px 15px; width: 100%; box-sizing: border-box; }
 }
@@ -383,6 +392,5 @@ th:nth-child(6), td:nth-child(6) { min-width: 130px; text-align: center; }
 @media (max-width: 400px) {
     .brand-text h1 { font-size: 16px; }
     .hero-stat-item .stat-angka { font-size: 16px; }
-    .tab-pill { font-size: 10px; }
-    .btn-logout-hero { width: 100%; justify-content: center; } 
+    .tab-pill { font-size: 10px !important; }
 }
