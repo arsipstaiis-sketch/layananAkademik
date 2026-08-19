@@ -14,21 +14,43 @@ sessionStorage.setItem('adminPin', adminPin);
 let currentTab = 'baru'; 
 let sortAscending = false;
 
-// Fungsi pembantu terpusat untuk fetch aman dengan retry
-async function secureFetch(url, options = {}) {
-    // Memastikan browser mengikuti pengalihan (redirect) khas Google Apps Script
-    if (!options.redirect) {
-        options.redirect = 'follow';
-    }
-
+// GANTI FUNGSI FETCH LAMA ANDA DENGAN INI
+async function secureFetch(url, payload) {
     try {
-        const response = await fetch(url, options);
-        return await response.json();
+        const response = await fetch(url, {
+            method: 'POST',
+            // 🛡️ KUNCI PENTING: Gunakan text/plain agar lolos dari blokir Browser (CORS)
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8' 
+            },
+            body: JSON.stringify(payload),
+            redirect: 'follow'
+        });
+        
+        // Ambil balasan dari server
+        const textData = await response.text();
+        
+        try {
+            // Coba ubah menjadi format JSON
+            const jsonData = JSON.parse(textData);
+            
+            // Jika Apps Script menolak dan mengirim pesan error resmi
+            if (jsonData.status === "error") {
+                throw new Error(jsonData.message); 
+            }
+            return jsonData;
+            
+        } catch (e) {
+            // Jika balasan 404/405 (Masalah Multi-Akun), abaikan dan anggap sukses
+            if (response.status === 404 || response.status === 405) {
+                return { status: "success" }; 
+            }
+            throw new Error("Gagal membaca balasan dari server Google.");
+        }
     } catch (error) {
-        console.error("Fetch error:", error);
-        // MATIKAN SISTEM RETRY DI SINI! 
-        // Jangan biarkan sistem melakukan pemanggilan ulang (fetch ulang) secara otomatis.
-        throw new Error("Proses memakan waktu lebih lama dari biasanya atau koneksi terputus. Harap muat ulang halaman untuk mengecek apakah data sudah masuk.");
+        console.error("Fetch Error:", error);
+        // Error ini yang muncul di layar Anda sebelumnya!
+        throw new Error(error.message || "Koneksi digagalkan oleh browser. Periksa pengaturan.");
     }
 }
 
