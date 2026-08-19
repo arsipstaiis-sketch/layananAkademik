@@ -401,8 +401,10 @@ async function saveAndApprove() {
     };
 
     try {
-        const res = await secureFetch({
+        // PERBAIKAN: Tambahkan WEB_APP_URL di depan, dan masukkan pin: adminPin
+        const res = await secureFetch(WEB_APP_URL, {
             action: "updateAndApprove",
+            pin: adminPin, // Kunci rahasia agar diizinkan oleh Code.gs
             rowNumber: rNum,
             rowData: rowDataMatang
         });
@@ -412,10 +414,18 @@ async function saveAndApprove() {
             closeModal(); 
             loadData(); 
         } else {
+            // Jika sukses terhubung tapi ada pesan error dari dalam Apps Script (Alarm Merah)
+            alert('Gagal memproses: ' + res.message);
             showToast('Gagal: ' + res.message, true);
         }
-    } catch(e) { alert('Error: ' + e); }
-    finally { btn.innerText = "Simpan Data & Buat Surat"; btn.disabled = false; }
+    } catch(e) { 
+        // Tangkap error jika benar-benar gagal fetch (misal internet mati)
+        alert('Error: ' + e.message); 
+    }
+    finally { 
+        btn.innerText = "Simpan Data & Buat Surat"; 
+        btn.disabled = false; 
+    }
 }
 
 let pendingAction = null;
