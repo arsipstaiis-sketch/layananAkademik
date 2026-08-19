@@ -15,31 +15,20 @@ let currentTab = 'baru';
 let sortAscending = false;
 
 // Fungsi pembantu terpusat untuk fetch aman dengan retry
-async function secureFetch(payload, retries = 3, delay = 1000) {
-    payload.pin = adminPin;
+async function secureFetch(url, options = {}) {
+    // Memastikan browser mengikuti pengalihan (redirect) khas Google Apps Script
+    if (!options.redirect) {
+        options.redirect = 'follow';
+    }
 
-    const options = {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-    };
-
-    for (let i = 0; i < retries; i++) {
-        try {
-            const response = await fetch(WEB_APP_URL, options);
-            const result = await response.json();
-
-            if (result.status === "error" && result.message && result.message.includes("Akses Ditolak")) {
-                sessionStorage.removeItem('adminPin');
-                alert("PIN Admin Salah! Akses ditolak oleh server.");
-                location.reload();
-            }
-            return result; 
-        } catch (err) {
-            if (i === retries - 1) throw err;
-            console.warn(`Koneksi gagal. Mencoba ulang... (${i + 1}/${retries})`);
-        }
-        await new Promise(res => setTimeout(res, delay));
+    try {
+        const response = await fetch(url, options);
+        return await response.json();
+    } catch (error) {
+        console.error("Fetch error:", error);
+        // MATIKAN SISTEM RETRY DI SINI! 
+        // Jangan biarkan sistem melakukan pemanggilan ulang (fetch ulang) secara otomatis.
+        throw new Error("Proses memakan waktu lebih lama dari biasanya atau koneksi terputus. Harap muat ulang halaman untuk mengecek apakah data sudah masuk.");
     }
 }
 
