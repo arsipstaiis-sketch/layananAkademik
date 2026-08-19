@@ -493,7 +493,7 @@ async function prosesConfirmAction(event) {
         let requestBody = { rowNumber: rowNum };
         if (action === 'tolak') requestBody.alasanPenolakan = alasan;
 
-        let result = await secureFetch(Object.assign({ action: actionCode }, requestBody));
+        let result = await secureFetch(WEB_APP_URL, Object.assign({ action: actionCode, pin: adminPin }, requestBody));
         tutupConfirmModal();
 
         if (result.status === "success") {
