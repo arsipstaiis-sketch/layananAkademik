@@ -536,7 +536,6 @@ function showToast(message, isError = false) {
         toast.style.backgroundColor = "#10b981"; 
         toastIcon.innerHTML = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>`;
     }
-    
     toast.classList.add('show');
     setTimeout(() => { toast.classList.remove('show'); }, 3500);
 }
