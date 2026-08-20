@@ -9,238 +9,298 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
-    <!-- Font Modern dari Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Import Font Lora & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     
-    <!-- Memanggil CSS Anda (Ubah ke style.css jika Anda menyimpannya dengan nama itu) -->
-    <link rel="stylesheet" href="css/admin.css">
-</head>
-<body>
-<!-- ================= NAVBAR STICKY ================= -->
-<nav class="top-navbar">
-    <div class="nav-brand">
-        <!-- Logo STAIIS Anda -->
-        <img src="assets/logo.png" alt="Logo STAIIS" class="logo-img">
-        <div class="brand-text">
-            <h1>STAI Imam Syafi'i Cianjur</h1>
-            <p>Layanan Administrasi Mahasiswa</p>
-        </div>
-    </div>
-    <div class="nav-links">
-        <!-- Sesuaikan href di bawah ini dengan link halaman form mahasiswa Anda -->
-        <a href="index.html">
-            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Formulir Mahasiswa
-        </a>
-        <a href="#" class="active">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Panel Admin
-        </a>
-    </div>
-</nav>
+    <!-- Import Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- ================= KONTEN UTAMA ================= -->
-<main class="main-container">
-    
-    <!-- HEADER DASHBOARD ADMIN (GAYA BANNER HIJAU ELEGAN) -->
-    <div class="hero-banner mb-20">
-        <div class="hero-text">
-            <span class="hero-tag">PANEL KENDALI UTAMA</span>
-            <h2>Dashboard Admin STAIIS</h2>
-            <p>Kelola formulir pengajuan, verifikasi dokumen, dan pantau status administrasi mahasiswa secara langsung.</p>
+    <!-- Konfigurasi Tema Kustom Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { DEFAULT: '#074c30', light: '#167a53', dark: '#053622' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Lora', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Style internal kecil untuk kompatibilitas JS Anda -->
+    <style>
+        /* Mengakomodasi class .active dari JS untuk Tab Switcher */
+        .tab-pill { color: #6b7280; background-color: transparent; }
+        .tab-pill.active { color: #074c30; background-color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 700; }
+        
+        /* Spinner */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-right: 6px; vertical-align: middle; }
+        
+        /* Jika toast JS Anda menggunakan class .show */
+        .toast-notification.show { opacity: 1 !important; transform: translate(-50%, -20px) !important; pointer-events: auto !important; }
+    </style>
+</head>
+
+<body class="bg-[#f4f7f6] text-gray-800 font-sans min-h-screen flex flex-col overflow-x-hidden">
+
+    <!-- ================= NAVBAR STICKY ================= -->
+    <nav class="bg-primary text-white sticky top-0 z-50 shadow-md w-full">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
             
-            <!-- Tombol Logout Khusus Banner -->
-            <button class="btn-logout-hero" onclick="logoutSistem()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> 
-                Keluar Sistem
+            <div class="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start">
+                <div class="w-11 h-11 bg-white rounded-full p-0.5 flex-shrink-0">
+                    <img src="assets/logo.png" alt="Logo" class="w-full h-full rounded-full object-cover" onerror="this.style.display='none'">
+                </div>
+                <div>
+                    <h1 class="font-serif text-lg font-bold leading-none tracking-wide">STAI Imam Syafi'i Cianjur</h1>
+                    <p class="text-emerald-200 text-[11px] mt-1 tracking-wide">Layanan Administrasi Mahasiswa</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-2 w-full md:w-auto">
+                <a href="index.html" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs md:text-sm font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path stroke-linecap="round" stroke-linejoin="round" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    Formulir Mahasiswa
+                </a>
+                <a href="#" class="flex items-center gap-2 bg-white/20 px-3 py-2 rounded-lg text-xs md:text-sm font-semibold hover:bg-white/30 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Panel Admin
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================= KONTEN UTAMA ================= -->
+    <main class="max-w-6xl mx-auto w-full px-4 md:px-8 mt-6 md:mt-10 flex-grow mb-10">
+        
+        <!-- HERO BANNER (GAYA BANNER HIJAU ELEGAN) -->
+        <div class="bg-primary rounded-2xl p-6 md:p-10 text-white flex flex-col md:flex-row justify-between items-center gap-8 shadow-xl relative overflow-hidden mb-8">
+            <div class="flex-1 w-full text-center md:text-left relative z-10">
+                <span class="inline-block bg-white/15 text-[10px] md:text-xs uppercase font-bold tracking-wider px-4 py-1.5 rounded-full mb-4">PANEL KENDALI UTAMA</span>
+                <h2 class="font-serif text-2xl md:text-4xl font-bold mb-3 leading-snug">Dashboard Admin STAIIS</h2>
+                <p class="text-sm md:text-base text-emerald-100/90 max-w-xl mx-auto md:mx-0 mb-6">Kelola formulir pengajuan, verifikasi dokumen, dan pantau status administrasi mahasiswa secara langsung.</p>
+                
+                <!-- Tombol Logout -->
+                <button onclick="logoutSistem()" class="inline-flex items-center justify-center md:justify-start gap-2 bg-red-500/20 text-red-100 hover:bg-red-500 hover:text-white border border-red-500/30 px-5 py-2.5 rounded-xl text-sm font-bold transition-all w-full md:w-auto">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline stroke-linecap="round" stroke-linejoin="round" points="16 17 21 12 16 7"></polyline><line stroke-linecap="round" stroke-linejoin="round" x1="21" y1="12" x2="9" y2="12"></line></svg> 
+                    Keluar Sistem
+                </button>
+            </div>
+            
+            <!-- Kotak Info (Statistik Live) -->
+            <div class="bg-white/10 border border-white/20 backdrop-blur-md rounded-xl p-5 w-full md:w-[280px] relative z-10 shadow-lg">
+                <div class="flex justify-between items-center mb-5">
+                    <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-200">STATISTIK HARI INI</span>
+                    <span class="bg-red-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm animate-pulse">LIVE</span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-white/90 font-medium flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Pending
+                        </span>
+                        <span id="countPending" class="font-bold text-lg">0</span>
+                    </div>
+                    <div class="w-full bg-white/20 h-px"></div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-white/90 font-medium flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Selesai / Dikirim
+                        </span>
+                        <span id="countDone" class="font-bold text-lg">0</span>
+                    </div>
+                    <div class="w-full bg-white/20 h-px"></div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-white/90 font-medium flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span> Ditolak
+                        </span>
+                        <span id="countReject" class="font-bold text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB SWITCHER DENGAN BADGE ANGKA -->
+        <div class="flex bg-gray-200 p-1.5 rounded-xl w-full max-w-lg mx-auto mb-8 gap-1 relative">
+            <button id="tabBaru" onclick="switchTab('baru')" class="tab-pill active flex-1 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all relative">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                Permohonan Baru
+                <!-- Badge Merah (dikendalikan JS) -->
+                <span id="badgeTabPending" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm" style="display: none;">0</span>
+            </button>
+            <button id="tabArsip" onclick="switchTab('arsip')" class="tab-pill flex-1 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Arsip Terkirim
             </button>
         </div>
-        
-        <!-- Kotak Info (Menampilkan Statistik Live) -->
-        <div class="hero-info-box" style="min-width: 250px;">
-            <div class="flex-between align-center mb-10">
-                <span class="info-label">STATISTIK HARI INI</span>
-                <span class="info-badge">LIVE</span>
-            </div>
+
+        <!-- AREA TABEL & KONTROL PENCARIAN -->
+        <div class="bg-white border border-gray-200 shadow-sm rounded-2xl p-6 md:p-8 w-full">
             
-            <div class="hero-stat-list">
-                <div class="hero-stat-item">
-                    <span class="stat-label"><span class="stat-dot dot-warning"></span> Pending</span>
-                    <span class="stat-angka" id="countPending">0</span>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-gray-100 pb-6">
+                <!-- Pencarian & Refresh -->
+                <div class="flex w-full md:w-auto gap-3 items-center">
+                    <div class="relative w-full sm:w-64">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" id="searchInput" placeholder="Cari nama / NIM..." onkeyup="renderTable()" autocomplete="off" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all bg-gray-50 focus:bg-white text-sm">
+                    </div>
+                    <button onclick="loadData()" title="Segarkan Data" class="flex-shrink-0 w-11 h-11 flex items-center justify-center bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-xl transition-colors text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path stroke-linecap="round" stroke-linejoin="round" d="M21 3v5h-5"></path></svg>
+                    </button>
                 </div>
-                <div class="hero-stat-item">
-                    <span class="stat-label"><span class="stat-dot dot-success"></span> Selesai / Dikirim</span>
-                    <span class="stat-angka" id="countDone">0</span>
+                
+                <!-- Filter & Sort (Hanya muncul di tab arsip) -->
+                <!-- Saya gunakan JS inline agar format JS Anda "style.display" berfungsi -->
+                <div id="toolbarArsip" class="flex flex-col sm:flex-row w-full md:w-auto gap-3 items-center" style="display: none;">
+                    <select id="filterJenis" onchange="renderTable()" class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-4 focus:ring-primary/10 focus:border-primary bg-gray-50 text-sm cursor-pointer outline-none">
+                        <option value="">Semua Jenis</option>
+                    </select>
+                    <select id="filterTA" onchange="renderTable()" class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-4 focus:ring-primary/10 focus:border-primary bg-gray-50 text-sm cursor-pointer outline-none">
+                        <option value="">Semua Tahun</option>
+                    </select>
+                    <button onclick="toggleSortOrder()" title="Urutkan Tanggal" class="flex-shrink-0 w-11 h-11 flex items-center justify-center bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-xl transition-colors text-gray-600 hidden sm:flex">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                    </button>
                 </div>
-                <div class="hero-stat-item">
-                    <span class="stat-label"><span class="stat-dot dot-danger"></span> Ditolak</span>
-                    <span class="stat-angka" id="countReject">0</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB SWITCHER DENGAN BADGE ANGKA -->
-    <div class="tab-switcher mb-20">
-        <button id="tabBaru" class="tab-pill active" onclick="switchTab('baru')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
-            Permohonan Baru
-            <!-- Badge Merah untuk Notifikasi Pending -->
-            <span id="badgeTabPending" class="tab-badge" style="display: none;">0</span>
-        </button>
-        
-        <button id="tabArsip" class="tab-pill" onclick="switchTab('arsip')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Arsip Terkirim
-        </button>
-    </div>
-
-    <!-- AREA TABEL & KONTROL PENCARIAN -->
-    <div class="ui-card table-card">
-        <div class="table-controls">
-            <!-- Pencarian & Refresh -->
-            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                <input type="text" id="searchInput" class="search-input" placeholder="Cari nama / NIM / nomor..." onkeyup="renderTable()" autocomplete="off">
-                <button onclick="loadData()" title="Segarkan Data" style="background: transparent; border: 1px solid var(--border-light); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6b7280" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
-                </button>
-            </div>
-            
-            <!-- Filter & Sort (Hanya muncul di tab arsip) -->
-            <div class="flex-gap" id="toolbarArsip" style="display: none; align-items: center; flex-wrap: wrap;">
-                <select id="filterJenis" class="filter-select" onchange="renderTable()">
-                    <option value="">Semua Jenis</option>
-                </select>
-                <select id="filterTA" class="filter-select" onchange="renderTable()">
-                    <option value="">Semua Tahun</option>
-                </select>
-                <button onclick="toggleSortOrder()" title="Urutkan Tanggal" style="background: transparent; border: 1px solid var(--border-light); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6b7280" stroke-width="2"><path d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
-                </button>
-            </div>
-        </div>
-
-        <div class="table-scroll-wrapper">
-            <table id="mainTable">
-                <thead id="adminTableHeader">
-                    <!-- JS akan mengisi thead -->
-                </thead>
-                <tbody id="adminTableBody">
-                    <tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-gray);">Memuat data dari server...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</main>
-
-<!-- ================= AREA MODAL & TOAST (TIDAK BERUBAH) ================= -->
-
-<!-- MODAL TINJAU -->
-<div id="modalTinjau" class="modal-overlay">
-    <div class="modal-content" style="max-width: 600px;">
-        <div class="modal-header">
-            <h3 style="font-size: 18px; color: var(--text-dark);">Tinjau & Validasi Data</h3>
-            <button class="close-btn" onclick="closeModal()">&times;</button>
-        </div>
-        
-        <form id="formTinjau" onsubmit="event.preventDefault(); saveAndApprove();" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <input type="hidden" id="editRowNumber">
-            
-            <div class="form-group"><label class="form-label">Nama Mahasiswa</label><input type="text" id="editNama" class="form-control"></div>
-            <div class="form-group"><label class="form-label">NIM</label><input type="text" id="editNim" class="form-control"></div>
-            <div class="form-group"><label class="form-label">Email</label><input type="text" id="editEmail" class="form-control"></div>
-            <div class="form-group">
-                <label class="form-label">Program Studi</label>
-                <select id="editProdi" class="form-control">
-                    <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
-                    <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
-                    <option value="Program Tamhidi">Program Tamhidi</option>
-                </select>
-            </div>
-            <div class="form-group"><label class="form-label">Tempat Lahir</label><input type="text" id="editTempatLahir" class="form-control"></div>
-            <div class="form-group"><label class="form-label">Tanggal Lahir</label><input type="date" id="editTanggalLahir" class="form-control"></div>
-            
-            <div class="full-width" style="margin-top: 10px; border-bottom: 1px solid var(--border-color);"></div>
-            <div class="full-width">
-                <h4 style="font-size: 14px; color: var(--primary-dark);">Data Khusus: <span id="labelJenisSurat" style="color: var(--text-dark);"></span></h4>
-            </div>
-            <input type="hidden" id="editJenisSurat">
-
-            <!-- Blok Field Dinamis -->
-            <div id="blokBebas" class="form-group full-width" style="display: none;"><label class="form-label">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="form-control"></div>
-            <div id="blokMutasi" class="full-width" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="form-group"><label class="form-label">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="form-control"></div>
-                <div class="form-group"><label class="form-label">Prodi Tujuan</label><input type="text" id="editProdiTujuan" class="form-control"></div>
-                <div class="form-group full-width"><label class="form-label">Alamat Tujuan Lengkap</label><input type="text" id="editAlamatTujuan" class="form-control"></div>
-            </div>
-            <div id="blokLulus" class="form-group full-width" style="display: none;"><label class="form-label">Tanggal Munaqosyah</label><input type="date" id="editTglMunaqosyah" class="form-control"></div>
-            <div id="blokRekomendasi" class="full-width" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="form-group full-width"><label class="form-label">Nama Kegiatan</label><input type="text" id="editNamaKegiatan" class="form-control"></div>
-                <div class="form-group full-width"><label class="form-label">Lokasi Kegiatan</label><input type="text" id="editLokasiKegiatan" class="form-control"></div>
-                <div class="form-group"><label class="form-label">Tgl Mulai</label><input type="date" id="editTglMulai" class="form-control"></div>
-                <div class="form-group"><label class="form-label">Tgl Selesai</label><input type="date" id="editTglSelesai" class="form-control"></div>
             </div>
 
-            <div class="full-width" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-                <button type="button" class="btn-cancel" onclick="closeModal()" style="padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; background: #f1f5f9; color: #475569;">Batal</button>
-                <button type="submit" id="btnSetujui" class="btn-primary" style="margin-top: 0; padding: 10px 20px; border: none; border-radius: 8px; background: var(--primary-dark); color: white; cursor: pointer; font-weight: 600;">Setujui</button>
+            <!-- TABEL RESPONSIF -->
+            <div class="overflow-x-auto border border-gray-200 rounded-xl" style="-webkit-overflow-scrolling: touch;">
+                <!-- thead dan tbody akan dirender oleh JS admin.js -->
+                <table id="mainTable" class="w-full min-w-[1050px] text-left border-collapse bg-white">
+                    <thead id="adminTableHeader" class="bg-gray-50 border-b border-gray-200 text-[11px] font-extrabold text-gray-500 uppercase tracking-wider">
+                        <!-- JS mengisi thead -->
+                    </thead>
+                    <tbody id="adminTableBody" class="divide-y divide-gray-100 text-sm">
+                        <tr><td colspan="8" class="text-center py-12 text-gray-500">Memuat data dari server...</td></tr>
+                    </tbody>
+                </table>
             </div>
-        </form>
-    </div>
-</div>
+        </div>
+    </main>
 
-<!-- MODAL KONFIRMASI (Tolak/Kirim Surat) -->
-<div id="confirmActionModal" class="custom-modal-overlay">
-    <div class="custom-modal-box">
-        <div class="custom-modal-icon" id="confirmIcon" style="background: #fef3c7; color: #d97706;">
-            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-        </div>
-        <h3 class="custom-modal-title" id="confirmTitle">Konfirmasi</h3>
-        <p class="custom-modal-desc" id="confirmDesc">Apakah Anda yakin?</p>
-        
-        <!-- INPUT KETERANGAN TOLAK (Otomatis muncul/hilang) -->
-        <div id="rejectInputContainer" style="display: none; margin-bottom: 20px; text-align: left;">
-            <label style="font-size: 11px; font-weight: bold; color: var(--text-gray); margin-bottom: 6px; display: block;">Alasan Penolakan (Wajib diisi)</label>
-            <textarea id="rejectReason" class="form-control" rows="2" placeholder="Tuliskan alasan penolakan..." style="font-size: 13px; resize: none; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e5e7eb;"></textarea>
-        </div>
-
-        <div class="custom-modal-actions">
-            <button class="btn-cancel" onclick="tutupConfirmModal()">Batal</button>
-            <button id="btnConfirmAction" type="button" onclick="prosesConfirmAction(event)" class="btn-confirm-logout">Ya, Lanjutkan</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL LOGOUT -->
-<div id="logoutModal" class="custom-modal-overlay">
-    <div class="custom-modal-box">
-        <div class="custom-modal-icon">
-            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-        </div>
-        <h3 class="custom-modal-title">Keluar dari sistem?</h3>
-        <p class="custom-modal-desc">Sesi Anda akan diakhiri dan Anda harus login kembali.</p>
-        <div class="custom-modal-actions">
-            <button class="btn-cancel" onclick="tutupLogoutModal()">Batal</button>
-            <button class="btn-confirm-logout" onclick="prosesLogout()">Keluar</button>
-        </div>
-    </div>
-</div>
-
-<!-- TOAST NOTIFICATION MODERN -->
-<div id="toastNotification" class="toast-notification">
-    <svg id="toastIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></svg>
-    <span id="toastMessage">Pesan Notifikasi</span>
-</div>
-<!-- ================= FOOTER ================= -->
-    <footer class="site-footer">
-        <div class="footer-content">
-            <p>&copy; 2026 STAI Imam Syafi'i Cianjur. Hak Cipta Dilindungi.</p>
-            <p class="footer-sub">Sistem Layanan Administrasi Persuratan Mahasiswa</p>
-        </div>
+    <!-- ================= FOOTER ================= -->
+    <footer class="mt-auto border-t border-gray-200 py-8 px-4 text-center">
+        <p class="text-sm font-semibold text-gray-800 mb-1">&copy; 2026 STAI Imam Syafi'i Cianjur. Hak Cipta Dilindungi.</p>
+        <p class="text-[11px] font-medium text-gray-500 tracking-wide uppercase">Sistem Layanan Administrasi Persuratan Mahasiswa</p>
     </footer>
+
+
+    <!-- ================= AREA MODAL & TOAST ================= -->
+    
+    <!-- MODAL TINJAU -->
+    <div id="modalTinjau" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[100] items-center justify-center p-4" style="display: none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative flex flex-col">
+            <!-- Header Modal -->
+            <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center z-10">
+                <h3 class="font-serif text-lg font-bold text-gray-900">Tinjau & Validasi Data</h3>
+                <button type="button" class="text-gray-400 hover:text-red-500 bg-gray-50 hover:bg-red-50 w-8 h-8 rounded-full flex items-center justify-center transition-colors" onclick="closeModal()">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <form id="formTinjau" onsubmit="event.preventDefault(); saveAndApprove();" class="p-6">
+                <input type="hidden" id="editRowNumber">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Nama Mahasiswa</label><input type="text" id="editNama" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">NIM</label><input type="text" id="editNim" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Email</label><input type="text" id="editEmail" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Program Studi</label>
+                        <select id="editProdi" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
+                            <option value="Pendidikan Bahasa Arab">Pendidikan Bahasa Arab</option>
+                            <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
+                            <option value="Program Tamhidi">Program Tamhidi</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Tempat Lahir</label><input type="text" id="editTempatLahir" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Tanggal Lahir</label><input type="date" id="editTanggalLahir" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"></div>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-5 mb-4">
+                    <h4 class="text-sm font-bold text-primary">Data Khusus: <span id="labelJenisSurat" class="text-gray-700"></span></h4>
+                </div>
+                <input type="hidden" id="editJenisSurat">
+
+                <!-- Blok Field Dinamis -->
+                <div id="blokBebas" style="display: none;" class="mb-6"><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Tujuan Keperluan</label><input type="text" id="editTujuanBebas" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:border-primary outline-none"></div>
+                
+                <div id="blokMutasi" style="display: none;" class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Kampus Tujuan</label><input type="text" id="editKampusTujuan" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Prodi Tujuan</label><input type="text" id="editProdiTujuan" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Alamat Tujuan Lengkap</label><input type="text" id="editAlamatTujuan" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none"></div>
+                </div>
+                
+                <div id="blokLulus" style="display: none;" class="mb-6"><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Tanggal Munaqosyah</label><input type="date" id="editTglMunaqosyah" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none"></div>
+                
+                <div id="blokRekomendasi" style="display: none;" class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Nama Kegiatan</label><input type="text" id="editNamaKegiatan" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Lokasi Kegiatan</label><input type="text" id="editLokasiKegiatan" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Tgl Mulai</label><input type="date" id="editTglMulai" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Tgl Selesai</label><input type="date" id="editTglSelesai" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none"></div>
+                </div>
+
+                <!-- Aksi Bawah -->
+                <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
+                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-600 font-semibold hover:bg-gray-50 transition-colors">Batal</button>
+                    <button type="submit" id="btnSetujui" class="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-light text-white font-bold transition-all shadow-md active:scale-95">Setujui</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI (Tolak/Kirim Surat) -->
+    <div id="confirmActionModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] items-center justify-center p-4" style="display: none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center transform transition-all">
+            <div id="confirmIcon" class="w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h3 id="confirmTitle" class="text-xl font-bold text-gray-900 mb-2">Konfirmasi</h3>
+            <p id="confirmDesc" class="text-gray-500 text-sm mb-6">Apakah Anda yakin?</p>
+            
+            <div id="rejectInputContainer" style="display: none;" class="mb-6 text-left">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Alasan Penolakan (Wajib diisi)</label>
+                <textarea id="rejectReason" rows="2" placeholder="Tuliskan alasan penolakan..." class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none resize-none"></textarea>
+            </div>
+
+            <div class="flex gap-3 w-full">
+                <button onclick="tutupConfirmModal()" class="flex-1 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors text-sm">Batal</button>
+                <button id="btnConfirmAction" type="button" onclick="prosesConfirmAction(event)" class="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary-light text-white font-bold transition-colors shadow-md text-sm">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LOGOUT -->
+    <div id="logoutModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] items-center justify-center p-4" style="display: none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center transform transition-all">
+            <div class="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Keluar dari sistem?</h3>
+            <p class="text-gray-500 text-sm mb-6">Sesi Anda akan diakhiri dan Anda harus login kembali.</p>
+            <div class="flex gap-3 w-full">
+                <button onclick="tutupLogoutModal()" class="flex-1 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors text-sm">Batal</button>
+                <button onclick="prosesLogout()" class="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold transition-colors shadow-md text-sm">Keluar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION MODERN -->
+    <!-- Diberi class opacity-0 dan style pointer-events-none sebagai default, akan diubah oleh JS Anda menjadi .show -->
+    <div id="toastNotification" class="toast-notification fixed bottom-[-10px] left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none z-[200]">
+        <svg id="toastIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></svg>
+        <span id="toastMessage" class="text-sm font-medium tracking-wide">Pesan Notifikasi</span>
+    </div>
+
+    <!-- JS Anda -->
     <script src="js/admin.js"></script>
 </body>
 </html>
