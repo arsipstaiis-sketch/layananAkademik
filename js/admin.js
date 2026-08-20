@@ -552,33 +552,34 @@ function prosesLogout() {
 function updateStatistik() {
     if (!globalData || globalData.length === 0) return;
 
-    let pending = 0, done = 0, reject = 0;
+    let pending = 0, perluKirim = 0, selesai = 0, reject = 0;
     
     globalData.forEach(item => {
         if (!item.status) return; 
         let status = item.status.toLowerCase();
         
-        if (status.includes("menunggu verifikasi")) pending++;
-        else if (status.includes("selesai") || status.includes("disetujui") || status.includes("dikirim")) done++;
-        else if (status.includes("tolak")) reject++;
+        if (status.includes("menunggu verifikasi")) {
+            pending++;
+        } else if (status.includes("menunggu dikirim") || status.includes("disetujui")) {
+            perluKirim++; // Status sudah disetujui tapi belum dikirim emailnya
+        } else if (status.includes("selesai") || status.includes("sudah dikirim")) {
+            selesai++;
+        } else if (status.includes("tolak")) {
+            reject++;
+        }
     });
 
-    // 1. Update Angka di Mini Bar Atas
+    // Update 4 poin angka di Banner Admin
     if (document.getElementById("countPending")) document.getElementById("countPending").innerText = pending;
-    if (document.getElementById("countDone")) document.getElementById("countDone").innerText = done;
+    if (document.getElementById("countPerluKirim")) document.getElementById("countPerluKirim").innerText = perluKirim;
+    if (document.getElementById("countDone")) document.getElementById("countDone").innerText = selesai;
     if (document.getElementById("countReject")) document.getElementById("countReject").innerText = reject;
 
-    // 2. Update Badge Merah di dalam Tab "Permohonan Baru"
+    // Update badge merah di tab Permohonan Baru (hanya menghitung yang murni pending)
     const badgePending = document.getElementById("badgeTabPending");
     if (badgePending) {
         badgePending.innerText = pending;
-        
-        // Hanya tampilkan warna merah jika ada antrean (Lebih dari 0)
-        if (pending > 0) {
-            badgePending.style.display = 'inline-flex';
-        } else {
-            badgePending.style.display = 'none'; // Sembunyikan jika kosong
-        }
+        badgePending.style.display = pending > 0 ? 'inline-flex' : 'none';
     }
 }
 
