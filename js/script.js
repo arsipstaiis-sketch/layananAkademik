@@ -413,39 +413,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 tabelBody.innerHTML = '';
-                if (hasilContainer) hasilContainer.style.display = 'none';
-                if (pesanKosong) pesanKosong.style.display = 'none';
+                
+                // Hapus class 'hidden' bawaan Tailwind dan pastikan display none/block bekerja
+                if (hasilContainer) { hasilContainer.classList.remove('hidden'); hasilContainer.style.display = 'none'; }
+                if (pesanKosong) { pesanKosong.classList.remove('hidden'); pesanKosong.style.display = 'none'; }
 
                 if (data.length > 0) {
                     if (hasilContainer) hasilContainer.style.display = 'block';
                     data.forEach(item => {
                         
-                        // 1. LOGIKA WARNA & FORMAT TEKS STATUS
-                        let badgeClass = "badge-verifikasi"; 
+                        // 1. LOGIKA WARNA & FORMAT TEKS STATUS (Versi Tailwind)
+                        let statusBadge = "";
                         let statusText = item.status.toLowerCase();
-                        let statusDisplay = "MENUNGGU<br>VERIFIKASI";
+                        let alasanHTML = "";
 
                         if (statusText.includes("sudah dikirim") || statusText.includes("selesai")) {
-                            badgeClass = "badge-selesai"; 
-                            statusDisplay = "SELESAI<br><span style='font-size: 9px; font-weight: 500; text-transform: none; letter-spacing: 0;'>(Email Terkirim)</span>";
+                            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-emerald-100 text-emerald-800 border border-emerald-200 leading-tight min-w-[90px]">SELESAI<span class="text-[8.5px] font-medium normal-case mt-0.5">(Email Terkirim)</span></span>`;
                         } else if (statusText.includes("menunggu dikirim") || statusText.includes("disetujui")) {
-                            badgeClass = "badge-dikirim"; 
-                            statusDisplay = "DISETUJUI<br><span style='font-size: 9px; font-weight: 500; text-transform: none; letter-spacing: 0;'>(Menunggu Dikirim)</span>";
+                            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-blue-100 text-blue-800 border border-blue-200 leading-tight min-w-[90px]">DISETUJUI<span class="text-[8.5px] font-medium normal-case mt-0.5">(Menunggu Dikirim)</span></span>`;
                         } else if (statusText.includes("tolak")) {
-                            badgeClass = "badge-tolak";   
-                            statusDisplay = "DITOLAK"; 
-                        }
-
-                        let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 6px 14px;">${statusDisplay}</span>`;
-
-                        if (statusText.includes("tolak")) {
+                            statusBadge = `<span class="inline-flex items-center justify-center px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wide bg-red-100 text-red-800 border border-red-200 min-w-[90px]">DITOLAK</span>`;
+                            
                             let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
-                            statusHTML += `
-                                <div class="alasan-tolak">
-                                    <strong style="display:block; margin-bottom:2px;">Catatan Admin:</strong>
-                                    <span style="font-style:italic">"${alasan}"</span>
-                                </div>
-                            `;
+                            alasanHTML = `
+                                <div class="text-[10px] text-gray-500 max-w-[150px] mx-auto text-center leading-tight bg-gray-50 p-2 rounded border border-gray-100 mt-2">
+                                    <strong class="block text-red-600 mb-0.5">Catatan Admin:</strong>
+                                    <span class="italic">"${alasan}"</span>
+                                </div>`;
+                        } else {
+                            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-amber-100 text-amber-800 border border-amber-200 leading-tight min-w-[90px]">MENUNGGU<span class="text-[8.5px] font-bold normal-case mt-0.5">Verifikasi</span></span>`;
                         }
 
                         // 2. LOGIKA MEMISAHKAN TANGGAL & JAM
@@ -455,23 +451,24 @@ document.addEventListener('DOMContentLoaded', function() {
                         let teksTanggal = tglArr[0] || "-";
                         let teksJam = tglArr.length > 1 ? tglArr.slice(1).join(' ') : ""; 
                         
-                        let htmlWaktu = `
-                            <div style="font-weight: 600; color: var(--text-main); font-size: 13px;">${teksTanggal}</div>
-                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                ${teksJam ? teksJam + ' WIB' : '-'}
-                            </div>
-                        `;
-
-                        // 3. MERAKIT BARIS TABEL
+                        // 3. MERAKIT BARIS TABEL (Versi Tailwind)
                         const row = `
-                            <tr>
-                                <td style="width: 25%; text-align: center;">${htmlWaktu}</td>
-                                <td style="text-align: center; width: 45%;">
-                                    <b>Surat ${item.jenisSurat}</b><br>
-                                    <span style="font-size:11.5px;color:var(--text-muted);">${item.nomorSurat || '-'}</span>
+                            <tr class="hover:bg-gray-50/80 transition-colors group">
+                                <td class="px-5 py-4 whitespace-nowrap text-center border-b border-gray-100">
+                                    <div class="font-bold text-gray-800 text-[11px] md:text-xs">${teksTanggal}</div>
+                                    <div class="text-[10px] text-gray-500 mt-1 flex items-center justify-center gap-1">
+                                        <svg class="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                        ${teksJam ? teksJam + ' WIB' : '-'}
+                                    </div>
                                 </td>
-                                <td style="width: 30%; text-align: center;">${statusHTML}</td>
+                                <td class="px-5 py-4 border-b border-gray-100">
+                                    <div class="font-bold text-primary text-xs md:text-sm whitespace-nowrap">Surat ${item.jenisSurat}</div>
+                                    <div class="text-[10px] md:text-xs font-medium text-gray-500 mt-1 whitespace-nowrap">No: ${item.nomorSurat || '-'}</div>
+                                </td>
+                                <td class="px-5 py-4 border-b border-gray-100 align-middle text-center">
+                                    ${statusBadge}
+                                    ${alasanHTML}
+                                </td>
                             </tr>
                         `;
                         tabelBody.innerHTML += row;
@@ -488,7 +485,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
 
 // ==========================================
 // AUTO-FORMAT TULISAN (PROPER CASE & UPPER CASE)
