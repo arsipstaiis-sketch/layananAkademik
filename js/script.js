@@ -535,3 +535,4 @@ function aktifkanAutoFormat() {
 window.onload = function() {
     aktifkanAutoFormat(); 
 }
+}
