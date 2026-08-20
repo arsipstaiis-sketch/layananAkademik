@@ -180,107 +180,112 @@ function renderTable() {
 
     tbody.innerHTML = '';
     if (dataTampil.length === 0) { 
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:40px; color:#6b7280;">Tidak ada data di tab ${currentTab === 'baru' ? 'Permohonan Baru' : 'Arsip Terkirim'}.</td></tr>`; 
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-gray-500 font-medium">Tidak ada data di tab ${currentTab === 'baru' ? 'Permohonan Baru' : 'Arsip Terkirim'}.</td></tr>`; 
         return; 
     }
 
     dataTampil.forEach(item => {
-        // --- LOGIKA STATUS ---
-        let badgeClass = "badge-verifikasi"; 
+        // --- LOGIKA STATUS (Desain Tailwind) ---
+        let statusBadge = "";
         let statusText = item.status.toLowerCase();
-        let statusDisplay = "MENUNGGU<br>VERIFIKASI"; 
 
         if (statusText.includes("sudah dikirim") || statusText.includes("selesai")) {
-            badgeClass = "badge-selesai"; 
-            statusDisplay = "SELESAI<br><span style='font-size: 9px; font-weight: 500; text-transform: none; letter-spacing: 0;'>(Email Terkirim)</span>";
+            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-emerald-100 text-emerald-800 border border-emerald-200 leading-tight min-w-[90px]">SELESAI<span class="text-[8.5px] font-medium normal-case mt-0.5">(Email Terkirim)</span></span>`;
         } else if (statusText.includes("menunggu dikirim") || statusText.includes("disetujui")) {
-            badgeClass = "badge-dikirim"; 
-            statusDisplay = "DISETUJUI<br><span style='font-size: 9px; font-weight: 500; text-transform: none; letter-spacing: 0;'>(Menunggu Dikirim)</span>";
+            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-blue-100 text-blue-800 border border-blue-200 leading-tight min-w-[90px]">DISETUJUI<span class="text-[8.5px] font-medium normal-case mt-0.5">(Menunggu Dikirim)</span></span>`;
         } else if (statusText.includes("tolak")) {
-            badgeClass = "badge-tolak";   
-            statusDisplay = "DITOLAK";
+            statusBadge = `<span class="inline-flex items-center justify-center px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wide bg-red-100 text-red-800 border border-red-200 min-w-[90px]">DITOLAK</span>`;
+        } else {
+            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-amber-100 text-amber-800 border border-amber-200 leading-tight min-w-[90px]">MENUNGGU<span class="text-[8.5px] font-bold normal-case mt-0.5">Verifikasi</span></span>`;
         }
 
-        let statusHTML = `<span class="badge ${badgeClass}" style="line-height: 1.4; padding: 5px 8px; display: inline-block; min-width: 85px;">${statusDisplay}</span>`;
-
-        // --- LOGIKA BERKAS ---
-        let linkStyle = "display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 11.5px; font-weight: 600; color: #2563eb; text-decoration: none; transition: all 0.2s ease;";
-        let iconFile = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>`;
+        // --- LOGIKA BERKAS (Desain Tailwind) ---
+        let iconFile = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>`;
+        let linkClass = "inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors whitespace-nowrap";
         
         let arrBerkas = [];
-        if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" style="${linkStyle}">${iconFile} KTM</a>`);
-        if(item.linkBebas) arrBerkas.push(`<a href="${item.linkBebas}" target="_blank" style="${linkStyle}">${iconFile} Bebas</a>`);
-        if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" style="${linkStyle}">${iconFile} Ijazah</a>`);
+        if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" class="${linkClass}">${iconFile} KTM</a>`);
+        if(item.linkBebas) arrBerkas.push(`<a href="${item.linkBebas}" target="_blank" class="${linkClass}">${iconFile} Bebas</a>`);
+        if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" class="${linkClass}">${iconFile} Ijazah</a>`);
         
-        let htmlBerkas = arrBerkas.length > 0 ? `<div style="display:flex; flex-direction:column; gap:8px; align-items: center;">${arrBerkas.join("")}</div>` : "-";
-        
-        // --- IKON AKSI ---
-        let iconSearch = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
-        let iconCross = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-        let iconEye = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-        let iconSend = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
-        let iconDoc = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+        let htmlBerkas = arrBerkas.length > 0 ? `<div class="flex flex-col gap-1.5 items-center justify-center">${arrBerkas.join("")}</div>` : `<span class="text-gray-400 font-bold">-</span>`;
+
+        // --- IKON AKSI (Desain Tailwind) ---
+        let iconSearch = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+        let iconCross = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+        let iconEye = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        let iconSend = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+        let iconDoc = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
 
         let aksiHTML = "";
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
-                <div class="action-group">
-                    <button onclick="openModal(${item.rowNumber})" class="action-btn-icon btn-icon-tinjau" title="Tinjau Permohonan">
+                <div class="flex justify-center gap-2">
+                    <button onclick="openModal(${item.rowNumber})" class="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors shadow-sm" title="Tinjau Permohonan">
                         ${iconSearch}
                     </button>
-                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#991b1b')" class="action-btn-icon btn-icon-tolak" title="Tolak Permohonan">
+                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#ef4444')" class="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors shadow-sm" title="Tolak Permohonan">
                         ${iconCross}
                     </button>
                 </div>`;
         } else if (item.status.includes("Disetujui")) {
             aksiHTML = `
-                <div class="action-group">
-                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-preview" title="Preview PDF">
+                <div class="flex justify-center gap-2">
+                    <a href="${item.linkPDF}" target="_blank" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2 rounded-lg transition-colors shadow-sm" title="Preview PDF">
                         ${iconEye}
                     </a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="action-btn-icon btn-icon-kirim" title="Kirim ke Mahasiswa">
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 p-2 rounded-lg transition-colors shadow-sm" title="Kirim ke Mahasiswa">
                         ${iconSend}
                     </button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
             aksiHTML = `
-                <div class="action-group">
-                    <a href="${item.linkPDF}" target="_blank" class="action-btn-icon btn-icon-full" title="Buka Dokumen PDF">
+                <div class="flex justify-center">
+                    <a href="${item.linkPDF}" target="_blank" class="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold shadow-sm whitespace-nowrap" title="Buka Dokumen PDF">
                         ${iconDoc} Lihat PDF
                     </a>
                 </div>`;
         } else if (item.status.includes("Ditolak")) {
             let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
             aksiHTML = `
-                <div class="alasan-tolak" style="margin-top:0;">
-                    <strong style="display:block; margin-bottom:2px;">Catatan Admin:</strong>
-                    <span style="font-style:italic">"${alasan}"</span>
+                <div class="text-[10px] text-gray-500 max-w-[150px] mx-auto text-center leading-tight bg-gray-50 p-2 rounded border border-gray-100">
+                    <strong class="block text-red-600 mb-0.5">Catatan Admin:</strong>
+                    <span class="italic">"${alasan}"</span>
                 </div>`;
         } else { 
             aksiHTML = "-"; 
         }
 
         let row = `
-            <tr>
-                <td class="col-tanggal">
-                    <div style="font-weight: 500; font-size: 11.5px; color: var(--text-dark);">${item.dateStr}</div>
-                    <div style="font-size: 10px; color: var(--text-gray); margin-top: 4px;">${item.timeStr} WIB</div>
+            <tr class="hover:bg-gray-50/80 transition-colors group">
+                <td class="px-4 py-4 whitespace-nowrap text-center border-b border-gray-100">
+                    <div class="font-bold text-gray-800 text-[11px] md:text-xs">${item.dateStr}</div>
+                    <div class="text-[10px] text-gray-500 mt-1">${item.timeStr} WIB</div>
                 </td>
-                <td>
-                    <div style="font-weight: 700; color: var(--text-dark);">${item.nama}</div>
-                    <div style="font-size: 11px; color: var(--text-gray); margin-top: 4px; letter-spacing: 0.5px;">${item.nim}</div>
+                <td class="px-4 py-4 border-b border-gray-100">
+                    <div class="font-bold text-primary text-xs md:text-sm whitespace-nowrap">${item.nama}</div>
+                    <div class="text-[10px] md:text-xs font-medium text-gray-500 mt-1 whitespace-nowrap">NIM: ${item.nim}</div>
                 </td>
-                <td class="col-ta">${item.tahunAkademik}</td>
-                <td class="col-jenis" style="font-weight: 600; color: var(--text-gray);">${item.jenisSurat}</td>
-                <td style="text-align:center;">${htmlBerkas}</td>
-                <td style="text-align:center;">${statusHTML}</td>
-                <td class="col-aksi">${aksiHTML}</td>
+                <td class="px-4 py-4 text-center border-b border-gray-100 whitespace-nowrap">
+                    <span class="text-[11px] font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">${item.tahunAkademik}</span>
+                </td>
+                <td class="px-4 py-4 text-center border-b border-gray-100">
+                    <span class="text-[11px] md:text-xs font-semibold text-gray-700 whitespace-nowrap">${item.jenisSurat}</span>
+                </td>
+                <td class="px-4 py-4 border-b border-gray-100 align-middle">
+                    ${htmlBerkas}
+                </td>
+                <td class="px-4 py-4 border-b border-gray-100 align-middle text-center">
+                    ${statusBadge}
+                </td>
+                <td class="px-4 py-4 border-b border-gray-100 align-middle">
+                    ${aksiHTML}
+                </td>
             </tr>`;
         
         tbody.innerHTML += row;
     });
 }
-
 function openModal(rowNum) {
     const data = globalData.find(d => d.rowNumber === rowNum);
     if(!data) return;
@@ -457,11 +462,11 @@ function bukaConfirmModal(action, rowNum, title, desc, btnText, btnColor) {
         confirmIcon.style.color = '#10b981';
     }
     
-    document.getElementById('confirmActionModal').classList.add('show');
+    document.getElementById('confirmActionModal').style.display = 'flex';
 }
 
 function tutupConfirmModal() {
-    document.getElementById('confirmActionModal').classList.remove('show');
+    document.getElementById('confirmActionModal').style.display = 'none';
     pendingAction = null;
     pendingRowNum = null;
 }
@@ -536,8 +541,8 @@ function showToast(message, isError = false) {
     setTimeout(() => { toast.classList.remove('show'); }, 3500);
 }
 
-function logoutSistem() { document.getElementById('logoutModal').classList.add('show'); }
-function tutupLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
+function logoutSistem() { document.getElementById('logoutModal').style.display = 'flex'; }
+function tutupLogoutModal() { document.getElementById('logoutModal').style.display = 'none'; }
 function prosesLogout() {
     sessionStorage.removeItem('userRole'); 
     sessionStorage.removeItem('adminPin'); 
