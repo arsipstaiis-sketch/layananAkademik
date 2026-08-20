@@ -180,37 +180,37 @@ function renderTable() {
 
     tbody.innerHTML = '';
     if (dataTampil.length === 0) { 
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-gray-500 font-medium">Tidak ada data di tab ${currentTab === 'baru' ? 'Permohonan Baru' : 'Arsip Terkirim'}.</td></tr>`; 
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-gray-400 font-medium">Tidak ada data di tab ${currentTab === 'baru' ? 'Permohonan Baru' : 'Arsip Terkirim'}.</td></tr>`; 
         return; 
     }
 
     dataTampil.forEach(item => {
-        // --- LOGIKA STATUS (Desain Tailwind) ---
+        // --- 1. STATUS: Dibuat lebih pasif/lembut seperti label pemberitahuan ---
         let statusBadge = "";
         let statusText = item.status.toLowerCase();
 
         if (statusText.includes("sudah dikirim") || statusText.includes("selesai")) {
-            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-emerald-100 text-emerald-800 border border-emerald-200 leading-tight min-w-[90px]">SELESAI<span class="text-[8.5px] font-medium normal-case mt-0.5">(Email Terkirim)</span></span>`;
+            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100 leading-tight min-w-[95px]">SELESAI<span class="text-[8.5px] font-normal text-emerald-600 normal-case mt-0.5">(Email Terkirim)</span></span>`;
         } else if (statusText.includes("menunggu dikirim") || statusText.includes("disetujui")) {
-            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-blue-100 text-blue-800 border border-blue-200 leading-tight min-w-[90px]">DISETUJUI<span class="text-[8.5px] font-medium normal-case mt-0.5">(Menunggu Dikirim)</span></span>`;
+            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-100 leading-tight min-w-[95px]">DISETUJUI<span class="text-[8.5px] font-normal text-sky-600 normal-case mt-0.5">(Menunggu Kirim)</span></span>`;
         } else if (statusText.includes("tolak")) {
-            statusBadge = `<span class="inline-flex items-center justify-center px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wide bg-red-100 text-red-800 border border-red-200 min-w-[90px]">DITOLAK</span>`;
+            statusBadge = `<span class="inline-flex items-center justify-center px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-100 min-w-[95px]">DITOLAK</span>`;
         } else {
-            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-amber-100 text-amber-800 border border-amber-200 leading-tight min-w-[90px]">MENUNGGU<span class="text-[8.5px] font-bold normal-case mt-0.5">Verifikasi</span></span>`;
+            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-100 leading-tight min-w-[95px]">PENDING<span class="text-[8.5px] font-normal text-amber-600 normal-case mt-0.5">Verifikasi</span></span>`;
         }
 
-        // --- LOGIKA BERKAS (Desain Tailwind) ---
+        // --- BERKAS ---
         let iconFile = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>`;
-        let linkClass = "inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors whitespace-nowrap";
+        let linkClass = "inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50/80 hover:bg-blue-100 px-2 py-1 rounded transition-colors whitespace-nowrap";
         
         let arrBerkas = [];
         if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" class="${linkClass}">${iconFile} KTM</a>`);
         if(item.linkBebas) arrBerkas.push(`<a href="${item.linkBebas}" target="_blank" class="${linkClass}">${iconFile} Bebas</a>`);
         if(item.linkIjazah) arrBerkas.push(`<a href="${item.linkIjazah}" target="_blank" class="${linkClass}">${iconFile} Ijazah</a>`);
         
-        let htmlBerkas = arrBerkas.length > 0 ? `<div class="flex flex-col gap-1.5 items-center justify-center">${arrBerkas.join("")}</div>` : `<span class="text-gray-400 font-bold">-</span>`;
+        let htmlBerkas = arrBerkas.length > 0 ? `<div class="flex flex-col gap-1.5 items-center justify-center">${arrBerkas.join("")}</div>` : `<span class="text-gray-400 font-medium">-</span>`;
 
-        // --- IKON AKSI (Desain Tailwind) ---
+        // --- 2. AKSI: Dibuat lebih kontras, tegas, dengan efek tombol nyata (shadow & hover menonjol) ---
         let iconSearch = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
         let iconCross = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
         let iconEye = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
@@ -221,35 +221,35 @@ function renderTable() {
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
                 <div class="flex justify-center gap-2">
-                    <button onclick="openModal(${item.rowNumber})" class="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors shadow-sm" title="Tinjau Permohonan">
-                        ${iconSearch}
+                    <button onclick="openModal(${item.rowNumber})" class="flex items-center gap-1 bg-primary hover:bg-primary-light text-white px-3 py-2 rounded-lg transition-all shadow-sm font-semibold text-xs" title="Tinjau Permohonan">
+                        ${iconSearch} Tinjau
                     </button>
-                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#ef4444')" class="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors shadow-sm" title="Tolak Permohonan">
-                        ${iconCross}
+                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#ef4444')" class="flex items-center gap-1 bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg transition-all shadow-sm font-semibold text-xs" title="Tolak Permohonan">
+                        ${iconCross} Tolak
                     </button>
                 </div>`;
         } else if (item.status.includes("Disetujui")) {
             aksiHTML = `
                 <div class="flex justify-center gap-2">
-                    <a href="${item.linkPDF}" target="_blank" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2 rounded-lg transition-colors shadow-sm" title="Preview PDF">
-                        ${iconEye}
+                    <a href="${item.linkPDF}" target="_blank" class="flex items-center gap-1 bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg transition-all shadow-sm font-semibold text-xs" title="Preview PDF">
+                        ${iconEye} Lihat
                     </a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 p-2 rounded-lg transition-colors shadow-sm" title="Kirim ke Mahasiswa">
-                        ${iconSend}
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg transition-all shadow-sm font-semibold text-xs" title="Kirim ke Mahasiswa">
+                        ${iconSend} Kirim
                     </button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
             aksiHTML = `
                 <div class="flex justify-center">
-                    <a href="${item.linkPDF}" target="_blank" class="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold shadow-sm whitespace-nowrap" title="Buka Dokumen PDF">
-                        ${iconDoc} Lihat PDF
+                    <a href="${item.linkPDF}" target="_blank" class="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-900 text-white px-3.5 py-2 rounded-lg transition-all text-xs font-bold shadow-sm" title="Buka Dokumen PDF">
+                        ${iconDoc} Buka PDF
                     </a>
                 </div>`;
         } else if (item.status.includes("Ditolak")) {
             let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
             aksiHTML = `
-                <div class="text-[10px] text-gray-500 max-w-[150px] mx-auto text-center leading-tight bg-gray-50 p-2 rounded border border-gray-100">
-                    <strong class="block text-red-600 mb-0.5">Catatan Admin:</strong>
+                <div class="text-[10px] text-gray-500 max-w-[160px] mx-auto text-center leading-tight bg-gray-50/80 p-2 rounded border border-gray-200">
+                    <strong class="block text-rose-600 mb-0.5">Catatan Admin:</strong>
                     <span class="italic">"${alasan}"</span>
                 </div>`;
         } else { 
@@ -260,14 +260,14 @@ function renderTable() {
             <tr class="hover:bg-gray-50/80 transition-colors group">
                 <td class="px-4 py-4 whitespace-nowrap text-center border-b border-gray-100">
                     <div class="font-bold text-gray-800 text-[11px] md:text-xs">${item.dateStr}</div>
-                    <div class="text-[10px] text-gray-500 mt-1">${item.timeStr} WIB</div>
+                    <div class="text-[10px] text-gray-400 mt-1">${item.timeStr} WIB</div>
                 </td>
                 <td class="px-4 py-4 border-b border-gray-100">
-                    <div class="font-bold text-primary text-xs md:text-sm whitespace-nowrap">${item.nama}</div>
+                    <div class="font-bold text-gray-900 text-xs md:text-sm whitespace-nowrap">${item.nama}</div>
                     <div class="text-[10px] md:text-xs font-medium text-gray-500 mt-1 whitespace-nowrap">NIM: ${item.nim}</div>
                 </td>
                 <td class="px-4 py-4 text-center border-b border-gray-100 whitespace-nowrap">
-                    <span class="text-[11px] font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">${item.tahunAkademik}</span>
+                    <span class="text-[11px] font-semibold text-gray-600 bg-gray-100/80 px-2.5 py-1 rounded">${item.tahunAkademik}</span>
                 </td>
                 <td class="px-4 py-4 text-center border-b border-gray-100">
                     <span class="text-[11px] md:text-xs font-semibold text-gray-700 whitespace-nowrap">${item.jenisSurat}</span>
