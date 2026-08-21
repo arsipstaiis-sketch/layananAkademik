@@ -347,7 +347,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (form) form.style.display = 'none'; 
                     if (successMessage) successMessage.style.display = 'block'; 
                 } else {
+                    alert('if (data.status === 'success') {
+                    // 1. Ambil NIM yang baru saja disubmit
+                    const nimDisubmit = document.getElementById('nim') ? document.getElementById('nim').value : "";
+                    
+                    // 2. Beritahu mahasiswa
+                    alert("Permohonan Berhasil! Anda akan dialihkan ke halaman Cek Status.");
+                    
+                    // 3. Reset form secara diam-diam (agar jika mahasiswa kembali ke tab form, datanya sudah bersih)
+                    form.reset();
+                    if (typeof tanganiPerubahanProdi === 'function') tanganiPerubahanProdi();
+                    
+                    // 4. Beralih ke Tab Cek Status secara otomatis
+                    const sectionForm = document.getElementById('sectionForm');
+                    const sectionStatus = document.getElementById('sectionStatus');
+                    const tabFormBtn = document.getElementById('tabFormBtn');
+                    const tabStatusBtn = document.getElementById('tabStatusBtn');
+                    
+                    if (sectionForm && sectionStatus) {
+                        sectionForm.style.display = 'none';
+                        sectionStatus.style.display = 'block';
+                    }
+                    if (tabFormBtn && tabStatusBtn) {
+                        tabFormBtn.classList.remove('active');
+                        tabStatusBtn.classList.add('active');
+                    }
+                    
+                    // 5. Auto-fill NIM dan otomatis klik tombol pencarian
+                    const inputNIMStatus = document.getElementById('inputNIMStatus');
+                    const btnCariStatus = document.getElementById('btnCariStatus');
+                    
+                    if (inputNIMStatus && btnCariStatus && nimDisubmit) {
+                        inputNIMStatus.value = nimDisubmit;
+                        // Beri sedikit delay (300ms) agar transisi tab terlihat mulus sebelum mulai mencari
+                        setTimeout(() => {
+                            btnCariStatus.click();
+                        }, 300);
+                    }
+
+                } else {
                     alert('Terjadi kesalahan sistem di server: ' + data.message);
+                }: ' + data.message);
                 }
 
             } catch (error) {
