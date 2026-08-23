@@ -301,9 +301,20 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-3 w-full mb-8">
-                    <input type="text" id="inputNIMStatus" placeholder="Ketik NIM Anda di sini..." class="w-full px-5 py-3.5 rounded-xl border border-gray-300 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all bg-gray-50 focus:bg-white text-sm">
-                    <button type="button" id="btnCariStatus" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-3.5 rounded-xl shadow-md transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/30 active:translate-y-0 active:shadow-md flex items-center justify-center gap-2">
+                <div class="flex flex-col sm:flex-row gap-3 mt-4">
+                    <div class="relative w-full">
+                        <!-- Ikon kecil di dalam input -->
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </span>
+                        <input type="text" id="inputNIMStatus" placeholder="Ketik NIM Anda di sini..." class="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none text-sm font-medium transition-all text-gray-700 shadow-sm">
+                    </div>
+                    
+                    <!-- Tombol dengan ikon pencarian -->
+                    <button type="button" id="btnCariStatus" class="flex-shrink-0 bg-primary hover:bg-primary-light text-white px-6 py-3.5 rounded-xl shadow-md transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/30 active:translate-y-0 active:shadow-sm flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <span class="font-bold">Cari Data</span>
+                    </button>
                 </div>
 
                 <div id="hasilContainerStatus" class="hidden">
