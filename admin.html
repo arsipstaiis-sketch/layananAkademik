@@ -118,24 +118,45 @@
                 </button>
             </div>
             
-            <!-- 4 Poin Statistik Live -->
-            <div class="bg-white/10 border border-white/20 backdrop-blur-md rounded-xl p-4 w-full lg:w-[320px] relative z-10 shadow-lg grid grid-cols-2 gap-3 text-center">
-                <div class="bg-white/5 p-2.5 rounded-lg border border-white/10">
-                    <span class="block text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-1">Pending</span>
-                    <span id="countPending" class="text-xl font-black">0</span>
+            <!-- 4 Poin Statistik Live Terpisah & Interaktif -->
+            <div class="grid grid-cols-2 gap-3 w-full lg:w-[380px] relative z-10 mt-6 lg:mt-0">
+                
+                <!-- Card Pending -->
+                <div class="group bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md rounded-2xl p-4 transition-all duration-300 cursor-default hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] font-extrabold text-amber-300 uppercase tracking-widest">Pending</span>
+                        <svg class="w-4 h-4 text-amber-300/60 group-hover:text-amber-300 transition-colors" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <span id="countPending" class="text-3xl font-black text-white drop-shadow-md">0</span>
                 </div>
-                <div class="bg-white/5 p-2.5 rounded-lg border border-white/10">
-                    <span class="block text-[10px] font-bold text-blue-300 uppercase tracking-wider mb-1">Perlu Dikirim</span>
-                    <span id="countPerluKirim" class="text-xl font-black">0</span>
+                
+                <!-- Card Perlu Dikirim -->
+                <div class="group bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md rounded-2xl p-4 transition-all duration-300 cursor-default hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] font-extrabold text-blue-300 uppercase tracking-widest">Kirim</span>
+                        <svg class="w-4 h-4 text-blue-300/60 group-hover:text-blue-300 transition-colors transform group-hover:translate-x-1 group-hover:-translate-y-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </div>
+                    <span id="countPerluKirim" class="text-3xl font-black text-white drop-shadow-md">0</span>
                 </div>
-                <div class="bg-white/5 p-2.5 rounded-lg border border-white/10">
-                    <span class="block text-[10px] font-bold text-emerald-300 uppercase tracking-wider mb-1">Selesai</span>
-                    <span id="countDone" class="text-xl font-black">0</span>
+
+                <!-- Card Selesai -->
+                <div class="group bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md rounded-2xl p-4 transition-all duration-300 cursor-default hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] font-extrabold text-emerald-300 uppercase tracking-widest">Selesai</span>
+                        <svg class="w-4 h-4 text-emerald-300/60 group-hover:text-emerald-300 transition-colors" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <span id="countDone" class="text-3xl font-black text-white drop-shadow-md">0</span>
                 </div>
-                <div class="bg-white/5 p-2.5 rounded-lg border border-white/10">
-                    <span class="block text-[10px] font-bold text-red-300 uppercase tracking-wider mb-1">Ditolak</span>
-                    <span id="countReject" class="text-xl font-black">0</span>
+
+                <!-- Card Ditolak -->
+                <div class="group bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md rounded-2xl p-4 transition-all duration-300 cursor-default hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] font-extrabold text-rose-300 uppercase tracking-widest">Ditolak</span>
+                        <svg class="w-4 h-4 text-rose-300/60 group-hover:text-rose-300 transition-colors" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                    </div>
+                    <span id="countReject" class="text-3xl font-black text-white drop-shadow-md">0</span>
                 </div>
+
             </div>
         </div>
 
