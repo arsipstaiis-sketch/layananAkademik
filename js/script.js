@@ -1,5 +1,20 @@
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', async function() {
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
+
+    // --- CEK STATUS MAINTENANCE DARI GOOGLE SHEETS ---
+    try {
+        const response = await fetch(`${WEB_APP_URL}?action=cekMaintenance`);
+        const data = await response.json();
+        
+        if (data.maintenance === "ON") {
+            // Jika ON, tampilkan penutup layar penuh dan hentikan skrip lainnya
+            document.getElementById('maintenanceOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Kunci scroll layar
+            return; // Hentikan eksekusi form
+        }
+    } catch (e) {
+        console.error("Gagal mengecek status maintenance.");
+    }
     // --- FUNGSI BANTUAN ---
     function getBase64(file) {
         return new Promise((resolve, reject) => {
