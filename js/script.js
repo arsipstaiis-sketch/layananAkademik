@@ -357,7 +357,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             btnCariStatus.click();
                         }, 300);
                     }
-
+                } else if (data.status === 'maintenance') {
+                    // BLOK KHUSUS MAINTENANCE
+                    alert("⚙️ PEMBERITAHUAN:\n" + data.message);
                 } else {
                     alert('Terjadi kesalahan sistem di server: ' + data.message);
                 }
