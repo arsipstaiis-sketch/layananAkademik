@@ -251,8 +251,11 @@ function renderTable() {
             statusBadge = `<span class="inline-flex flex-col items-center justify-center px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-100 leading-tight min-w-[95px]">PENDING<span class="text-[8.5px] font-normal text-amber-600 normal-case mt-0.5">Verifikasi</span></span>`;
         }
 
+        // --- BERKAS (Dengan efek melayang ringan saat di-hover) ---
         let iconFile = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>`;
-        let linkClass = "inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50/80 hover:bg-blue-100 px-2 py-1 rounded transition-colors whitespace-nowrap";
+        
+        // Penambahan efek transform, translate-y, dan shadow pada tombol berkas
+        let linkClass = "inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50/80 hover:bg-blue-100 px-2.5 py-1.5 rounded-md whitespace-nowrap transform transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-blue-500/20 active:translate-y-0 active:shadow-sm";
         
         let arrBerkas = [];
         if(item.linkKTM) arrBerkas.push(`<a href="${item.linkKTM}" target="_blank" class="${linkClass}">${iconFile} KTM</a>`);
@@ -261,6 +264,7 @@ function renderTable() {
         
         let htmlBerkas = arrBerkas.length > 0 ? `<div class="flex flex-col gap-1.5 items-center justify-center">${arrBerkas.join("")}</div>` : `<span class="text-gray-400 font-medium">-</span>`;
 
+        // --- AKSI (Dengan efek melayang kuat dan bayangan berwarna) ---
         let iconSearch = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
         let iconCross = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
         let iconEye = `<svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
@@ -271,27 +275,27 @@ function renderTable() {
         if (item.status === "Menunggu Verifikasi") {
             aksiHTML = `
                 <div class="flex justify-center gap-2">
-                    <button onclick="openModal(${item.rowNumber})" class="flex items-center gap-1 bg-primary hover:bg-primary-light text-white px-3 py-2 rounded-lg transition-all shadow-sm font-semibold text-xs" title="Tinjau Permohonan">
+                    <button onclick="openModal(${item.rowNumber})" class="flex items-center gap-1 bg-primary hover:bg-primary-light text-white px-3 py-2 rounded-lg shadow-sm font-semibold text-xs transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/30 active:translate-y-0 active:shadow-sm" title="Tinjau Permohonan">
                         ${iconSearch} Tinjau
                     </button>
-                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#ef4444')" class="flex items-center gap-1 bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg transition-all shadow-sm font-semibold text-xs" title="Tolak Permohonan">
+                    <button onclick="bukaConfirmModal('tolak', ${item.rowNumber}, 'Tolak Permohonan?', 'Surat ini akan ditolak secara permanen.', 'Tolak Surat', '#e11d48')" class="flex items-center gap-1 bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg shadow-sm font-semibold text-xs transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-rose-600/30 active:translate-y-0 active:shadow-sm" title="Tolak Permohonan">
                         ${iconCross} Tolak
                     </button>
                 </div>`;
         } else if (item.status.includes("Disetujui")) {
             aksiHTML = `
                 <div class="flex justify-center gap-2">
-                    <a href="${item.linkPDF}" target="_blank" class="flex items-center gap-1 bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg transition-all shadow-sm font-semibold text-xs" title="Preview PDF">
+                    <a href="${item.linkPDF}" target="_blank" class="flex items-center gap-1 bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg shadow-sm font-semibold text-xs transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-sky-600/30 active:translate-y-0 active:shadow-sm" title="Preview PDF">
                         ${iconEye} Lihat
                     </a>
-                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim ke email mahasiswa.', 'Kirim Sekarang', '#0f5132')" class="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg transition-all shadow-sm font-semibold text-xs" title="Kirim ke Mahasiswa">
+                    <button onclick="bukaConfirmModal('kirim', ${item.rowNumber}, 'Kirim Dokumen?', 'Dokumen PDF ini akan dikirim ke email mahasiswa.', 'Kirim Sekarang', '#059669')" class="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg shadow-sm font-semibold text-xs transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-600/30 active:translate-y-0 active:shadow-sm" title="Kirim ke Mahasiswa">
                         ${iconSend} Kirim
                     </button>
                 </div>`;
         } else if (item.status.includes("Selesai")) {
             aksiHTML = `
                 <div class="flex justify-center">
-                    <a href="${item.linkPDF}" target="_blank" class="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-900 text-white px-3.5 py-2 rounded-lg transition-all text-xs font-bold shadow-sm" title="Buka Dokumen PDF">
+                    <a href="${item.linkPDF}" target="_blank" class="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-900 text-white px-3.5 py-2 rounded-lg text-xs font-bold shadow-sm transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-gray-900/30 active:translate-y-0 active:shadow-sm" title="Buka Dokumen PDF">
                         ${iconDoc} Buka PDF
                     </a>
                 </div>`;
