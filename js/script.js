@@ -387,9 +387,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 } else {
                     alert('Terjadi kesalahan sistem di server: ' + data.message);
-                }: ' + data.message);
                 }
-
+                
             } catch (error) {
                 alert('Gagal mengirim permohonan. Mohon periksa kembali koneksi internet Anda atau pastikan ukuran file tidak melebihi batas wajar.');
                 console.error('Pesan Error:', error);
