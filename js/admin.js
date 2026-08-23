@@ -631,3 +631,56 @@ window.onload = function() {
     loadData(); // Memuat tabel admin
     aktifkanAutoFormat(); // Mengaktifkan auto-format saat edit data
 };
+// GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT ANDA
+const API_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
+
+async function prosesLogin() {
+    const inputPin = document.getElementById('inputPin').value;
+    const errorMsg = document.getElementById('loginErrorMsg');
+    const btnSubmit = document.querySelector('#adminLoginForm button[type="submit"]');
+    
+    if (!inputPin) return;
+
+    // Ubah teks tombol menjadi loading
+    const originalBtnText = btnSubmit.innerHTML;
+    btnSubmit.innerHTML = `<span class="spinner"></span> Memeriksa...`;
+    btnSubmit.disabled = true;
+    errorMsg.classList.add('hidden');
+
+    try {
+        // Kirim PIN ke server Google Apps Script
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'login',
+                pin: inputPin
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            // PIN Benar
+            document.getElementById('loginOverlay').style.display = 'none';
+            sessionStorage.setItem('adminLoggedIn', 'true');
+            
+            if (typeof loadData === "function") {
+                loadData();
+            }
+        } else {
+            // PIN Salah
+            errorMsg.innerText = "PIN yang Anda masukkan salah!";
+            errorMsg.classList.remove('hidden');
+            document.getElementById('inputPin').value = '';
+            document.getElementById('inputPin').focus();
+        }
+    } catch (error) {
+        errorMsg.innerText = "Gagal terhubung ke server. Coba lagi.";
+        errorMsg.classList.remove('hidden');
+    } finally {
+        // Kembalikan tombol ke semula
+        btnSubmit.innerHTML = originalBtnText;
+        btnSubmit.disabled = false;
+    }
+}
