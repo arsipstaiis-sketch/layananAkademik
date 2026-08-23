@@ -39,15 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileIjazah = document.getElementById('fileIjazah'); 
     const tanggalMunaqosyah = document.getElementById('tanggalMunaqosyah'); 
 
-    // Mencegah error jika atribut onchange ada di HTML
-    window.tampilkanFieldKhusus = function() {
-        jenisSurat.dispatchEvent(new Event('change'));
-    };
-
-    // =======================================================
-    // FITUR DINAMIS: PRODI -> SANAH -> JENIS SURAT & SEMESTER
-    // =======================================================
-
+    // --- FITUR DINAMIS: PRODI -> SANAH -> JENIS SURAT & SEMESTER ---
     const semuaJenisSurat = [
         "Keterangan Aktif Kuliah",
         "Keterangan Lulus",
@@ -63,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
 
     function cekStatusSemesterWaktu() {
-        const bulanSekarang = new Date().getMonth() + 1; // Januari = 1
+        const bulanSekarang = new Date().getMonth() + 1;
         return (bulanSekarang >= 2 && bulanSekarang <= 8) ? "Genap" : "Ganjil";
     }
 
@@ -71,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!inputProdi || !jenisSurat || !inputSemester) return;
         const prodiTerpilih = inputProdi.value;
 
-        // --- A. Atur Jenis Surat ---
         const pilihanSuratSaatIni = jenisSurat.value;
         jenisSurat.innerHTML = '<option value="" disabled selected>-- Pilih Jenis Surat --</option>';
         
@@ -89,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         jenisSurat.dispatchEvent(new Event('change'));
 
-        // --- B. Atur Visibilitas Kolom Sanah (Menggunakan style.display) ---
         if (prodiTerpilih === "Program Tamhidi") {
             if (wrapperSanah) wrapperSanah.style.display = 'none';
             if (inputSanah) {
@@ -97,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 inputSanah.value = ""; 
             }
         } else {
-            if (wrapperSanah) wrapperSanah.style.display = 'flex';
+            if (wrapperSanah) wrapperSanah.style.display = 'block';
             if (inputSanah) inputSanah.required = true;
         }
 
@@ -234,7 +224,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- LOGIKA MENAMPILKAN FORM DINAMIS ---
     if (jenisSurat) {
         jenisSurat.addEventListener('change', function() {
-            // Sembunyikan semua field khusus terlebih dahulu
             if (fieldBebasTanggungan) fieldBebasTanggungan.style.display = 'none';
             if (fieldMutasi) fieldMutasi.style.display = 'none';
             if (fieldLulus) fieldLulus.style.display = 'none';
@@ -245,9 +234,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const val = this.value;
 
-            // Tampilkan field khusus berdasarkan pilihan surat
             if (val.includes('Bebas Tanggungan')) {
-                if (fieldBebasTanggungan) fieldBebasTanggungan.style.display = 'grid';
+                if (fieldBebasTanggungan) fieldBebasTanggungan.style.display = 'block';
             } else if (val.includes('Mutasi')) {
                 if (fieldMutasi) fieldMutasi.style.display = 'grid';
                 if (fileBebas) fileBebas.required = true; 
@@ -302,9 +290,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     ijazahObj.mime = fileIjazah.files[0].type;
                 }
 
+                const nimValue = document.getElementById('nim') ? document.getElementById('nim').value : "";
+
                 const formData = {
                     nama: document.getElementById('nama') ? document.getElementById('nama').value : "",
-                    nim: document.getElementById('nim') ? document.getElementById('nim').value : "",
+                    nim: nimValue,
                     email: document.getElementById('email') ? document.getElementById('email').value : "",
                     tempat_lahir: document.getElementById('tempatLahir') ? document.getElementById('tempatLahir').value : "",
                     tanggal_lahir: document.getElementById('tanggalLahir') ? document.getElementById('tanggalLahir').value : "",
@@ -344,25 +334,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    if (form) form.style.display = 'none'; 
-                    if (successMessage) successMessage.style.display = 'block'; 
-                } else {
-                    alert('if (data.status === 'success') {
-                    // 1. Ambil NIM yang baru saja disubmit
-                    const nimDisubmit = document.getElementById('nim') ? document.getElementById('nim').value : "";
-                    
-                    // 2. Beritahu mahasiswa
                     alert("Permohonan Berhasil! Anda akan dialihkan ke halaman Cek Status.");
                     
-                    // 3. Reset form secara diam-diam (agar jika mahasiswa kembali ke tab form, datanya sudah bersih)
                     form.reset();
                     if (typeof tanganiPerubahanProdi === 'function') tanganiPerubahanProdi();
-                    
-                    // 4. Beralih ke Tab Cek Status secara otomatis
-                    const sectionForm = document.getElementById('sectionForm');
-                    const sectionStatus = document.getElementById('sectionStatus');
-                    const tabFormBtn = document.getElementById('tabFormBtn');
-                    const tabStatusBtn = document.getElementById('tabStatusBtn');
                     
                     if (sectionForm && sectionStatus) {
                         sectionForm.style.display = 'none';
@@ -373,13 +348,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         tabStatusBtn.classList.add('active');
                     }
                     
-                    // 5. Auto-fill NIM dan otomatis klik tombol pencarian
                     const inputNIMStatus = document.getElementById('inputNIMStatus');
                     const btnCariStatus = document.getElementById('btnCariStatus');
                     
-                    if (inputNIMStatus && btnCariStatus && nimDisubmit) {
-                        inputNIMStatus.value = nimDisubmit;
-                        // Beri sedikit delay (300ms) agar transisi tab terlihat mulus sebelum mulai mencari
+                    if (inputNIMStatus && btnCariStatus && nimValue) {
+                        inputNIMStatus.value = nimValue;
                         setTimeout(() => {
                             btnCariStatus.click();
                         }, 300);
@@ -388,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     alert('Terjadi kesalahan sistem di server: ' + data.message);
                 }
-                
+
             } catch (error) {
                 alert('Gagal mengirim permohonan. Mohon periksa kembali koneksi internet Anda atau pastikan ukuran file tidak melebihi batas wajar.');
                 console.error('Pesan Error:', error);
@@ -453,55 +426,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 tabelBody.innerHTML = '';
                 
-                // Hapus class 'hidden' bawaan Tailwind dan pastikan display none/block bekerja
                 if (hasilContainer) { hasilContainer.classList.remove('hidden'); hasilContainer.style.display = 'none'; }
                 if (pesanKosong) { pesanKosong.classList.remove('hidden'); pesanKosong.style.display = 'none'; }
 
                 if (data.length > 0) {
                     if (hasilContainer) hasilContainer.style.display = 'block';
                     data.forEach(item => {
-                        
-                        // 1. LOGIKA WARNA & FORMAT TEKS STATUS (Versi Tailwind)
                         let statusBadge = "";
                         let statusText = item.status.toLowerCase();
                         let alasanHTML = "";
 
                         if (statusText.includes("sudah dikirim") || statusText.includes("selesai")) {
-                            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-emerald-100 text-emerald-800 border border-emerald-200 leading-tight min-w-[90px]">SELESAI<span class="text-[8.5px] font-medium normal-case mt-0.5">(Email Terkirim)</span></span>`;
+                            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100 leading-tight min-w-[95px]">SELESAI<span class="text-[8.5px] font-normal text-emerald-600 normal-case mt-0.5">(Email Terkirim)</span></span>`;
                         } else if (statusText.includes("menunggu dikirim") || statusText.includes("disetujui")) {
-                            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-blue-100 text-blue-800 border border-blue-200 leading-tight min-w-[90px]">DISETUJUI<span class="text-[8.5px] font-medium normal-case mt-0.5">(Menunggu Dikirim)</span></span>`;
+                            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-100 leading-tight min-w-[95px]">DISETUJUI<span class="text-[8.5px] font-normal text-sky-600 normal-case mt-0.5">(Menunggu Kirim)</span></span>`;
                         } else if (statusText.includes("tolak")) {
-                            statusBadge = `<span class="inline-flex items-center justify-center px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wide bg-red-100 text-red-800 border border-red-200 min-w-[90px]">DITOLAK</span>`;
+                            statusBadge = `<span class="inline-flex items-center justify-center px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-100 min-w-[95px]">DITOLAK</span>`;
                             
                             let alasan = item.alasanPenolakan ? item.alasanPenolakan : "Tidak memenuhi syarat administrasi.";
                             alasanHTML = `
-                                <div class="text-[10px] text-gray-500 max-w-[150px] mx-auto text-center leading-tight bg-gray-50 p-2 rounded border border-gray-100 mt-2">
-                                    <strong class="block text-red-600 mb-0.5">Catatan Admin:</strong>
+                                <div class="text-[10px] text-gray-500 max-w-[160px] mx-auto text-center leading-tight bg-gray-50/80 p-2 rounded border border-gray-200 mt-2">
+                                    <strong class="block text-rose-600 mb-0.5">Catatan Admin:</strong>
                                     <span class="italic">"${alasan}"</span>
                                 </div>`;
                         } else {
-                            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-amber-100 text-amber-800 border border-amber-200 leading-tight min-w-[90px]">MENUNGGU<span class="text-[8.5px] font-bold normal-case mt-0.5">Verifikasi</span></span>`;
+                            statusBadge = `<span class="inline-flex flex-col items-center justify-center px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-100 leading-tight min-w-[95px]">PENDING<span class="text-[8.5px] font-normal text-amber-600 normal-case mt-0.5">Verifikasi</span></span>`;
                         }
 
-                        // 2. LOGIKA MEMISAHKAN TANGGAL & JAM
                         let tanggalString = item.tanggal ? item.tanggal.trim() : "";
                         let tglArr = tanggalString.split(' '); 
-                        
                         let teksTanggal = tglArr[0] || "-";
                         let teksJam = tglArr.length > 1 ? tglArr.slice(1).join(' ') : ""; 
                         
-                        // 3. MERAKIT BARIS TABEL (Versi Tailwind)
                         const row = `
                             <tr class="hover:bg-gray-50/80 transition-colors group">
                                 <td class="px-5 py-4 whitespace-nowrap text-center border-b border-gray-100">
                                     <div class="font-bold text-gray-800 text-[11px] md:text-xs">${teksTanggal}</div>
-                                    <div class="text-[10px] text-gray-500 mt-1 flex items-center justify-center gap-1">
+                                    <div class="text-[10px] text-gray-400 mt-1 flex items-center justify-center gap-1">
                                         <svg class="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                                         ${teksJam ? teksJam + ' WIB' : '-'}
                                     </div>
                                 </td>
                                 <td class="px-5 py-4 border-b border-gray-100">
-                                    <div class="font-bold text-primary text-xs md:text-sm whitespace-nowrap">Surat ${item.jenisSurat}</div>
+                                    <div class="font-bold text-gray-900 text-xs md:text-sm whitespace-nowrap">Surat ${item.jenisSurat}</div>
                                     <div class="text-[10px] md:text-xs font-medium text-gray-500 mt-1 whitespace-nowrap">No: ${item.nomorSurat || '-'}</div>
                                 </td>
                                 <td class="px-5 py-4 border-b border-gray-100 align-middle text-center">
@@ -524,6 +491,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // --- PANGGIL AUTO FORMAT DI SINI (Dalam DOMContentLoaded) ---
+    aktifkanAutoFormat();
+
+}); // <--- PENUTUP DOMContentLoaded
 
 // ==========================================
 // AUTO-FORMAT TULISAN (PROPER CASE & UPPER CASE)
@@ -570,8 +542,3 @@ function aktifkanAutoFormat() {
         }
     });
 }
-
-window.onload = function() {
-    aktifkanAutoFormat(); 
-}
-});
