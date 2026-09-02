@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     inputNama.value = "NIM tidak ditemukan. Periksa kembali NIM Anda.";
                     inputNama.classList.add('text-rose-600');
                 } else {
-                    inputNama.value = "Sistem gagal mencari nama.";
+                    inputNama.value = "Gagal: " + (data.message || "Aksi tidak dikenali server.");
                     inputNama.classList.add('text-rose-600');
                 }
             } catch (error) {
