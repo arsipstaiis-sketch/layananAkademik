@@ -319,6 +319,10 @@ function renderTable() {
                 <td class="px-4 py-4 border-b border-gray-100">
                     <div class="font-bold text-gray-900 text-xs md:text-sm whitespace-nowrap">${item.nama}</div>
                     <div class="text-[10px] md:text-xs font-medium text-gray-500 mt-1 whitespace-nowrap">NIM: ${item.nim}</div>
+                    <div class="text-[10px] text-gray-400 mt-0.5 whitespace-nowrap flex items-center gap-1">
+                        <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        ${item.email}
+                    </div>
                 </td>
                 <td class="px-4 py-4 text-center border-b border-gray-100 whitespace-nowrap">
                     <span class="text-[11px] font-semibold text-gray-600 bg-gray-100/80 px-2.5 py-1 rounded">${item.tahunAkademik}</span>
