@@ -54,6 +54,55 @@ document.addEventListener('DOMContentLoaded', async function() {
     const fileIjazah = document.getElementById('fileIjazah'); 
     const tanggalMunaqosyah = document.getElementById('tanggalMunaqosyah'); 
 
+    // --- FITUR AUTO-FILL NAMA BERDASARKAN NIM ---
+    const inputNim = document.getElementById('nim');
+    const inputNama = document.getElementById('nama');
+    const nimLoading = document.getElementById('nimLoading');
+
+    if (inputNim && inputNama) {
+        // Event 'blur' mendeteksi ketika pengguna selesai mengetik NIM dan beralih ke kolom lain
+        inputNim.addEventListener('blur', async function() {
+            const nimVal = this.value.trim();
+            
+            if (!nimVal) {
+                inputNama.value = "";
+                inputNama.classList.remove('text-rose-600');
+                return;
+            }
+
+            // Memunculkan status loading
+            inputNama.value = "Mencari data mahasiswa...";
+            inputNama.classList.remove('text-rose-600');
+            if (nimLoading) nimLoading.classList.remove('hidden');
+
+            try {
+                // Ganti dengan URL eksekusi Apps Script Anda
+                const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
+                const response = await fetch(`${WEB_APP_URL}?action=getNamaByNIM&nim=${encodeURIComponent(nimVal)}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    // Jika sukses, masukkan nama
+                    inputNama.value = data.nama;
+                    inputNama.classList.remove('text-rose-600');
+                } else if (data.status === 'not_found') {
+                    // Jika NIM tidak ada di DatabaseMahasiswa
+                    inputNama.value = "NIM tidak ditemukan. Periksa kembali NIM Anda.";
+                    inputNama.classList.add('text-rose-600');
+                } else {
+                    inputNama.value = "Sistem gagal mencari nama.";
+                    inputNama.classList.add('text-rose-600');
+                }
+            } catch (error) {
+                inputNama.value = "Koneksi terputus. Pastikan internet Anda stabil.";
+                inputNama.classList.add('text-rose-600');
+            } finally {
+                // Matikan animasi loading
+                if (nimLoading) nimLoading.classList.add('hidden');
+            }
+        });
+    }
+
     // --- FITUR DINAMIS: PRODI -> SANAH -> JENIS SURAT & SEMESTER ---
     const semuaJenisSurat = [
         "Keterangan Aktif Kuliah",
