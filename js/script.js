@@ -54,51 +54,59 @@ document.addEventListener('DOMContentLoaded', async function() {
     const fileIjazah = document.getElementById('fileIjazah'); 
     const tanggalMunaqosyah = document.getElementById('tanggalMunaqosyah'); 
 
-    // --- FITUR AUTO-FILL NAMA BERDASARKAN NIM ---
+    // --- FITUR AUTO-FILL NAMA (VERSI INSTAN / LOCAL CACHE) ---
     const inputNim = document.getElementById('nim');
     const inputNama = document.getElementById('nama');
     const nimLoading = document.getElementById('nimLoading');
 
+    let dbMahasiswaLokal = null; // Variabel penyimpan data di RAM
+
     if (inputNim && inputNama) {
-        // Event 'blur' mendeteksi ketika pengguna selesai mengetik NIM dan beralih ke kolom lain
-        inputNim.addEventListener('blur', async function() {
+        // 1. Diam-diam muat semua database saat web pertama dibuka
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
+        
+        fetch(`${WEB_APP_URL}?action=getAllMahasiswaDB`)
+            .then(res => res.json())
+            .then(hasil => {
+                if (hasil.status === 'success') {
+                    dbMahasiswaLokal = hasil.data; // Simpan data ke RAM browser
+                    
+                    // Jika mahasiswa sudah keburu mengetik sebelum data selesai dimuat, cek ulang
+                    if (inputNim.value.trim() !== "") {
+                        inputNim.dispatchEvent(new Event('input')); 
+                    }
+                }
+            })
+            .catch(err => console.error("Gagal sinkronisasi background", err));
+
+        // 2. Pencarian Real-time saat mahasiswa mengetik (Gunakan event 'input', bukan 'blur')
+        inputNim.addEventListener('input', function() {
             const nimVal = this.value.trim();
             
             if (!nimVal) {
                 inputNama.value = "";
                 inputNama.classList.remove('text-rose-600');
+                if (nimLoading) nimLoading.classList.add('hidden');
                 return;
             }
 
-            // Memunculkan status loading
-            inputNama.value = "Mencari data mahasiswa...";
-            inputNama.classList.remove('text-rose-600');
-            if (nimLoading) nimLoading.classList.remove('hidden');
+            // Jika database masih loading di background
+            if (dbMahasiswaLokal === null) {
+                inputNama.value = "Menyiapkan database...";
+                if (nimLoading) nimLoading.classList.remove('hidden');
+                return;
+            }
 
-            try {
-                // Ganti dengan URL eksekusi Apps Script Anda
-                const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzowQaUWWhMgiLoQl6VTAjJERKos1YKzjk_VCU4ih2H69G_YAfktf5P-KWJrvymmkXeQQ/exec';
-                const response = await fetch(`${WEB_APP_URL}?action=getNamaByNIM&nim=${encodeURIComponent(nimVal)}`);
-                const data = await response.json();
+            // Jika database sudah siap, matikan ikon loading
+            if (nimLoading) nimLoading.classList.add('hidden');
 
-                if (data.status === 'success') {
-                    // Jika sukses, masukkan nama
-                    inputNama.value = data.nama;
-                    inputNama.classList.remove('text-rose-600');
-                } else if (data.status === 'not_found') {
-                    // Jika NIM tidak ada di DatabaseMahasiswa
-                    inputNama.value = "NIM tidak ditemukan. Periksa kembali NIM Anda.";
-                    inputNama.classList.add('text-rose-600');
-                } else {
-                    inputNama.value = "Gagal: " + (data.message || "Aksi tidak dikenali server.");
-                    inputNama.classList.add('text-rose-600');
-                }
-            } catch (error) {
-                inputNama.value = "Koneksi terputus. Pastikan internet Anda stabil.";
+            // 3. Pencocokan instan (0 detik)
+            if (dbMahasiswaLokal[nimVal]) {
+                inputNama.value = dbMahasiswaLokal[nimVal];
+                inputNama.classList.remove('text-rose-600');
+            } else {
+                inputNama.value = "NIM tidak terdaftar.";
                 inputNama.classList.add('text-rose-600');
-            } finally {
-                // Matikan animasi loading
-                if (nimLoading) nimLoading.classList.add('hidden');
             }
         });
     }
