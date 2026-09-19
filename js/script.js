@@ -115,14 +115,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     const semuaJenisSurat = [
         "Keterangan Aktif Kuliah",
         "Keterangan Lulus",
-        "Bebas Tanggungan",
         "Rekomendasi",
         "Keterangan Mutasi"
     ];
 
     const suratTamhidi = [
         "Keterangan Aktif Kuliah",
-        "Bebas Tanggungan",
         "Rekomendasi"
     ];
 
@@ -296,21 +294,21 @@ document.addEventListener('DOMContentLoaded', async function() {
     // --- LOGIKA MENAMPILKAN FORM DINAMIS ---
     if (jenisSurat) {
         jenisSurat.addEventListener('change', function() {
-            if (fieldBebasTanggungan) fieldBebasTanggungan.style.display = 'none';
+            // Sembunyikan semua field spesifik terlebih dahulu
             if (fieldMutasi) fieldMutasi.style.display = 'none';
             if (fieldLulus) fieldLulus.style.display = 'none';
             if (fieldRekomendasi) fieldRekomendasi.style.display = 'none'; 
             
-            if (fileBebas) fileBebas.required = false;
+            // Reset kewajiban unggah file
             if (fileIjazah) fileIjazah.required = false;
+            if (fileBebas) fileBebas.required = false; // Tetap di-reset untuk berjaga-jaga jika ID masih ada
 
             const val = this.value;
 
-            if (val.includes('Bebas Tanggungan')) {
-                if (fieldBebasTanggungan) fieldBebasTanggungan.style.display = 'block';
-            } else if (val.includes('Mutasi')) {
+            // Tampilkan field sesuai pilihan
+            if (val.includes('Mutasi')) {
                 if (fieldMutasi) fieldMutasi.style.display = 'grid';
-                if (fileBebas) fileBebas.required = true; 
+                if (fileBebas) fileBebas.required = true; // Jika mutasi masih butuh surat bebas, biarkan ini
             } else if (val.includes('Lulus')) {
                 if (fieldLulus) fieldLulus.style.display = 'grid';
                 if (fileIjazah) fileIjazah.required = true; 
